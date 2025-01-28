@@ -1,0 +1,139 @@
+{% load i18n %}
+{% load l10n %}
+
+<!-- Issue Buttons -->
+{% include 'issues/include/issue_sponsers.html' %}
+{% if actionbar.work %}
+    {% if user.is_authenticated %}
+        <a href ng-click="work()" class="fs-button blue">Work on this issue</a>
+    {% else %}
+        <a href="/login/?next={{issue.get_view_link}}" class="fs-button blue">Work on this issue</a>
+    {% endif %}
+{% endif %}
+
+{% if actionbar.sponsor %}
+    {% if user.is_authenticated %}
+        <a href id="btn_sponsor_{{issue.id}}" ng-click="sponsor()" class="fs-button green">Sponsor this issue</a>
+    {% else %}
+        <a href="/login/?next={{issue.get_view_link}}" class="fs-button green">Sponsor this issue</a>
+    {% endif %}
+{% endif %}
+{% if actionbar.pay %}
+    <a href="/offer/{{myoffer.id}}/pay" class="fs-button green">Pay Offer</a>
+{% endif %}
+{% if actionbar.change %}
+    <a href ng-click="change()" class="fs-button green">Change Offer</a>
+{% endif %}
+{% if actionbar.revoke %}
+    <a href ng-click="revoke()" class="fs-button green">Revoke Offer</a>
+{% endif %}
+{% if actionbar.resolve %}
+    {% if user.is_authenticated %}
+        <a href ng-click="resolve()" class="fs-button blue">Resolve issue</a>
+    {% else %}
+        <a href="/login/?next={{issue.get_view_link}}" class="fs-button blue">Resolve issue</a>
+    {% endif %}
+{% endif %}
+{% if actionbar.abort %}
+    <a href ng-click="abort()" class="fs-button blue">Abort work</a>
+{% endif %}
+
+
+<!-- Modal -->
+<div class="modal fade in" id="action_modal">
+    <div class="modal-dialog column-wrapper vertical">
+        <div class="column fit"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="close_modal('#action_modal')" >&times;</button>
+                <span class="modal-title font-size-20 ubahn grey-text">{[{ actionmodal.title }]}</span>
+            </div>
+            <div class="divider small"></div>
+            <form method="post" id="action_form" action="{[{ actionmodal.formaction }]}">
+                {% csrf_token %}
+                <input type="hidden" name="issue_id" value="{{issue.id}}">
+                <input type="hidden" name="offer_id" value="{{myoffer.id}}">
+                <input type="hidden" name="solution_id" value="{{mysolution.id}}">
+
+                <div class="modal-body">
+                    <div ng-switch on="actionmodal.action">
+                        <div ng-switch-when="SPONSOR">
+                            <div class="inline-content">
+								<span class="bold">Offer value:</span>
+								<input type="text" ng-model="myoffer.price" id="price" name="price" value="" class="positive fs-input small text-align-right">
+								<div class="hgap-5"><!-- Horizontal Gap 5px --></div>
+                                <!-- FS Radio -->
+								<span>
+									<input id="currency_usd" class="fs-input" name="currency" type="radio" value="USD" ng-model="myoffer.currency">
+									<label for="currency_usd"> US$</label>
+								</span>
+                                {% if BITCOIN_ENABLED %}
+								<div class="hgap-5"><!-- Horizontal Gap 5px --></div>
+                                <!-- FS Radio -->
+								<span>
+									<input id="currency_btc" class="fs-input" name="currency" type="radio" value="BTC" ng-model="myoffer.currency">
+									<label for="currency_btc"> Bitcoin</label>
+								</span>
+                                {% endif %}
+                            </div>
+                            <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+                            <div class="inline-content">
+								<!-- FS Checkbox -->
+								<span>
+									<input ng-model="myoffer.no_forking" type="checkbox" id="no_forking" name="no_forking" value="no_forking" class="fs-input">
+									<label id="no_forking_label" for="no_forking">No Forking</label>
+								</span>
+								<i class="icon-question-sign popopo" rel="popover" data-content="Having this checked means that you are only interested in solutions that are implemented on the main project's codebase. We recommended leaving it checked. It will enable you to benefit from new improvements that might get implemented in the future." data-original-title="Original vs. copies"></i>
+								<!-- FS Checkbox -->
+								<span>
+									<input ng-model="myoffer.require_release" type="checkbox" id="require_release" name="require_release" value="require_release" class="fs-input">
+									<label id="require_release_label" for="require_release">Require release</label>
+								</span>
+								<i class="icon-question-sign popopo" rel="popover" data-content="By checking this one you are telling the developer that just commiting the code is not enough. The solution must be available in a released, easily installable version" data-original-title="Commiting is not enough!"></i>
+								<!-- FS Checkbox -->
+								<span>
+									<input ng-model="myoffer.expires" type="checkbox" id="expires" name="expires" value="expires" class="fs-input">
+									<label id="expires_label" for="expires">This offer will expire...</label>
+								</span>
+                                <span ng-show="myoffer.expires">
+                                    in
+                                    <input ng-model="myoffer.expiration_time" type="text" id="expiration_time" name="expiration_time" style="width:50px;" class="fs-input text-align-right">
+                                    Days
+                                </span>
+                            </div>
+							<div class="vgap-15"><!-- Vertical Gap 15px --></div>
+                            <div>
+                                <label class="bold" for="acceptanceCriteria">Acceptance criteria</label>
+                                <text-with-markdown-preview model="myoffer.acceptanceCriteria" nameid="acceptanceCriteria" placeholder="{[{ actionmodal.commentplaceholder }]}"></text-with-markdown-preview>
+                            </div>
+							<div class="vgap-15"><!-- Vertical Gap 15px --></div>
+							<div>
+                                <p class="help-block green-text font-size-11">
+                                    {{SITE_NAME}} will charge a 3% fee on top of your payment. For offers in US$, Paypal's fees will also apply.
+									<a href=""> Learn more!</a>
+                                </p>
+                            </div>
+                        </div>
+                        <div ng-switch-when="ACTION_AND_COMMENT">
+                            <div>
+                                <label for="comment">Leave a comment</label>
+                                <text-with-markdown-preview model="actioncomment" nameid="comment" placeholder="{[{ actionmodal.commentplaceholder }]}"></text-with-markdown-preview>
+                            </div>
+                            <div class="inline-content">
+								<span ng-show="actionmodal.show_accept_payments">
+									<input id="accept_payments" class="fs-input" name="accept_payments" type="checkbox">
+									<label for="accept_payments"> Start accepting payments for this issue</label>
+								</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href ng-click="close_modal('#action_modal')" class="fs-button grey medium">Cancel</a>
+                    <a href ng-click="actionmodal.validate_and_submit()" class="fs-button green medium">{[{ actionmodal.buttonlabel }]}</a>
+                </div>
+            </form>
+        </div>
+        <div class="column fit"></div>
+    </div>
+</div>

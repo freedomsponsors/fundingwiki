@@ -1,0 +1,64 @@
+<!-- Sponsored Issue Card -->
+<div class="fs-box push-footer issue-card sponsored">
+    <!--Issue Title-->
+    <a href="{[{ issue_link(issue) }]}" multiline-ellipsis class="font-size-18 darkblue-text ubahn issue-title">
+        <div class="ellipsis">{[{ issue.title }]}</div>
+    </a>
+
+    <div class="divider small"><!--Small Divider--></div>
+
+    <!--Issue Values-->
+    <div class="column-wrapper">
+        <div class="column fit font-size-12">
+            <span class="paid-value" title="{[{getTitlePaid(issue)}]}">{[{ getPaidValue(issue) }]}</span><span> Paid</span>
+        </div>
+        <div class="column fit font-size-12 orange-text" align="right">
+            <span class="offered-value" title="{[{getTitleOffered(issue)}]}">{[{ getOfferedValue(issue) }]}</span><span> Offered</span>
+        </div>
+    </div>
+
+    <!--Issue Sponsors-->
+    <div class="card-sponsors">
+        <div class="column-wrapper">
+            <div class="user-picture" ng-class="{placeholder: sponsor.empty}" ng-repeat="sponsor in issue.four_sponsors_places">
+                <a href="{[{ sponsor.sponsor_link }]}"><img ng-hide="sponsor.empty" ng-src="{[{ sponsor.image_link }]}" alt="{[{ sponsor.username }]}" title="{[{ sponsor.username }]}"></a>
+            </div>
+        </div>
+        <a href="{[{ issue_link(issue) }]}" class="sponsors-label">
+            {[{ getMoreSponsors(issue) }]}
+        </a>
+    </div>
+
+    <!--Issue Description-->
+    <div multiline-ellipsis class="issue-description">
+        <p class="ellipsis" ng-show="issue.description">{[{ issue.description }]}</p>
+        <p ng-hide="issue.description">[No description]</p>
+    </div>
+
+
+    <!--Issue Project Logo-->
+    <a href="{[{ issue.project_link }]}">
+        <div class="project-logo" title="{[{ issue.project_name }]}">
+            linefix<img ng-src="{[{ issue.image_link }]}"/>
+        </div>
+    </a>
+
+    <!--Issue Status-->
+    <a href="{[{ issue_link(issue) }]}">
+        <div class="card-status {[{ issue.status }]}"></div>
+    </a>
+
+    <!--Issue Card Footer-->
+    <div class="fs-box-footer card-footer">
+        <div class="column-wrapper">
+            <div class="column fit">
+                <!-- <span class="views-number">{[{ issue.viewcount }]}</span><span> views</span> -->
+            </div>
+            <div class="column fit" align="right">
+                <a href="{[{ issue_link(issue) }]}">
+                    <span class="comments-number">{[{ issue.commentcount }]}</span><span> comments</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

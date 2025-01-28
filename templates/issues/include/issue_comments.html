@@ -1,0 +1,26 @@
+<!--Issue comments-->
+<div id='div_icoment_{{ issue.id }}' style="display: none">
+    {% for comment in issue.getComments %}
+        {% if forloop.counter > 1 %}
+            <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+        {% endif %}
+        {% with section='' from='issue_comments' %}
+            {% include 'issues/include/comment.html' %}
+        {% endwith %}
+    {% endfor %}
+
+    <!-- Leave a Comment -->
+    <div class="vgap-15"><!-- Vertical Gap 60px --></div>
+    {% if user and user.is_authenticated %}
+        {% include 'issues/include/comment_add.html' %}
+    {% endif %}
+</div>
+
+<!--diff of issues-->
+{% if issue.getHistEvents %}
+    {% with actual=issue %}
+        <div id='div_irevision_{{ issue.id }}' style="display: none">
+        {% include 'issues/include/history_list.html' %}
+    {% endwith %}
+    </div>
+{% endif %}

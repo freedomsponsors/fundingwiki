@@ -1,0 +1,17 @@
+<div class="column-wrapper">
+    <div class="column">
+        <div class="user-picture"><img src="{{user.gravatar_url_medium}}"></div>
+    </div>
+    <div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+    <div class="fs-box column fit">
+        <p>Leave your comment.</p>
+        <form id="{{ id | default:'add_comment' }}form" method="post" ng-init class="well form-horizontal" action="{{ action | default:'/issue/comment/add/submit' }}">
+            {% csrf_token %}
+            <input type="hidden" id="issue_id" name="issue_id" value="{{issue.id}}">
+            <text-with-markdown-preview model="{{ id | default:'new_comment' }}" nameid="content"></text-with-markdown-preview>
+            <p class="text-align-right">
+                <a href="#" onclick="{{ id | default:'add_comment' }}form.submit()" class="fs-button blue medium">Submit</a>
+            </p>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+{% load i18n %}
+{% load l10n %}
+
+{% if issue.getSolutions %}
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Developer</th>
+        <th>Status</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for solution in issue.getSolutions %}
+    <tr>
+        <td>
+            <div>
+                <img src="{{ solution.programmer.gravatar_url_medium }}">
+                <a href="{{ solution.programmer.get_view_link }}" class="arial">{{ solution.programmer.username }}</a>
+            </div>
+        </td>
+        <td>
+            <p>{{solution.status}}
+                {% if solution.accepting_payments %}
+                    / {% trans "Accepting payments" %}
+                {% endif %}
+            </p>
+        </td>
+        <td>
+            <p><span title="{{ solution.creationDate }}">{{ solution.creationDate|date:"D, d/M/Y" }}</span></p>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div style="text-align:center;padding:10px">{% trans "The list is empty" %}</div>
+{% endif %}

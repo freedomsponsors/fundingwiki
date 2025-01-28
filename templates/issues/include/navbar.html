@@ -1,0 +1,15 @@
+<link rel= "stylesheet" href= "https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css" >
+<script type="text/javascript">
+    var user_preferred_language = '';
+    {% if user and user.is_authenticated %}
+        user_preferred_language = '{{ user.getUserInfo.preferred_language_code }}';
+    {% endif %}
+</script>
+
+{% if request.COOKIES.oldpage and request.COOKIES.oldpage == '1' %}
+    {% include "issues/include/navbar_old.html" %}
+{% else %}
+    <div style="padding:20px">
+        {% include "issues/include/newnavbar.html" %}
+    </div>
+{% endif %}

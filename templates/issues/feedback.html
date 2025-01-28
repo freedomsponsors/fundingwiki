@@ -1,0 +1,19 @@
+{% extends "issues/base_old.html" %}
+{% block mainContent%}
+
+  <h3>Feedback</h3>
+  We care a lot about what you think about our website.<br>
+  Please let us know if you have any problems, or have any idea on how we can serve the open source community better!<br>
+  We take feedback very seriously. If you're reporting a problem, we'll get back at you as soon as possible.
+  <hr>
+
+{% include "issues/feedback_form.html" %}
+
+{% if issues %}
+  {% include 'issues/include/issue_grid.html' with showKey='false' showProject='false' showOffers='false' showWorking='true' showCreatedBy='true' %}
+{% else %}
+  <h3>No feedback so far</h3>
+{% endif %}
+
+
+{% endblock mainContent%}

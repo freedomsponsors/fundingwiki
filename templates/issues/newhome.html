@@ -1,0 +1,61 @@
+{% extends "issues/newbase.html" %}
+
+{% block mainContent%}
+<script type="text/javascript">
+  $(function(){
+    $('.triggle_issue_form').click(()=>{
+      $('#basic_form').slideToggle()
+      $('#advanced_form').slideToggle()
+    })
+  })
+</script>
+  <div class="row" style="display:flex;justify-content:space-around;">
+    <div class="" style="background-color:;padding-top:50px;">
+      <!--Issue form start-->
+      <div>
+        <h1>
+          <img src="/static/img/fundingwiki-logo-fit_80x107px-v1.0.png" />
+          <label for="usr">I have an idea!</label>
+        </h1>
+      </div>
+      <div id="basic_form" style="display:;max-width:800px">
+        <form ng-model="issue" method="post" id="form_addIssue" class="form-horizontal" action="/home/startIssue" >
+          {% csrf_token %}
+          <input type="text" name="title" style="display:none;">
+          <input type="text" name="description" style="display:none;">
+          <input type="text" name="noProject" style="display:none;">
+          <input type="text" name="key" style="display:none;">
+          <input type="text" name="project_id" style="display:none;" >
+          <input type="text" name="project_name" style="display:none;" >
+          <input type="text" name="newProjectName" style="display:none;" >
+          <input type="text" name="newProjectHomeURL" style="display:none;" >
+          <input type="text" name="newProjectTrackerURL" style="display:none;" >
+          <input type="text" name="description" value=" " style="display:none;" >
+          <input type="text" name="trackerURL" style="display:none;" >
+          <div class="form-group">
+    <!--          <input type="text" class="form-control" id="usr">-->
+              <textarea class="form-control" name="issue_text" style="height:36px"></textarea>
+
+            <p class="text-right small">
+              <a href="/issue/add/?operation=KICKSTART">Advanced</a>
+<!--              <a class="triggle_issue_form" href="javascript:;">Advanced</a>-->
+            </p>
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary">Propose!</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div id="advanced_form" style="display:none">
+        <a class="triggle_issue_form" href="javascript:;">Basic</a>
+      </div>
+      <!--form end-->
+      <div>
+        <div><a href="/search/?sortby=&asc=&s=&project_id=&project_name=&operation=SPONSOR&other_filter=paid_work#"><span class="lar la-handshake" style="margin-right:6px; font-size:20px"></span>Looking for paid work</a></div>
+        <div style="padding:2px 0"><a href="/search"><span class="las la-money-bill-wave-alt" style="margin-right:6px; font-size:20px"></span>I want to donate to a project</a></div>
+	<!-- <div><a href=""><span class="las la-glasses" style="margin-right:6px; font-size:20px"></span>I want to learn</a></div> -->
+        <div><a href=""><span class="las la-hands-helping" style="margin-right:6px; font-size:20px"></span>I want to help</a></div>
+      </div>
+    </div>
+  </div>
+{% endblock mainContent%}

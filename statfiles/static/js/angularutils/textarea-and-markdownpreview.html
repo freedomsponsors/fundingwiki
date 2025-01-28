@@ -1,0 +1,16 @@
+<div>
+    <textarea id="{[{ nameid }]}"
+              name="{[{ nameid }]}"
+              ng-model="model"
+              placeholder="{[{ placeholder }]}"
+              ng-required="required"
+              class="{[{ dirclass }]}"
+              style="resize: vertical;"
+              ng-disabled="disable">
+
+    </textarea>
+    <p class="help-block">
+        You can use <a target="_markdown" href="http://blog.freedomsponsors.org/markdown_formatting/">markdown</a> for formatting
+    </p>
+    <div id="bootstrap-content" ng-bind-html-unsafe="markdown(model)"></div>
+</div>

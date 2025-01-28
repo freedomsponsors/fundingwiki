@@ -1,0 +1,53 @@
+<div class="modal fade in" id="alert_modal">
+    <div class="modal-dialog column-wrapper vertical">
+        <div class="column fit"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick="$('#alert_modal').modal('hide')">&times;</button>
+                <span class="modal-title font-size-20 ubahn grey-text">Proposed! Now what?</span>
+            </div>
+            <div class="divider small"></div>
+            <div class="modal-body">
+                {% if user and user.is_authenticated %}
+                    {% with id='news' %}
+                        <a href="#" class="fs-button blue"  onclick="openToggle('#div_project_w_{{ id }}')"><i class="fa fa-folder-open-o" aria-hidden="true"></i>Project</a>
+                        <a href="#" class="fs-button blue"  onclick="openToggle('#div_media_w_{{ id }}')"><i class="fa fa-folder-open-o" aria-hidden="true"></i>Add new media</a>
+                        <a href="#" class="fs-button blue" onclick='openToggle("#div_tsolution_w_{{ id }}")'><i class="fa fa-folder-open-o" aria-hidden="true"></i>Add new Solution</a>
+                        <a href="#" class="fs-button blue" onclick='clickOuterBtn("#btn_sponsor_{{issue.id}}")'><i class="fa fa-folder-open-o" aria-hidden="true"></i>Sponsor</a>
+                    {% endwith %}
+                {% endif %}
+                <div class="divider small"></div>
+
+                <p class="ubahn font-size-20 orange-text text-align-center">Let the world know about it. Share on:</p>
+				<div class="vgap-15"><!-- Vertical Gap 15px --></div>
+                <div class="text-align-center">
+                    <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{SITE_HOME}}{{ issue.get_view_link }}" class="social-button facebook" style="width:60px;height:60px;"></a>
+                    <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>
+                    <a target="_blank" href="https://twitter.com/intent/tweet?url={{SITE_HOME}}{{ issue.get_view_link }}&text=I just proposed a Free Software issue on {{SITE_NAME}}." class="social-button twitter" style="width:60px;height:60px;"></a>
+                    <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>
+                    <a target="_blank" href="https://plus.google.com/share?url={{SITE_HOME}}{{ issue.get_view_link }}" class="social-button google" style="width:60px;height:60px;"></a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" onclick="$('#alert_modal').modal('hide')" class="fs-button green medium">OK</a>
+            </div>
+        </div>
+        <div class="column fit"></div>
+    </div>
+</div>
+
+<script>
+    // Used to open form outside the modal
+    var openToggle = function(selector) {
+        $('#alert_modal').modal('hide');
+        $(selector).slideDown();
+    }
+    // Used to perform onclick to open form outside the modal
+    var clickOuterBtn = function(selector) {
+        $('#alert_modal').modal('hide');
+        angular.element(selector).triggerHandler('click');
+    };
+    $(function(){
+        $('#alert_modal').modal()
+    });
+</script>

@@ -1,0 +1,5 @@
+{% if request.COOKIES.oldpage and request.COOKIES.oldpage == '1' %}
+    {% include "issues/include/navbar_old.html" %}
+{% else %}
+    {% include "issues/include/newnavbar.html" %}
+{% endif %}

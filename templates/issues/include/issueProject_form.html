@@ -1,0 +1,20 @@
+{% load markdown %}
+{% load i18n %}
+<div id='div_project_w_{{ media.id | default:id }}' style="display: none" >
+  <form method="post" class="well form-horizontal"  action="/issue/saveProjectName">
+        {% csrf_token %}
+        <input type="hidden" name="issue_id" value="{{issue.id}}">
+        <input type="hidden" name="project_id" value="{{issue.project.id}}">
+        <div>
+          Project Name *
+          <input type="text" class="input-xlarge span8" id="project_name" name="project_name" value="{{issue.project.name}}" placeholder="Project name" required>
+          <button type="submit">{% trans "Submit"%}</button>
+          <a href ng-click='editToggle("#div_project_w_news")'>{% trans "Cancel"%}</a>
+        </div>
+      {% if issue.project_id %}
+      <div>
+          <a href="/project/{{issue.project_id}}/edit">Edit more project fields</a>
+      </div>
+      {% endif %}
+    </form>
+</div>

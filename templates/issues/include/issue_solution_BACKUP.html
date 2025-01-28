@@ -1,0 +1,30 @@
+{% if issue.getTechSolution %}
+    <!--<br><h3><i class="fa fa-wrench" aria-hidden="true"></i> Tech Solutions</h3>-->
+    <ul class="tab-list" id="techTabs">
+    {% for solution in issue.getTechSolution %}
+        {% if not solution.deleted %}
+            {% if forloop.first %}
+            <li class="active">
+            {% else %}
+            <li>
+            {% endif %}
+            <a href="#sol{{solution.id}}" data-toggle="tab">{{solution.title}}</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+    <div class="tab-content">
+        <!-- Description Tab -->
+        {% for solution in issue.getTechSolution %}
+            {% if not solution.deleted %}
+                {% if forloop.first %}
+                    <div class="tab-pane active" id="sol{{solution.id}}" >
+                {% else %}
+                    <div class="tab-pane" id="sol{{solution.id}}" >
+                {% endif %}
+                {% include 'issues/include/techSolution.html' %}
+                    </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}

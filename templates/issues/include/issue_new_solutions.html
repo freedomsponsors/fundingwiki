@@ -1,0 +1,19 @@
+{% load markdown %}
+{% load i18n %}
+{% load l10n %}
+
+{% if issue.getTechSolution%}
+{% for solution in issue.getTechSolution %}
+  {% if not solution.deleted %}
+  <div style="padding-top:10px">
+    <div style="border-bottom:1px solid #f5f5f5;font-size:18px">{{solution.title}}</div>
+    <div style="color:#999">
+        <markdown-text text="222222222222222222222222222222222222222222"></markdown-text>
+      {{solution.content}}
+    </div>
+  </div>
+  {% endif %}
+{% endfor %}
+{% else %}
+<div style="text-align:center;padding:10px">{% trans "The list is empty" %}</div>
+{% endif %}

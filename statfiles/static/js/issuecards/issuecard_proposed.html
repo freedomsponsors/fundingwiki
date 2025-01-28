@@ -1,0 +1,45 @@
+<div class="fs-box push-footer issue-card proposed">
+    <!--Issue Title-->
+    <a href="{[{ issue_link(issue) }]}" multiline-ellipsis class="font-size-18 darkblue-text ubahn issue-title">
+        <div class="ellipsis">{[{ issue.title }]}</div>
+    </a>
+
+    <div class="divider small"><!--Small Divider--></div>
+
+    <!--Issue Project Logo-->
+    <a href="{[{ issue.project_link }]}">
+        <div class="project-logo" title="{[{ issue.project_name }]}">
+            linefix<img ng-src="{[{ issue.image_link }]}"/>
+        </div>
+    </a>
+
+    <!--Issue Sponsors-->
+    <div class="orange-text sponsors-label" align="right">No sponsors yet</div>
+	
+	<div class="vgap-15"><!-- Vertical Gap 15px --></div>
+	
+    <!--Issue Description-->
+    <div multiline-ellipsis class="issue-description">
+        <p class="ellipsis" ng-show="issue.description">{[{ issue.description }]}</p>
+        <p ng-hide="issue.description">[No description]</p>
+    </div>
+
+    <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+
+    <!--Sponsor Now! button-->
+    <a href="" class="fs-button green">Sponsor now!</a>
+
+    <!--Issue Card Footer-->
+    <div class="fs-box-footer card-footer">
+		<div class="column-wrapper">
+			<span class="views">
+				<!-- <span class="views-number">{[{ issue.viewcount }]}</span><span> views</span> -->
+			</span>
+			<span class="comments">
+				<a href="{[{ issue_link(issue) }]}">
+					<span class="comments-number">{[{ issue.commentcount }]}</span><span> comments</span>
+				</a>
+			</span>
+		</div>
+    </div>
+</div>

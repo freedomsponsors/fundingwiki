@@ -1,0 +1,16 @@
+{% if issue.getTechSolution %}
+    <!--<br><h3><i class="fa fa-wrench" aria-hidden="true"></i> Tech Solutions</h3>-->
+    <div>
+    {% for solution in issue.solutionListWithVote %}
+        {% if not solution.deleted %}
+            <div>
+                <div><h3>{{solution.title}}</h3></div>
+                <div style="display:flex;">
+                    <div>{% include 'issues/include/issue_solution_vote.html' %}</div>
+                    <div style="flex:1">{% include 'issues/include/techSolution.html' %}</div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+    </div>
+{% endif %}

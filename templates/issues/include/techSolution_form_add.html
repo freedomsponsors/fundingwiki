@@ -1,0 +1,16 @@
+{% load markdown %}
+{% load i18n %}
+<div id='div_tsolution_w_{{ solution.id | default:id }}' style="display: ">
+    <div><h2>Propose another solution</h2></div>
+    <form method="post" class="well form-horizontal"  action="/solution/{{ solution.id }}">
+        {% csrf_token %}
+        <input type="hidden" name="issue" value="{{issue.id}}">
+        <input type="text" class="input-xlarge span8" id="title" name="title" value="{{solution.title}}" placeholder="{{solution.title | default:'Title*' }}" required>
+        <br>
+
+        <text-with-markdown-preview model="solution_{{ solution.id }}" nameid="content" placeholder="{{solution.content | default:'Content*'}}" value="{{solution.content}}" required="required" ></text-with-markdown-preview>
+            <span>
+                <button type="submit" class="btn btn-primary">{% trans "Post your solution"%}</button>
+            </span>
+    </form>
+</div>

@@ -1,0 +1,10 @@
+{% load markdown %}
+{% load i18n %}
+<div id='div_media_w_{{ media.id | default:id }}' style="display: none" >
+  <media-form ng-init="id={{ media.id  | default:id }}"
+              media="media_{{id}}"
+              issue="{{issue.id}}"
+              notnew="{{ media.id }}"
+              csrf='csrfToken'></media-form>
+    <a href ng-click="editMedia({{ media.id  | default:id }}, false)">{% trans "Cancel"%}</a>
+</div>

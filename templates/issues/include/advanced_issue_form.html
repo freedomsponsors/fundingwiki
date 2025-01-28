@@ -1,0 +1,233 @@
+<link href='/static/css2/reset.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css2/fs_style.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css2/fs_structure.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css2/fs_responsive.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css2/bootstrap_ish.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css2/markdown.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css/highlighting.css' rel='stylesheet' type='text/css'/>
+		<link href="/static/css2/freedom_bootstrap.css" rel="stylesheet" media="screen">
+        <!--Djangology Styles-->
+        <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/static/css2/djangology_style.css" rel="stylesheet">
+
+<script>
+      if(!window.FS){
+          window.FS = {};
+      }
+      FS.dependencies = ['angularutils', 'fswatch'];
+  </script>
+  <script src="/static/js/angular.min.js"></script>
+  <script src="/static/js/angular-sanitize.min.js"></script>
+  <script src="/static/js-generated/fs.js"></script>
+  <script src="/static/bootstrap/js/markdown-it.min.js"></script>
+  <script src="/static/bootstrap/js/markdown-it-task-lists.min.js"></script>
+  <script src="/static/js/markdown-it-djangology-flavoured.js"></script>
+  <script type="text/javascript">
+
+    // Used to redirect to issue if trackerURL used is from an existing issue
+    var vaiPraIssue = function(){
+         window.location = '/issue/'+existing_issue_id;
+    }
+    var existing_issue_id;
+
+    // AngularJS controller
+    function addIssueCtrl($scope){
+
+      $scope.issue = {}
+      $scope.issue.description = "" // Initialize it for use it in textarea-and-markdown
+      $scope.issue.disable = false // Used to disable title and description when is filled by url
+
+      // If issue exist via trackerURLCheck response
+      var promptUserIfIssueExists = function(issue){
+        var exists = issue && issue.id
+        if(exists){
+          existing_issue_id = issue.id;
+          $('#issueExistsModal').modal();
+        }
+        return exists;
+      };
+
+      // Process trackerURLCheck response to check if url is valid tracker url with info
+      $scope.processJsonResponse = function(result){
+        if(result.urlValidationError){
+          alert('invalid url: ('+result.urlValidationError+')');
+          return false;
+        }
+        var exists = promptUserIfIssueExists(result.issue);
+        if(!exists){
+          $scope.fillParams(result.issueInfo)
+        }
+      };
+
+      // Used to prepare the issue to fill with a trackerURL found params before send it
+      $scope.fillParams = function (params) {
+
+        function isEmpty(obj){
+          return obj.title.length < 1
+        }
+
+        $scope.issue.key = params.key;
+        $scope.issue.title = params.issue_title
+        $scope.issue.description = params.description
+        $scope.issue.project_id = params.project_id
+        $scope.issue.project_name = params.project_name
+        $scope.issue.newProjectName = params.project_name
+        $scope.issue.newProjectHomeURL = params.project_homeURL
+        $scope.issue.newProjectTrackerURL = params.project_trackerURL
+
+        if (!isEmpty($scope.issue)) $scope.issue.disable = "true"
+        else $scope.issue.disable = false
+
+        $scope.$apply();
+      }
+
+      $scope.trackerURLCheck = function(){
+        var url = $scope.issue.trackerURL
+        if (url !== undefined && url !== '') {
+          $("body").addClass("loading");
+          $.ajax({
+            url: '/core/json/by_issue_url?trackerURL='+url,
+            dataType: 'JSON',
+            async: true,
+            success: function(data){
+              $scope.processJsonResponse(data);
+              $("body").removeClass("loading");
+              $('#language').val('en')
+              return false;
+            },
+            error: function(a,b,c){
+              $("body").removeClass("loading");
+              alert(a+' '+b+' '+c);
+            }
+          });
+        }
+        else $scope.issue.disable = false
+      }
+    }
+
+    $(function(){
+      // check language
+      var do_detect = true;
+      $('#language').click(function(){
+        do_detect = false;
+      })
+
+      $('#language').val(user_preferred_language)
+
+      $('#title-show').blur(function(){
+        if(!do_detect){
+          return;
+        }
+        var content = $(this).val();
+        if(!content){
+          return;
+        }
+        $.post('/core/json/detectLanguage', {content:content}, function(res){
+            console.log(res)
+            $('#language').val(res.language)
+        })
+      })
+    })
+    $(document).ready(function () {
+    $('#form_addIssue').on('submit', function (event) {
+      var tagsInput = $('#tags');
+      if (tagsInput.length > 0) {
+        tagsInput.val(tagsInput.val().split(',').map(tag => tag.trim()).join(','));
+      }
+    });
+});
+  </script>
+
+<div  ng-app="fs" ng-controller="addIssueCtrl" class="well control-group">
+
+  <div class="modal hide fade in" id="issueExistsModal">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3>Issue Exists</h3>
+    </div>
+    <div class="modal-body">
+      <p>Someone already registered an offer for that issue.</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn" data-dismiss="modal">Close</a>
+      <a href="javascript:vaiPraIssue()" class="btn btn-primary">Check it out!</a>
+    </div>
+  </div>
+
+  <form ng-model="issue"  method="post" id="form_addIssue" class="form-horizontal" action="/issue/kickstart/submit" >
+  {% csrf_token %}
+    <fieldset>
+      <!--Following lines are recicled to use old end-point that uses form data instead of angularjs Json objects-->
+      <!--TODO: use a properly configured angularjs $http method-->
+      <input type="text" ng-model="issue.title" id="title" name="title" style="display:none;">
+      <input type="text" ng-model="issue.description" id="description" name="description" nameid="description" style="display:none;">
+      <input type="text" ng-model="issue.noProject" id="noProject" name="noProject" style="display:none;" ng-disabled="issue.key">
+      <input type="text" ng-model="issue.key" id="key" name="key" style="display:none;" ng-disabled="!issue.key">
+      <input type="text" ng-model="issue.project_id" id="project_id" name="project_id" style="display:none;" >
+      <input type="text" ng-model="issue.project_name" id="project_name" name="project_name" style="display:none;" >
+      <input type="text" ng-model="issue.newProjectName" id="newProjectName" name="newProjectName" style="display:none;" >
+      <input type="text" ng-model="issue.newProjectHomeURL" id="newProjectHomeURL" name="newProjectHomeURL" style="display:none;" >
+      <input type="text" ng-model="issue.newProjectTrackerURL" id="newProjectTrackerURL" name="newProjectTrackerURL" style="display:none;" >
+
+      <div class="control-group">
+        <label class="control-label" for="trackerURL">Issue URL</label>
+        <div class="controls form-inline">
+            <input ng-model="issue.trackerURL" ng-pattern="/^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/" ng-change="trackerURLCheck()" type="url" class="input-xlarge span8" id="trackerURL" name="trackerURL" placeholder="If you already have an URL explaining your issue paste it here">
+        </div>
+        <br>
+
+        <label class="control-label" for="project_name">Project Name </label>
+        <div class="controls form-inline">
+          <input ng-model="issue.project_name" type="text" class="input-xlarge span8" id="name-show" name="project_name" placeholder="Project name" ng-disabled="issue.disable">
+        </div>
+        <br>
+
+        <label class="control-label" for="title">Title * </label>
+        <div class="controls">
+            <input ng-model="issue.title" type="text" class="input-xlarge span8" id="title-show" name="title" placeholder="Descriptive title" ng-disabled="issue.disable" required>
+        </div>
+        <br>
+
+        <label class="control-label" for="description">Description *</label>
+        <div class="controls">
+          <text-with-markdown-preview model="issue.description" nameid="description"
+                                      placeholder="Brief description" dirclass="input-xlarge span9"
+                                      name="description" rows="10" required="required" disable="issue.disable"></text-with-markdown-preview>
+        </div>
+        <br>
+        <label class="control-label" for="tags">Tags</label>
+        <div class="controls">
+          <input
+              ng-model="issue.tags"
+              type="text"
+              id="tags"
+              name="tags"
+              placeholder="Add tags separated by commas"
+              class="form-control"
+          />
+        </div>
+        <br>
+        <label class="control-label" for="language">Language *</label>
+        <div class="controls">
+            <select id="language" name="language">
+            {% for lang in available_languages %}
+                <option value="{{lang.code}}">
+                    {{lang.name}}
+                </option>
+            {% endfor %}
+            </select>
+        </div>
+        <br>
+
+        <div class="span9">
+          <div class="btn-toolbar pull-right" >
+            <div class="btn-group">
+              <button id="submit" class="btn btn-primary " type="submit">Propose! &gt;&gt;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </fieldset>
+  </form>
+</div>

@@ -1,0 +1,145 @@
+{% extends "issues/newbase.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block mainContent%}
+<script type="text/javascript">
+  $(function(){
+    $('.tag_item_related_BACKUP').click(function(){
+      var current_tags_str = $('#form_tag_field').val()
+      var current_tags = [];
+      if(current_tags_str){
+        current_tags = current_tags_str.split(', ')
+      }
+      console.log('aa',current_tags)
+      add_tag = $(this).data('name');
+
+      if(arrHasValue(current_tags, add_tag)){
+        $('#filter_form').submit();
+        return;
+      }
+      current_tags.push(add_tag)
+      console.log(current_tags)
+      $('#form_tag_field').val(current_tags.join(', '))
+      $('#filter_form').submit();
+    })
+
+    $('.filter_form_toggle, #filter_cancel').click(function(){
+      $('#filter_form_div').slideToggle()
+     })
+     $('#filter_newest').click(function(){
+      clearFilter()
+      $('.radio_newest').attr('checked', true)
+      $('#filter_form').submit();
+     })
+     $('#filter_sponsored').click(function(){
+      clearFilter()
+      $('.checkbox_sponsored').attr('checked', true)
+      $('#filter_form').submit();
+     })
+     $('#filter_score').click(function(){
+      clearFilter()
+      $('.radio_score').attr('checked', true)
+      $('#filter_form').submit();
+     })
+     function clearFilter(){
+      $('.checkbox_sponsored').attr('checked', false)
+      $('.radio_newest').attr('checked', false)
+      $('.radio_score').attr('checked', false)
+     }
+
+     //check if arr has value
+     function arrHasValue(arr, value){
+      for(var i in arr){
+        if(arr[i] == value){
+          return true;
+        }
+       }
+     }
+
+     return false;
+  })
+</script>
+<div style="display:flex;justify-content:space-around">
+  <div style="width:1000px;margin-top:20px;display:flex;gap:30px">
+    <!--Filter form-->
+    <div style="border:0px solid #ccc;width:800px;margin-top:20px">
+      <div>
+        <div class="flex_between_bottom" style="margin-bottom:10px">
+           <div style="padding-left:20px">{{issues_count}} issues</div>
+           <div>
+             <div class="btn-group">
+              <button type="button" id="filter_newest" class="btn btn-default"
+                      {% ifequal sortby '-creationDate' %}disabled{% endifequal %}>Newest</button>
+              <button type="button" id="filter_sponsored" class="btn btn-default"
+                      {%ifequal request.GET.has_sponsors '1'%}disabled{%endifequal%}>Sponsored</button>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">More <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a id="filter_score" href="#">Score</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <button type="button" class="btn filter_form_toggle" style="margin-left:20px">Filter</button>
+          </div>
+        </div>
+        <div id="filter_form_div" style="background:#f7f7f7;padding:15px;border:1px solid #e6e2e2;border-radius:4px;display:">
+          <form id="filter_form" class="" action="{% url 'issue_search'%}">
+            <input type="hidden" name="s" value="{{request.GET.s|default:''}}">
+            <div style="display:flex; justify-content:space-between;">
+              <div class="form-group">
+                <label for="email">Filter by</label>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="no_proposals" value="1" {%ifequal request.GET.no_proposals '1'%}checked{%endifequal%}>No proposals</label>
+                </div>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="has_sponsors" class="checkbox_sponsored" value="1" {%ifequal request.GET.has_sponsors '1'%}checked{%endifequal%}>Has sponsors</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="pwd">Sorted by</label>
+                <div class="radio">
+                  <label><input type="radio" class="radio_newest" name="sortby" value="-creationDate"
+                                {% ifequal sortby '-creationDate' %}checked{% endifequal %}
+                    >Newest</label>
+                </div>
+                <div class="radio">
+                  <label><input type="radio" class="radio_score" name="sortby" value="-points"
+                                {% ifequal sortby '-points' %}checked{% endifequal %}
+                  >Highest score</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="pwd">Tagged with</label>
+<!--                <input type="text" class="form-control" id="form_tag_field" name="tag" value="{{request.GET.tag}}" style="width:200px">-->
+                {% include 'issues/include/tag_choose_item.html' %}
+              </div>
+              <div class="form-group">
+                <label for="pwd">Languages</label>
+                <select id="tag_filter_form_language" class="form-control" name="language" style="width:200px">
+                  <option value="">choose language</option>
+                  {% for key, value in language_list.items %}
+                  <option value="{{key}}" {% ifequal request.GET.language key %}selected{% endifequal %}>{{value}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <div class="flex_between_bottom">
+                <button type="submit" class="btn btn-primary">Apply filter</button>
+                <a id="filter_cancel" href="javascript:;">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {% include "issues/include/issue_search_list.html" %}
+    </div>
+    <div style="padding-top:260px">
+      {% include "issues/include/issue_search_related_tags.html" %}
+    </div>
+  </div>
+</div>
+{% endblock mainContent %}

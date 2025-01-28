@@ -1,0 +1,9 @@
+<span>
+    <a class="iconized watch" ng-show="showWatchLink()" href="{[{watchLink}]}">
+        {[{ action() }]}
+    </a>
+    <a class="iconized {[{ action() }]}" ng-hide="showWatchLink()" href ng-click="toggle()">
+        {[{ action() }]}
+    </a>
+    <img src="/static/img2/ajax-loader.gif" ng-show="loading">
+</span>

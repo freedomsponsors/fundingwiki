@@ -1,0 +1,40 @@
+<div class="">
+    <form method="post" class="well form-horizontal"  action="/issue/media/{{ media.id }}" enctype="multipart/form-data">
+        <div style="display:none" ng-bind-html-unsafe="csrf"></div>
+        <input type="hidden" name="issue" value="{{issue}}">
+        <!-- <br> -->
+        <div ng-hide="notnew">
+            <label><input type="radio" ng-model="media.type" value="video" name="type" ng-required="!notnew" />video</label>
+            <label><input type="radio" ng-model="media.type" value="url" name="type" ng-required="!notnew" />url</label>
+            <label><input type="radio" ng-model="media.type" value="image" name="type" ng-required="!notnew" />image</label>
+        </div>
+
+        <input type="url" class="input-xlarge span8" id="url" name="url"
+                ng-init="urlVal = media.url"
+                value="{{media.url}}"
+                placeholder="{{urlVal ? urlVal : 'Url' }}"
+                ng-model="media.url"
+                ng-hide="notnew || media.type == 'image'"
+                ng-required="media.type != 'image' && !notnew">
+
+        <input type="file"
+               id="image" name="image"
+               accept="image/png, image/jpeg"
+               ng-hide="notnew || media.type != 'image'"
+               ng-required="media.type == 'image'&& !notnew">
+
+        <input type="text" class="input-xlarge span8" id="title" name="title"
+                ng-init="titleVal = media.title"
+                value="{{media.title}}"
+                placeholder="{{titleVal ? titleVal : 'Title (Optional)'}}"
+                ng-model="media.title" >
+
+        <textarea id="content" name="content" maxlength="50"
+                  ng-init="contVal = media.content"
+                  ng-model="media.content"
+                  placeholder="{{contVal ? contVal : 'Content (Optional)'}}"></textarea>
+
+         <button type="submit"><i class="fa fa-check-circle-o"></i>Submit!</button>
+
+    </form>
+</div>

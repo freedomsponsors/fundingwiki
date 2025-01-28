@@ -1,0 +1,65 @@
+{% load i18n %}
+<style type="text/css">
+    .user-picture{
+        margin-right:4px
+    }
+    .user-picture, .user-picture img{
+width:30px;height:30px
+    }
+</style>
+<div class="" id="" style="padding-top:6px">
+    <!-- Issue Developers Header-->
+    <!--<div class="fs-box">
+        <div class="column-wrapper">
+            <div class="column" style="padding-right:10px">
+                <span class="font-size-18 ubahn">Developer</span>
+            </div>
+            <div class="column fit" style="padding-right:10px">
+                <span class="font-size-18 ubahn">Status</span>
+            </div>
+            <div class="column" style="width:100px;">
+                <span class="font-size-18 ubahn">Date</span>
+            </div>
+        </div>
+    </div>-->
+    <div style="padding:4px"><h3 style="margin-bottom:0">{% trans 'Workers on this issue:' %}</h3></div>
+    {% if issue.getSolutions %}
+    {% for solution in issue.getSolutions %}
+        <!-- Issue Sponsor Row-->
+        <div class="fs-box" style="padding-right:4px">
+            <div class="column-wrapper vcenter-content" style="height:50px;">
+                <!-- Sponsor-->
+                <div class="column" style="width:120px;padding-right:px;">
+                    <div class="column-wrapper vcenter-content">
+                        <div class="user-picture"><img src="{{ solution.programmer.gravatar_url_medium }}"></div>
+                        <!-- Sponsor Name -->
+                        <div class="column fit">
+                            <a href="{{ solution.programmer.get_view_link }}" class="arial">{{ solution.programmer.username }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="column" style="width:120px;padding:0 10px" title="{{solution.status}}">
+                    {% if solution.status == 'DONE' %}
+                    <span class="las la-check-square" style="font-size:20px"></span>
+                    {% elif solution.status == 'IN_PROGRESS' %}
+                    <span class="las la-hammer" style="font-size:20px"></span>
+                    {% else %}
+                    {{solution.status}}
+                    {% endif %}
+                        <!--{% if solution.accepting_payments %}
+                            / {% trans "Accepting payments" %}
+                        {% endif %}-->
+                </div>
+                <!-- Date -->
+                <div class="column" style="width:200px;">
+                    {{ solution.creationDate|date:"d/M/y" }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% else %}
+    <div class="content_empty">No developers yet</div>
+    {% endif %}
+</div>

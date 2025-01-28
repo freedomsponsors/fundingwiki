@@ -1,0 +1,25 @@
+<style type="text/css">
+    .vote_points{
+        padding:0 10px;font-size:30px;line-height:24px
+    }
+    .voted_link span{
+        color:#8DC63F
+    }
+</style>
+<div style="display:flex;flex-direction: column;align-items: center;padding-right:10px;padding-top:10px">
+    <a class="vote_solution_a {% if solution.if_voted_up %}voted_link{% endif %}"
+       data-type="{{solution.vote_up_ope}}"
+       data-solution_id="{{solution.id}}"
+       data-issue_id="{{solution.issue_id}}"
+       href="javascript:;">
+        <span class="las la-sort-up" style="font-size:30px;"></span>
+    </a>
+    <div class="vote_points">{{solution.points}}</div>
+    <a class="vote_solution_a {% if solution.if_voted_down %}voted_link{% endif %}"
+       data-type="{{solution.vote_down_ope}}"
+       data-solution_id="{{solution.id}}"
+       data-issue_id="{{solution.issue_id}}"
+       href="javascript:;">
+        <span class="las la-sort-down" style="font-size:30px"></span>
+    </a>
+</div>

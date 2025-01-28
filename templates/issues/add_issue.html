@@ -1,0 +1,527 @@
+{% extends "issues/base_old.html" %}
+{% load markdown %}
+
+{% block head %}
+  <script>
+      if(!window.FS){
+          window.FS = {};
+      }
+      FS.dependencies = ['angularutils', 'fswatch'];
+  </script>
+  <script src="/static/js/angular.min.js"></script>
+  <script src="/static/js/angular-sanitize.min.js"></script>
+  <script src="/static/js-generated/fs.js"></script>
+  <script src="/static/bootstrap/js/markdown-it.min.js"></script>
+  <script src="/static/bootstrap/js/markdown-it-task-lists.min.js"></script>
+  <script src="/static/js/markdown-it-djangology-flavoured.js"></script>
+
+  <link rel="stylesheet" href="/static/tag/bootstrap-tagsinput.css" >
+  <script src="/static/tag/bootstrap-tagsinput.js"></script>
+<!--  <script src="/static/tag/bootstrap-tagsinput-angular.js"></script>-->
+  <script src="/static/tag/typeahead.bundle.js"></script>
+<style>
+    .tag_item{
+        border:1px solid #ccc;
+        padding:4px;
+        margin-right:10px;
+        margin-bottom:5px;
+        margin-top:5px;
+    }
+    .tag_item .header{
+        font-weight:bold;
+    }
+    .tag_item .description{
+        color:#999
+    }
+    .tag_item .close_icon{
+        float: right;
+        margin-top: -6px;
+        margin-right: -6px;
+        cursor: pointer;
+        font-size: 22px;
+    }
+    #tag_wapper .tag_item{
+        cursor: pointer;
+    }
+    #tag_wapper .tag_item:first-child{
+        border:1px solid #999;
+    }
+    #tag_wapper .tag_item .close_icon{
+        display:none
+    }
+    #tag_select_wapper{
+        display:flex
+    }
+    #tag_select_wapper .tag_item{
+        background:#5bc0de;
+        color:#fff;
+    }
+    #tag_select_wapper .tag_item .description{
+        color:#eee
+    }
+</style>
+  <script type="text/javascript">
+  var form_is_basic = true
+
+    // Used to redirect to issue if trackerURL used is from an existing issue
+    var vaiPraIssue = function(){
+         window.location = '/issue/'+existing_issue_id;
+    }
+    var existing_issue_id;
+
+    // AngularJS controller
+    function addIssueCtrl($scope){
+
+      $scope.issue = {}
+      $scope.issue.description = "" // Initialize it for use it in textarea-and-markdown
+      $scope.issue.disable = false // Used to disable title and description when is filled by url
+
+      // If issue exist via trackerURLCheck response
+      var promptUserIfIssueExists = function(issue){
+        var exists = issue && issue.id
+        if(exists){
+          existing_issue_id = issue.id;
+          $('#issueExistsModal').modal();
+        }
+        return exists;
+      };
+
+      // Process trackerURLCheck response to check if url is valid tracker url with info
+      $scope.processJsonResponse = function(result){
+        if(result.urlValidationError){
+          alert('invalid url: ('+result.urlValidationError+')');
+          return false;
+        }
+        var exists = promptUserIfIssueExists(result.issue);
+        if(!exists){
+          $scope.fillParams(result.issueInfo)
+        }
+      };
+
+      // Used to prepare the issue to fill with a trackerURL found params before send it
+      $scope.fillParams = function (params) {
+
+        function isEmpty(obj){
+          return obj.title.length < 1
+        }
+
+        $scope.issue.key = params.key;
+        $scope.issue.title = params.issue_title
+        $scope.issue.description = params.description
+        $scope.issue.project_id = params.project_id
+        $scope.issue.project_name = params.project_name
+        $scope.issue.newProjectName = params.project_name
+        $scope.issue.newProjectHomeURL = params.project_homeURL
+        $scope.issue.newProjectTrackerURL = params.project_trackerURL
+
+        if (!isEmpty($scope.issue)) $scope.issue.disable = "true"
+        else $scope.issue.disable = false
+
+        $scope.$apply();
+      }
+
+      $scope.trackerURLCheck = function(){
+        var url = $scope.issue.trackerURL
+        if (url !== undefined && url !== '') {
+          $("body").addClass("loading");
+          $.ajax({
+            url: '/core/json/by_issue_url?trackerURL='+url,
+            dataType: 'JSON',
+            async: true,
+            success: function(data){
+              $scope.processJsonResponse(data);
+              $("body").removeClass("loading");
+              $('#language').val('en')
+              return false;
+            },
+            error: function(a,b,c){
+              $("body").removeClass("loading");
+              alert(a+' '+b+' '+c);
+            }
+          });
+        }
+        else $scope.issue.disable = false
+      }
+
+      $scope.toAdvancedForm = function(){
+        baseFormToAdvance($scope, false)
+      }
+      $scope.submitForm = function(){
+        console.log('form_basic', form_is_basic)
+        console.log(333)
+        if(form_is_basic){
+          baseFormToAdvance($scope, true)
+        }
+        return false
+      }
+    }
+
+    function baseFormToAdvance($scope, for_submit){
+      var content = $('#issue_content').val()
+      if(content){
+        content_arr = content.split(/\r?\n/);
+        var title = content_arr[0];
+        $scope.issue.title = title
+        $('#title-show').val(title)
+
+        content_arr.shift()
+        $scope.issue.description = content_arr.join("\n")
+
+        if(for_submit && content_arr.length == 0){
+          console.log(222)
+          $scope.issue.description = title
+        }
+
+        $('#title-show').blur()
+      }
+    }
+
+    $(function(){
+      // check language
+      var do_detect = true;
+      $('#language').click(function(){
+        do_detect = false;
+      })
+
+      $('#language').val(user_preferred_language)
+
+      $('#title-show').blur(function(){
+        console.log(333222)
+        if(!do_detect){
+          return;
+        }
+        var content = $(this).val();
+        if(!content){
+          return;
+        }
+        $.post('/core/json/detectLanguage', {content:content}, function(res){
+            console.log(res)
+            $('#language').val(res.language)
+        })
+      })
+    })
+ $(document).ready(function () {
+    $('#form_addIssue').on('submit', function (event) {
+      var tagsInput = $('#tags');
+      if (tagsInput.length > 0) {
+        tagsInput.val(tagsInput.val().split(',').map(tag => tag.trim()).join(','));
+      }
+    });
+    //toggle basic and advanced form
+    $('.toggleLink').click(function(){
+      $('#form_basic').slideToggle();
+      $('#form_advanced').slideToggle();
+      form_is_basic = !form_is_basic
+    })
+
+    //the tag input, when keyup, show the tags that can be selected
+    var tag_timer = null;
+    $('#tag_input').keyup(function(e){
+        var that = this;
+        var search = $(that).val();
+
+        if(isTagTextEnded(search)){
+            chooseTheFirstTag()
+            return;
+        }
+
+        clearTimeout(tag_timer);
+        tag_timer = setTimeout(function(){
+            if(search){
+                $.post('/core/json/suggestTags', {search:search, language:$('#language').val()}, function(res){
+                    console.log(res)
+                    fillTagInfo(res)
+                })
+            }else{
+                fillTagInfo([])
+            }
+        }, 300)
+    })
+    $('#tag_input').keydown(function(e){
+        console.log((e.key, e.keyCode))
+        if (e.key === 'Enter' || e.keyCode === 13){ //enter key
+            e.preventDefault()
+            e.stopPropagation()
+            chooseTheFirstTag()
+        }
+        if (e.keyCode === 9){   //tab key
+            chooseTheFirstTag()
+        }
+    })
+    //select the first optional tag
+    function chooseTheFirstTag(){
+        $('#tag_wapper').find('.tag_item:first').click()
+    }
+    // check if the tag text has finished
+    function isTagTextEnded(value){
+        console.log('check if tag text ended:|'+value+'|')
+        var last_char = value.substr(value.length - 1);
+        if( last_char == ' ' || last_char == '.' || last_char == ',')
+            return true;
+        return false;
+    }
+    $('#tag_input').keyup()
+
+    // select one tag
+    $('#tag_wapper').on('click', '.tag_item', function(){
+        var qid = $(this).data('qid')
+        var title = $(this).data('title')
+        var description = $(this).data('description')
+        console.log(qid, title)
+        var tag = {
+            qid:qid,
+            title:title,
+            description:description
+        }
+        fillTagSelected(tag)
+        $('#tag_input').val('')
+        fillTagInfo([])
+    })
+
+    //remove one tag
+    $('#tag_select_wapper').on('click', '.close_icon', function(){
+        var qid = $(this).parent('.tag_item').data('qid')
+        removeTagSelected(qid)
+    })
+
+    //show the tags to be selected
+    function fillTagInfo(tag_list){
+        var html = [];
+        for(var i in tag_list){
+            var tag = {
+                qid:tag_list[i].qid,
+                title:tag_list[i].match_text,
+                description:tag_list[i].description
+            }
+            html.push( getTagItemHtml(tag) );
+        }
+        $('#tag_wapper').html(html.join(''))
+    }
+
+    //selected tags
+    var tag_selected = [];
+    function fillTagSelected(tag){
+        tag_selected.push(tag)
+        console.log(tag_selected)
+        var html = [];
+        var qids = [];
+        for(var i in tag_selected){
+            qids.push(tag_selected[i].qid)
+            html.push( getTagItemHtml(tag_selected[i]) );
+        }
+        $('#tag_select_wapper').html(html.join(''))
+        $('#tag_qids').val(qids.join(','))
+        $('#tag_info').val(JSON.stringify(tag_selected))
+    }
+
+    function removeTagSelected(tag_qid){
+        var tag_selected_new = [];
+        for(var i in tag_selected){
+            if(tag_selected[i].qid == tag_qid){
+                continue;
+            }
+            tag_selected_new.push(tag_selected[i])
+        }
+        tag_selected = tag_selected_new;
+        renderTagSelectedHtml()
+    }
+
+    function renderTagSelectedHtml(){
+        var html = [];
+        var qids = [];
+        for(var i in tag_selected){
+            qids.push(tag_selected[i].qid)
+            html.push( getTagItemHtml(tag_selected[i]) );
+        }
+        $('#tag_select_wapper').html(html.join(''))
+        //$('#tag_qids').val(JSON.stringify(qids))
+        $('#tag_info').val(JSON.stringify(tag_selected))
+    }
+
+    //get html by tag info
+    function getTagItemHtml(tag){
+        var qid = tag.qid;
+        var title = tag.title;
+        var description = tag.description;
+        var html = '<div class="tag_item" data-qid="'+qid+'" data-title="'+title+'" data-description="'+description+'"><span class="las la-window-close close_icon"></span><div class="header">'+title+'</div><div class="description">'+description+'</div></div>'
+        return html;
+    }
+
+    //$('.toggleLink').click()
+});
+  </script>
+{% endblock %}
+
+{% block mainContent%}
+<div style="display:flex;justify-content:space-around">
+  <div style="display:flex;align-items:center;">
+    <img src="/static/img/fundingwiki-logo-fit_80x107px-v1.0.png" />
+    <h1 style="padding-left:10px">I have an idea!</h1>
+  </div>
+</div>
+
+<div  ng-app="fs" ng-controller="addIssueCtrl" class="well control-group">
+
+  <div class="modal hide fade in" id="issueExistsModal">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3>Issue Exists</h3>
+    </div>
+    <div class="modal-body">
+      <p>Someone already registered an offer for that issue.</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn" data-dismiss="modal">Close</a>
+      <a href="javascript:vaiPraIssue()" class="btn btn-primary">Check it out!</a>
+    </div>
+  </div>
+
+  <form ng-model="issue"  method="post" id="form_addIssue" class="form-horizontal" action="/issue/kickstart/submit" >
+  {% csrf_token %}
+    <fieldset>
+      <!--Following lines are recicled to use old end-point that uses form data instead of angularjs Json objects-->
+      <!--TODO: use a properly configured angularjs $http method-->
+      <input type="text" ng-model="issue.title" id="title" name="title" style="display:none;">
+      <input type="text" ng-model="issue.description" id="description" name="description" nameid="description" style="display:none;">
+      <input type="text" ng-model="issue.noProject" id="noProject" name="noProject" style="display:none;" ng-disabled="issue.key">
+      <input type="text" ng-model="issue.key" id="key" name="key" style="display:none;" ng-disabled="!issue.key">
+      <input type="text" ng-model="issue.project_id" id="project_id" name="project_id" style="display:none;" >
+      <input type="text" ng-model="issue.project_name" id="project_name" name="project_name" style="display:none;" >
+      <input type="text" ng-model="issue.newProjectName" id="newProjectName" name="newProjectName" style="display:none;" >
+      <input type="text" ng-model="issue.newProjectHomeURL" id="newProjectHomeURL" name="newProjectHomeURL" style="display:none;" >
+      <input type="text" ng-model="issue.newProjectTrackerURL" id="newProjectTrackerURL" name="newProjectTrackerURL" style="display:none;" >
+
+      <input type="text" name="tag_qids" style="display:none;" >
+      <input type="text" id="tag_info" name="tags" style="display:none;" >
+
+      <div class="control-group">
+        <div id="form_basic">
+          <label class="control-label"></label>
+          <div class="controls form-inline">
+              <text-with-markdown-preview model="issue.content" nameid="issue_content"
+                            placeholder="Issue content" dirclass="input-xlarge span9"
+                            name="content" rows="10" required=""></text-with-markdown-preview>
+          </div>
+          <br>
+          <label class="control-label"></label>
+          <div class="controls">
+              <a id="to_advanced_form22" ng-click="toAdvancedForm()" class="toggleLink" href="javascript:;">Advanced</a>
+          </div>
+        </div>
+        <div id="form_advanced" style="display:none">
+          <label class="control-label" for="trackerURL">Issue URL</label>
+          <div class="controls form-inline">
+              <input ng-model="issue.trackerURL" ng-pattern="/^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/" ng-change="trackerURLCheck()" type="url" class="input-xlarge span8" id="trackerURL" name="trackerURL" placeholder="If you already have an URL explaining your issue paste it here">
+          </div>
+          <br>
+
+          <label class="control-label" for="project_name">Project Name </label>
+          <div class="controls form-inline">
+            <input ng-model="issue.project_name" type="text" class="input-xlarge span8" id="name-show" name="project_name" placeholder="Project name" ng-disabled="issue.disable">
+          </div>
+          <br>
+
+          <label class="control-label" for="title">Title * </label>
+          <div class="controls">
+              <input ng-model="issue.title" type="text" class="input-xlarge span8" id="title-show" name="title" placeholder="Descriptive title" ng-disabled="issue.disable" required>
+          </div>
+          <br>
+
+          <label class="control-label" for="description">Description *</label>
+          <div class="controls">
+            <text-with-markdown-preview model="issue.description" nameid="description"
+                                        placeholder="Brief description" dirclass="input-xlarge span9"
+                                        name="description" rows="10" required="required" disable="issue.disable"></text-with-markdown-preview>
+          </div>
+          <br>
+          <label class="control-label" for="tags">Tags</label>
+          <div class="controls">
+<!--            <input-->
+<!--                ng-model="issue.tags"-->
+<!--                type="text"-->
+<!--                id="tags"-->
+<!--                name="tags"-->
+<!--                placeholder="Add tags separated by commas"-->
+<!--                class="form-control"-->
+<!--            />-->
+<!--            <select multiple data-role="tagsinput">-->
+<!--              <option value="Amsterdam">Amsterdam</option>-->
+<!--              <option value="Washington">Washington</option>-->
+<!--              <option value="Sydney">Sydney</option>-->
+<!--              <option value="Beijing">Beijing</option>-->
+<!--              <option value="Cairo">Cairo</option>-->
+<!--            </select>-->
+<!--            <input id="tag_input" type="text" value="Amsterdam,Washington,Sydney,Beijing,Cairo" data-role="tagsinput"/>-->
+            <div id="tag_select_wapper"></div>
+            <input id="tag_input" type="text" value="" class="input-xlarge span8" placeholder="input tag keyword" autocomplete="off"/>
+            <div id="tag_wapper" style="display:flex">
+<!--                <div class="tag_item">-->
+<!--                    <div class="header">abc</div>-->
+<!--                    <div class="description">ccccccccccc</div>-->
+<!--                </div>-->
+            </div>
+          </div>
+          <br>
+          <label class="control-label" for="language">Language *</label>
+          <div class="controls">
+              <select id="language" name="language">
+              {% for lang in available_languages %}
+                  <option value="{{lang.code}}">
+                      {{lang.name}}
+                  </option>
+              {% endfor %}
+              </select>
+          </div>
+<!--          <br>-->
+<!--          <label class="control-label"></label>-->
+<!--          <div class="controls">-->
+<!--              <a class="toggleLink" href="javascript:;">Basic form</a>-->
+<!--          </div>-->
+        </div>
+
+        <div class="span9">
+          <div class="btn-toolbar pull-right" >
+              <div style="display:flex;align-items:center">
+                <button id="submit" class="btn btn-primary " ng-click="submitForm()" type="submit">Propose! &gt;&gt;</button>
+<!--                <button id="submit" class="btn btn-primary " type="submit">Propose! &gt;&gt;</button>-->
+
+              </div>
+          </div>
+        </div>
+      </div>
+
+    </fieldset>
+  </form>
+</div>
+
+<div>
+  <div><a href="/search/?sortby=&asc=&s=&project_id=&project_name=&operation=SPONSOR&other_filter=paid_work#"><span class="lar la-handshake" style="margin-right:6px; font-size:20px"></span>Looking for paid work</a></div>
+  <div style="padding:2px 0"><a href="/search"><span class="las la-money-bill-wave-alt" style="margin-right:6px; font-size:20px"></span>I want to donate to a project</a></div>
+<!-- <div><a href=""><span class="las la-glasses" style="margin-right:6px; font-size:20px"></span>I want to learn</a></div> -->
+  <div><a href=""><span class="las la-hands-helping" style="margin-right:6px; font-size:20px"></span>I want to help</a></div>
+</div>
+
+{% endblock %}
+<!--<script>-->
+<!--var cities = new Bloodhound({-->
+<!--  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),-->
+<!--  queryTokenizer: Bloodhound.tokenizers.whitespace,-->
+<!--  prefetch: '/static/tag/cities.json'-->
+<!--});-->
+<!--cities.initialize();-->
+
+<!--var elt = $('#tag_input');-->
+<!--elt.tagsinput({-->
+<!--  itemValue: 'value',-->
+<!--  itemText: 'text',-->
+<!--  typeaheadjs: {-->
+<!--    name: 'cities',-->
+<!--    displayKey: 'text',-->
+<!--    source: cities.ttAdapter()-->
+<!--  }-->
+<!--});-->
+<!--elt.tagsinput('add', { "value": 1 , "text": "Amsterdam"   , "continent": "Europe"    });-->
+<!--elt.tagsinput('add', { "value": 4 , "text": "Washington"  , "continent": "America"   });-->
+<!--elt.tagsinput('add', { "value": 7 , "text": "Sydney"      , "continent": "Australia" });-->
+<!--elt.tagsinput('add', { "value": 10, "text": "Beijing"     , "continent": "Asia"      });-->
+<!--elt.tagsinput('add', { "value": 13

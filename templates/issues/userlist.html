@@ -1,0 +1,44 @@
+{% extends "core2/base_old.html" %}
+{% block mainContent%}
+{% load markdown %}
+
+<h3> Users </h3>
+<hr>
+<table class="table table-condensed table-striped">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th style="width:120px">Social links</th>
+      <th>Home page</th>
+      <th>About</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for userinfo in users %}
+    <tr>
+      <td><a href="{{ userinfo.user.get_view_link }}"><img src="{{userinfo.user.gravatar_url_medium}}"> {{userinfo.user.username}}</a></td>
+      <td>
+        {% for auth in userinfo.user.getSocialAuths %}
+        {% if auth.getSocialIcon_small %}
+          {% if auth.getSocialProfileLink %}
+          <a href="{{auth.getSocialProfileLink}}" target="_{{auth.provider}}"><img src="{{auth.getSocialIcon_small}}"></a>
+          {% endif %}
+        {% endif %}
+        {% endfor %}
+      </td>
+      <td><a href="{{userinfo.get_website_url}}">{{userinfo.get_website_short}}</a></td>
+      <td>
+        {% autoescape off %}
+        <markdown-text text="{{ userinfo.about}}"></markdown-text>
+        {% endautoescape %}
+      </td>
+    </tr>
+    <tr>
+{% endfor %}
+  </tbody>
+</table>
+<div class="pagination pagination-right">
+{#{% paginate %}#}
+</div>
+
+{% endblock mainContent%}

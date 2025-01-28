@@ -1,0 +1,29 @@
+<style type="text/css">
+    .vote_points{
+        padding:0 10px;font-size:30px;line-height:24px
+    }
+    .voted_link span{
+        color:#8DC63F
+    }
+</style>
+<script type="text/javascript">
+    $(function(){
+        $('.vote_a').click(function(){
+            var issue_id = {{ issue.id }};
+            var type = $(this).data('type');
+            $.post('/issue/vote', {issue_id:issue_id, vote_type:type}, function(res){
+                console.log(res)
+                window.location.reload()
+            });
+        });
+    })
+</script>
+<div style="display:flex;flex-direction: column;align-items: center;padding-right:10px;padding-top:10px">
+    <a class="vote_a {% if issue.if_voted_up %}voted_link{% endif %}" data-type="{{issue.vote_up_ope}}" href="javascript:;">
+        <span class="las la-sort-up" style="font-size:30px;"></span>
+    </a>
+    <div class="vote_points">{{issue.points}}</div>
+    <a class="vote_a {% if issue.if_voted_down %}voted_link{% endif %}" data-type="{{issue.vote_down_ope}}" href="javascript:;">
+        <span class="las la-sort-down" style="font-size:30px"></span>
+    </a>
+</div>

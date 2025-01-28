@@ -1,0 +1,17 @@
+{% load markdown %}
+{% load i18n %}
+<div id='' style="display: " >
+  <form method="post" class="well form-horizontal"  action="/issuenew/addSolution">
+        {% csrf_token %}
+        <input type="hidden" name="issue" value="{{issue.id}}">
+        <div class="flex_cg10">
+          <input type="text" class="input-xlarge span8" name="title" value="" placeholder="Title *" required>
+            <text-with-markdown-preview model="solution_{{ solution.id }}" nameid="content" placeholder="{{solution.content | default:'Content*'}}" value="{{solution.content}}" required="required" ></text-with-markdown-preview>
+          <textarea name="content2" placeholder="Content *" required></textarea>
+            <div>
+                <button type="submit" class="btn btn-primary">{% trans "Submit"%}</button>
+                <a href="javascript:;" class="cancelForm">{% trans "Cancel"%}</a>
+            </div>
+        </div>
+    </form>
+</div>

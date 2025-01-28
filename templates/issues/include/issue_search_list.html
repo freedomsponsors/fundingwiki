@@ -1,0 +1,68 @@
+{% load pagination %}
+{% load mathfilters %}
+{% load extras %}
+<style type="text/css">
+    .issue_item{
+        display:flex;
+        padding:20px 0;
+        border-bottom:1px solid #f7f6f9
+    }
+    .tag_item_list2{
+        background:#286090;
+        color:#fff;
+        border-radius:4px;
+        margin-bottom:4px;
+        cursor:pointer;
+        padding:6px 10px;
+    }
+    .tag_item_list2 .header{
+        font-size:16px;
+        font-weight:bold;
+    }
+</style>
+<div style="border-top:1px solid #f7f6f9;">
+{% if issues %}
+{% for issue in issues %}
+    <div class="issue_item">
+        <div style="width:140px;display: flex;flex-direction: column;align-items: flex-end;padding-right: 20px;;padding-top:10px">
+            <div>{{issue.points}} votes</div>
+            <div>{% add issue.count_solutions_done issue.count_solutions_in_progress %} proposals</div>
+<!--            <div>{{issue.points}} works</div>-->
+            <div>+ $ {% add_float 0 issue.total_open_offers_usd issue.total_paid_offers_usd %}</div>
+            <div>+ BTC {% add_float 8 issue.total_open_offers_btc issue.total_paid_offers_btc %}</div>
+        </div>
+        <div style="flex:1">
+            <div><a href="{{issue.get_view_link}}" style="font-size:24px">{{issue.title}}</a></div>
+            <div style="padding:8px 0">{{issue.description|truncatechars:300}}</div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+                <div>
+<!--                    {% for tag in issue.tags.all %}-->
+<!--                        <span class="label label-info tag_item" data-name="{{ tag.slug }}" style="cursor:pointer">{{ tag.slug }}</span>-->
+<!--                    {% endfor %}-->
+                    <div class="tag_wapper_list">
+                    {% for tag in issue.issueTagsList %}
+                        <span class="label label-info tag_item_list" data-qid="{{ tag.qid }}" data-title="{{tag.title}}" data-description="{{tag.description}}" style="cursor:pointer">{{ tag.title }}</span>
+<!--                        <div class="tag_item_list" data-qid="{{ tag.qid }}" data-title="{{tag.title}}" data-description="{{tag.description}}">-->
+<!--                            <div class="header">{{tag.title}}</div>-->
+<!--                            <div class="description">{{tag.description}}</div>-->
+<!--                        </div>-->
+                    {% endfor %}
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:4px">
+                    <img src="{{issue.createdByUser.gravatar_url_medium}}" style="width:30px;height:30px">
+                    <a href="{{ issue.createdByUser.get_view_link }}" class="arial font-size-14">{{ issue.createdByUser.username }}</a>
+                    <div>{{issue.createdByUser.getReputation}}</div>
+                    <div style="padding-left:10px">{{issue.language|lang_name}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+<div class="pagination pagination-right">
+  {% pagination issues %}
+</div>
+{%else%}
+<div style="text-align:center;padding:20px">No issues found...</div>
+{%endif%}
+</div>

@@ -1,0 +1,35 @@
+<div class="column-wrapper" id="bootstrap-content">
+    <div id="carousel{{issue.id}}" class="carousel slide" style="width:100%;">
+            <div class="carousel-inner">
+            {% for media in issue.getMediaVideoOrImage %}
+                {% if forloop.first %}
+                    <div class="item active">
+                {% else %}
+                    <div class="item">
+                {% endif %}
+                        <div class="carousel-content">
+                            {% if media.url and media.type == "video" and media.video_iframe %}
+                                <div class="video-container">
+                                    {{ media.video_iframe | safe }}
+                                    <div class="iframeBlocker"></div>
+                                </div>
+                            {% elif media.image_url and media.type == "image" %}
+                                <img src="{{media.image_url}}" alt="">
+                            {% endif %}
+                        </div>
+                        {% if media.title or media.content %}
+                            <div class="carousel-caption">
+                              <h4>{{media.title}}</h4>
+                              <p>{{media.content}}</p>
+                            </div>
+                        {% endif %}
+
+                    </div>
+            {% endfor %}
+            </div>
+            {% if issue.getMediaVideoOrImage|length > 1 %}
+                <a class="left carousel-control" href="#carousel{{issue.id}}" data-slide="prev">‹</a>
+                <a class="right carousel-control" href="#carousel{{issue.id}}" data-slide="next">›</a>
+            {% endif %}
+          </div>
+</div>

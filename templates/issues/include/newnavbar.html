@@ -1,0 +1,64 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<div class="row" style="">
+<div class="col-sm-4" style="">
+  <div style="display:flex;align-items:center">
+    <div class="dropdown">
+      <!--<button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">-->
+      <span id="menu1" data-toggle="dropdown" class="las la-bars" style="cursor:pointer;font-size:18px"></span>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/"><span class="las la-home" style="margin-right:6px"></span>Main page</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/search"><span class="las la-lightbulb" style="margin-right:6px"></span>Ideas</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/search/?sortby=&asc=&s=&project_id=&project_name=&operation=SPONSOR"><span class="las la-hammer" style="margin-right:6px"></span>Projects in development</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><span class="lab la-slack-hash" style="margin-right:6px"></span>Tags</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/home/randomIssue"><span class="las la-dice-d6" style="margin-right:6px"></span>Random idea</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/faq"><span class="las la-people-carry" style="margin-right:6px"></span>About funding wiki</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/feedback"><span class="las la-envelope-open-text" style="margin-right:6px"></span>Contact us</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><span class="las la-money-bill-wave-alt" style="margin-right:6px"></span>Donate to funding.wiki</a></li>
+        <li role="presentation" class="divider"></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" id="change_to_oldpage" href="javascript:;"><span class="las la-blind" style="margin-right:6px"></span>Switch to old look</a></li>
+        <li role="presentation" class="divider"></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/search/?sortby=created&asc=False&s=&project_id=&project_name="><span class="las la-exchange-alt" style="margin-right:6px"></span>Recent changes</a></li>
+      </ul>
+    </div>
+    <div style="padding:0 10px"><a href="/"><img src="/static/img/fundingwiki-logo-fit_80x107px-v1.0.png" style="width:55px"></div>
+    <div style="padding-bottom:12px">
+    <h3>Funding.wiki</h3></a>
+    </div>
+  </div>
+</div>
+<div class="col-sm-4" style="padding-top:10px">
+  <form class="navbar-form navbar-left" method="get" action="/issues">
+    <div class="input-group" style="display:flex">
+      <input type="text" class="form-control" name="s" placeholder="Search" value="{{request.GET.s|default:''}}" style="max-width:400px;min-width:200px;width:100%">
+      <div class="input-group-btn">
+        <button class="btn btn-default" type="submit">
+          <i class="las la-search"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="col-sm-4" style="">
+  {% if user and user.is_authenticated %}
+    <div style="padding:10px 0;width:90%">
+      Hello, <a href="/user/{{ user.username }}">{{ user.username }}</a>, <a href="/user/edit">edit</a>, <a href="/logout">Sign Out</a>
+    </div>
+    <div><a href="/myissues"><span class="las la-clipboard-list" style="margin-right:6px; font-size:20px"></span>Personal Task Manager</a></div>
+  {% else %}
+    <div style="padding:10px 0;width:90%">Hello, visitor, you can make some interactions with your IP or </div>
+    <div>
+      <a href="/accounts/register/">create account</a>. <a href="/login/">Log in</a>
+    </div>
+  {% endif %}
+</div>
+</div>
+{% csrf_token %}
+<script type="text/javascript">
+  $('#change_to_oldpage').click(function(){
+    var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val()
+    $.post('/home/switchOldPage', {csrfmiddlewaretoken : csrfmiddlewaretoken, to:'old'}, function(res){
+      window.location.reload()
+    });
+  });
+</script>

@@ -1,0 +1,206 @@
+<style>
+    #tag_wapper{
+        border-left:1px solid #ccc;
+        border-right:1px solid #ccc;
+        position:absolute;
+        width:300px;
+        background:#fff;
+        max-height:300px;
+        overflow:auto
+    }
+    .tag_item{
+        border-top:1px solid #ccc;
+        padding:4px;
+    }
+    .tag_item:hover{
+        background:#286090;
+        color:#fff
+    }
+    .tag_item .header{
+        font-weight:bold;
+        font-size:16px
+    }
+    .tag_item .description{
+    }
+    :nth-last-child(1 of .tag_item) {
+        border-bottom:1px solid #ccc;
+    }
+    .tag_item .close_icon{
+        float: right;
+        margin-top: -6px;
+        margin-right: -6px;
+        cursor: pointer;
+        font-size: 22px;
+    }
+    #tag_wapper .tag_item{
+        cursor:pointer;
+    }
+    #tag_wapper .tag_item .close_icon{
+        display:none
+    }
+    #tag_select_wapper{
+    }
+    #tag_select_wapper .tag_item{
+        background:#286090;
+        color:#fff;
+    }
+    #tag_select_wapper .tag_item .description{
+        color:#fff
+    }
+    .tag_empty{
+        border-top:1px solid #ccc;
+        border-bottom:1px solid #ccc;
+        padding:8px;
+    }
+</style>
+
+<script>
+$(function(){
+    var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val()
+
+    //the tag input, when keyup, show the tags that can be selected
+    var tag_timer = null;
+    $('#tag_input').keyup(function(){
+        var that = this;
+        clearTimeout(tag_timer);
+        tag_timer = setTimeout(function(){
+            var search = $(that).val();
+            if(search){
+                var param = {
+                    csrfmiddlewaretoken:csrfmiddlewaretoken,
+                    search:search,
+                    language:$('#tag_filter_form_language').val()
+                };
+                $.post('/core/json/suggestTagsLocal', param, function(res){
+                    console.log(res)
+                    fillTagInfo(res)
+                })
+            }else{
+                fillTagInfo([])
+            }
+        }, 500)
+    })
+    $('#tag_input').keyup()
+
+    // select one tag
+    $('#tag_wapper').on('click', '.tag_item', function(){
+        var qid = $(this).data('qid')
+        var title = $(this).data('title')
+        var description = $(this).data('description')
+        console.log(qid, title)
+        var tag = {
+            qid:qid,
+            title:title,
+            description:description
+        }
+        fillTagSelected(tag)
+        $('#tag_input').val('')
+        fillTagInfo([])
+    })
+    //remove one tag
+    $('#tag_select_wapper').on('click', '.close_icon', function(){
+        var qid = $(this).parent('.tag_item').data('qid')
+        removeTagSelected(qid)
+    })
+
+    //show the tags to be selected
+    function fillTagInfo(tag_list){
+        var html = [];
+        for(var i in tag_list){
+            var tag = {
+                qid:tag_list[i].qid,
+                title:tag_list[i].match_text,
+                description:tag_list[i].description
+            }
+            html.push( getTagItemHtml(tag) );
+        }
+        if($('#tag_input').val() != '' && html.length == 0){
+            html.push('<div class="tag_empty">No tags found, try other keywords...</div>')
+        }
+        $('#tag_wapper').html(html.join(''))
+    }
+
+    //selected tags
+    var tag_selected = [];
+    function fillTagSelected(tag){
+        tag_selected.push(tag)
+        renderTagSelectedHtml()
+    }
+    function removeTagSelected(tag_qid){
+        var tag_selected_new = [];
+        for(var i in tag_selected){
+            if(tag_selected[i].qid == tag_qid){
+                continue;
+            }
+            tag_selected_new.push(tag_selected[i])
+        }
+        tag_selected = tag_selected_new;
+        renderTagSelectedHtml()
+    }
+    function renderTagSelectedHtml(){
+        var html = [];
+        var qids = [];
+        for(var i in tag_selected){
+            qids.push(tag_selected[i].qid)
+            html.push( getTagItemHtml(tag_selected[i]) );
+        }
+        $('#tag_select_wapper').html(html.join(''))
+        //$('#tag_qids').val(JSON.stringify(qids))
+        $('#tag_info').val(JSON.stringify(tag_selected))
+    }
+
+    //get html by tag info
+    function getTagItemHtml(tag){
+        var qid = tag.qid;
+        var title = tag.title;
+        var description = tag.description;
+        var html = '<div class="tag_item" data-qid="'+qid+'" data-title="'+title+'" data-description="'+description+'"><span class="las la-window-close close_icon"></span><div class="header">'+title+'</div><div class="description">'+description+'</div></div>'
+        return html;
+    }
+    if($('#tag_selected_init').val()){
+        tag_selected = JSON.parse($('#tag_selected_init').val())
+        renderTagSelectedHtml()
+    }
+    $('.tag_item_list').click(function(){
+      var qid = $(this).data('qid');
+      var title = $(this).data('title');
+      var description = $(this).data('description');
+
+      tag_selected = [{
+            qid:qid,
+            title:title,
+            description:description,
+        }]
+        renderTagSelectedHtml()
+
+      //$('#form_tag_field').val($(this).data('name'))
+      $('#filter_form').submit();
+    })
+    $('.tag_item_related').click(function(){
+      var qid = $(this).data('qid');
+      var title = $(this).data('title');
+      var description = $(this).data('description');
+
+      tag_selected.push({
+            qid:qid,
+            title:title,
+            description:description,
+        })
+        renderTagSelectedHtml()
+      $('#filter_form').submit();
+    })
+})
+</script>
+<div style="width:240px">
+<!--    <input type="text" id="tag_qids" name="tags_qids" style="display:;" >-->
+    <input type="text" id="tag_info" name="tags" hidden="hidden">
+    <input type="text" id="tag_selected_init" value="{{tag_selected_init}}" hidden="hidden" >
+    <div id="tag_select_wapper"></div>
+    <input id="tag_input" type="text" value="" class="form-control" placeholder="input tag keyword" autocomplete="off"/>
+    <div id="tag_wapper" style="">
+<!--        <div class="tag_item">-->
+<!--            <div class="header">abc</div>-->
+<!--            <div class="description">ccccccccccc</div>-->
+<!--        </div>-->
+    </div>
+</div>

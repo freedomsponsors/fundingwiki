@@ -1,0 +1,466 @@
+{% extends "issues/base.html" %}
+
+{% block title %}
+    About {{SITE_NAME}} / FAQ
+{% endblock %}
+
+{% block mainContent%}
+
+    <div style="width: 800px; margin: auto; margin-bottom: 125px;">
+        <h1 class="green-text">Help and  Frequently Asked Questions (FAQ)</h1>
+		<h2 class="green-text">About Funding.wiki</h2>
+		<div class="column-wrapper">
+			<ol class="decimal">
+				<li><a href="#What is Funding.wiki?">What is Funding.wiki?</a></li>
+			</ol>
+			<div class="hgap-30"><!-- Horizontal Gap 30px --></div>
+			<ol class="decimal" start="13">
+				<li><a href="#?">?</a></li>
+			</ol>
+		</div>
+
+		<h2 class="green-text">About Freedom Sponsors</h2>
+		<div class="column-wrapper">
+			<ol class="decimal">
+				<li><a href="#What is {{SITE_NAME}}?">What is {{SITE_NAME}}?</a></li>
+				<li><a href="#What makes {{SITE_NAME}} different from other crowdfunding sites?">What makes {{SITE_NAME}} different from other crowdfunding sites?</a></li>
+				<li><a href="#Do you really think that idea could work?">Do you really think that idea could work?</a></li>
+				<li><a href="#How do I change my profile picture?">How do I change my profile picture?</a></li>
+				<li><a href="#How can I tell if a sponsor is serious about his offer?">How can I tell if a sponsor is serious about his offer?</a></li>
+				<li><a href="#So you have a reputation system?">So you have a reputation system?</a></li>
+				<li><a href="#How do I add credit to {{SITE_NAME}}?">How do I add credit to {{SITE_NAME}}?</a></li>
+				<li><a href="#What about privacy?">What about privacy?</a></li>
+				<li><a href="#How do payments work?">How does payment work?</a></li>
+				<li><a href="#I don't have a Paypal account or a Bitcoin wallet, is that ok?">I don't have a Paypal account or a Bitcoin wallet, is that ok?</a></li>
+				<li><a href="#What is Bitcoin?">What is Bitcoin?</a></li>
+				<li><a href="#Two developers are claiming to have resolved my issue. What should I do?">Two developers are claiming to have resolved my issue. What should I do?</a></li>
+			</ol>
+			<div class="hgap-30"><!-- Horizontal Gap 30px --></div>
+			<ol class="decimal" start="13">
+				<li><a href="#How a fix done by an independent developer will return back to the main project (trunk)?">How a fix done by an independent developer will return back to the main project (trunk)?</a></li>
+				<li><a href="#I resolved an issue, but the sponsor just didn't pay me. What can I do?">I resolved an issue, but the sponsor just didn't pay me. What can I do?</a></li>
+				<li><a href="#Can I get paid before I complete the issue?">Can I get paid before I complete the issue?</a></li>
+				<li><a href="#Can I send a payment before the issue is completed?">Can I send a payment before the issue is completed?</a></li>
+				<li><a href="#I paid for an unfinished issue, and the developer won't deliver. What can I do?">I paid for an unfinished issue, and the developer won't deliver. What can I do?</a></li>
+				<li><a href="#Does {{SITE_NAME}} have any kind of integration API?">Does {{SITE_NAME}} have any kind of integration API?</a></li>
+				<li><a href="#Who is behind {{SITE_NAME}}?">Who is behind {{SITE_NAME}}?</a></li>
+				<li><a href="#Tell me more about {{SITE_NAME}}!">Tell me more about {{SITE_NAME}}!</a></li>
+				<li><a href="#What technology and tools are used to build this website?">What technology and tools are used to build this website?</a></li>
+				<li><a href="#What can I do to help?">What can I do to help?</a></li>
+				<li><a href="#I have more questions!">I have more questions!</a></li>
+			</ol>
+		</div>
+		<h2 class="green-text">About Funding.wiki</h2>
+		<a id="What is Funding.wiki?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">What is Funding.wiki?</h3>
+			<p><strong>Funding.wiki</strong> is not just another <strong>crowdfunding platform</strong>. At <strong>Funding.wiki</strong>, we accompany the <a href="@entrepreneurs">entrepreneur</a> <strong>from the very start of the creative process</strong>, from the moment they have an <a href="#idea">idea</a>, facilitating connections not only with the <a href="#sponsor">sponsor</a> but also with <a href="#communicators">people who can communicate</a> the idea and with <a href="developers">people who can help make the idea a reality</a>.</p>
+			<p>These <strong>four distinct roles</strong> greatly enhance project dynamism compared to traditional platforms with just two roles: entrepreneurs/donors. While <strong>Funding.wiki</strong> can also operate with two roles if desired, it is much better to use all four to provide dynamism, offering these advantages:</p>
+			<ul>
+			<li>If you want to <strong>bring your idea to life</strong> but find it <strong>tedious to <a href="#create%20a%20campaign">create a campaign</a></strong> with its media, videos, and <a href="#rewards">rewards</a>, no problem: <em>an idea doesn’t need a finished media campaign</em> to start <strong>accepting donations</strong>. All ideas can accept donations from the beginning.</li>
+			</ul>
+			<ul>
+			<li>On the other hand, if you enjoy <strong>helping ideas grow</strong> with your <strong><a href="#communicators">communication skills</a></strong>, offer to <a href="#develop%20the%20concept%20of%20an%20idea">develop the concept of an idea</a> and <strong>create content</strong> such as videos, images, or text, whether <strong>for fun</strong>, <strong>for money</strong>, or <strong>to learn with others</strong>. <em>You can create a media campaign whether the idea is yours or not.</em></li>
+			</ul>
+			<ul>
+			<li>If you have a <strong>great idea</strong>, but in addition to lacking <strong>money</strong>, you currently lack the <strong>knowledge</strong> or <strong>time</strong> to execute it, yet you’d like to <strong>see it realized</strong>, post it in the <a href="#Idea%20Bank"><strong>Funding.wiki Idea Bank</strong></a>! <em>The person proposing an idea doesn’t have to be the one to execute it.</em></li>
+			</ul>
+			<ul>
+			<li>If your case is that you’re short on ideas but have a <strong>strong desire to execute projects</strong>, whether <strong>for money</strong>, <strong>for fun</strong>, or <strong>to share learning experiences with others</strong>, then the role of <a href="#developer"><strong>developer</strong></a> is for you! <em>You can earn donations by carrying out an idea even if it isn’t yours.</em></li>
+			</ul>
+			<p>Of course, you can donate to other people’s projects or ideas or upload your own project or idea, taking charge of all aspects to receive donations yourself.</p>
+			</div>
+		<h2 class="green-text">About {{SITE_NAME}}</h2>
+		<a id="What is {{SITE_NAME}}?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">What is {{SITE_NAME}}?</h3>
+			<p>{{SITE_NAME}} is a crowdfunding platform for programming tasks of Free and Open Source Software.</p>
+			<p>You can place money bounties for issues that you care about getting fixed, and you can collect bounties by working on open issues.</p>
+		</div>
+		<a id="What makes {{SITE_NAME}} different from other crowdfunding sites?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">What makes {{SITE_NAME}} different from other crowdfunding sites?</h3>
+			<p>The main difference is that we are focused on helping the Open Source and Free Software community.</p>
+			<p>But we believe that what really makes us unique is that we have a strong philosophy based on openness and freedom.</p>
+			<p>That philosophy means we put the community first in everything we do. Here's a few examples:</p>
+			<ul class="bullet">
+				<li>
+					<p>We want to build a community based on trust and reputation. Sponsors only have to pay their bounty after the developer resolves the issue (but you can choose to pay before, if you wish.)</p>
+				</li>
+				<li>
+					<p>We want to build free, libre, open source software. Our users' software freedom is important to us, so <a href="https://github.com/freedomsponsors/www.freedomsponsors.org">this website is libre/open source</a> on the front-end <span class="bold">and the back end</span>. We don't use third-party javascript code that can allow our users' online activities to be spied on. This includes Google Analytics, Facebook Like buttons, and things like that. We also follow the <a href="https://www.gnu.org/philosophy/javascript-trap.html">FSF guidelines for free, libre javascript code</a>.</p>
+				</li>
+				<li>
+					<p>We want to be the change we wish to see in the world.
+					We're "open everything", so everything we do is out in the open: 
+					Check out our <a href="/stats/">website statistics</a>, 
+					browse our <a href="http://blog.freedomsponsors.org/">blog</a>, 
+					and see the way we handle all <a href="{% url 'feedback' %}">feedback</a>.
+					It has a lot in common with the <a href="http://blog.gittip.com/post/26350459746/the-first-open-company">"open company" concept</a> 
+					pioneered by our friends at <a href="http://gittip.com">Gittip</a>.</p>
+				</li>
+			</ul>
+			<p>Last but not least, {{SITE_NAME}} is proudly made in Brazil. If you ever
+                <a href="https://maps.google.com.br/maps?q=S%C3%A3o+Jos%C3%A9+dos+Campos+-+S%C3%A3o+Paulo&hl=pt&ie=UTF8&sll=-23.061419,-45.917373&sspn=1.038618,1.234589&oq=sao+jose+dos+campos&t=h&hnear=S%C3%A3o+Jos%C3%A9+dos+Campos+-+S%C3%A3o+Paulo&z=14">
+                    come visit
+                </a>
+                , let's get together and have some <a href="http://en.wikipedia.org/wiki/Caipirinha">caipirinhas</a>! :-)</p>
+		</div>
+		<a id="Do you really think that idea could work?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">Do you really think that idea could work? </h3>
+			
+			<!-- TODO: Yes. It is working and we have already paid developers $TOTAL_SENT to work on $TOTAL_ISSUES for $TOTAL_PROJECTS. (Until then, --> 
+			<p>Yes. Honestly, we do.</p>
+			<p>We believe that there are enough decent, honest people in the world for this to work.</p>
+			<p>A wise guy once said, stay foolish. We intend to do just that.</p>
+			<p>Have you heard of <a href="http://agilemanifesto.org/" target="_agile">the Agile Manifesto</a>? {{SITE_NAME}} is all about taking the third Agile principle to its ultimate consequence: <span class="bold">"Customer collaboration over contract negotiation."</span></p>
+			<p>We want to give people the ability to push forwards the projects they love. No contracts, just trust that developers also love these projects too, and feel happy when they can be paid to put more work into them.</p>
+		</div>
+		<a id="How do I change my profile picture?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">How do I change my profile picture?</h3>
+			<p>Use <a href="http://gravatar.com">Gravatar</a>.</p>
+			<p>Gravatar is a nice and simple online service that will let you upload avatar pictures and associate them with an email address.</p>
+			<p>For example, the email tony@freedomsponsors.org is linked to <a href="http://www.gravatar.com/avatar/b2f9b553e184602579b920053952ce4c.png?s=160">this image</a>.</p>
+			<p>So create your Gravatar account and associate an avatar to the email you use here.</p>
+			<p>Simple.</p>
+		</div>
+		<a id="How can I tell if a sponsor is serious about his offer?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">How can I tell if a sponsor is serious about his offer?</h3>
+			<p>Like eBay, you should check out their profile and take a look at their history. If there are a lot of unpaid offers on resolved issues, that's a bad sign.</p>
+		</div>
+		<a id="So you have a reputation system?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">So you have a reputation system?</h3>
+			<p>Yes, but later (that's the way clever people say no).</p>
+			<p>We just display the user history attached to a profile. But we intend to have something more sophisticated in the future.</p>
+		</div>
+		<a id="How do I add credit to {{SITE_NAME}}?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">How do I add credit to {{SITE_NAME}}?</h3>
+			<p>Actually you just pay each developer directly.</p>
+		</div>
+		<a id="What about privacy?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">What about privacy?</h3>
+			<p>Our purpose is to do business in public. We don't show your email address, but everything that you do here (making an offer, saying you'll work on an issue, all your comments) is public for the world to see.</p>
+		</div>
+		<a id="How do payments work?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">How do payments work?</h3>
+			<p>Payments can be made either in USD via Paypal, or in <a href="http://bitcoin.org/">Bitcoins</a></p>
+
+			<p>If you don't have a Paypal account, setting up one is very easy and you can do it when you're making your first payment.<br>
+			Setting up a bitcoin wallet is also very easy, see <a href="#What is Bitcoin?">"What is Bitcoin?"</a>.</p>
+
+			<p>Before you can receive payments, we recommend you have both a Paypal account and a Bitcoin address so you can accept all offers. We check that each Paypal account is valid before allowing anyone to make a payment to it.</p>
+			
+			<p>{{SITE_NAME}} charges a 3% fee on top of offers, regardless of the payment method. We clearly state this on each payment page. To keep things simple, we use Paypal’s <span class="bold">Parallel</span> payment type, so a single payment is sent to two or more receivers.</p>
+			<p>For example, when you want to pay a US$ 100 bounty, you may decide to give US$ 50 each to 2 developers. On Paypal’s website, you will see:</p>
+			<br/>
+			<ul>
+				<li>Developer A: USD $50</li>
+				<li>Developer B: USD $50</li>
+				<li>{{SITE_NAME}}' 3% fee: USD $3</li>
+				<li>PayPal's Fee: USD $4.60 (may vary)</li>
+				<li>-----------------------------------------------------------</li>
+				<li>TOTAL: USD $107.60</li>
+			</ul>
+			<br/>
+			<p>Bitcoin has no “parallel payment.” Instead, you send us, we verify the transaction, keep 3%, and transfer the rest to the developer(s) being paid.</p>
+			<p>
+                Since our system is libre, you can review the code that processes transactions for both
+                <a href="https://github.com/freedomsponsors/www.freedomsponsors.org/blob/master/djangoproject/core/utils/paypal_adapter.py">
+                    Paypal
+                </a> and
+                <a href="https://github.com/freedomsponsors/www.freedomsponsors.org/blob/master/djangoproject/core/services/bitcoin_frespo_services.py">
+                    Bitcoin
+                </a>.
+            </p>
+		</div>
+
+		<a id="I don't have a Paypal account or a Bitcoin wallet, is that ok?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">I don't have a Paypal account or a Bitcoin wallet, is that ok?</h3>
+			<p>To be able to <span class="bold">receive</span> payments, you’ll need to set up one of these options on <a href="{% url 'editUserForm' %}">your profile page</a>. </p>
+
+			<p>If you're sponsoring issues, you don't need that until right before making your payment. If you made an offer in USD and you don't have a Paypal account, you'll be prompted to setup one when you're making your first payment (and it's very easy to do so).</p>
+		</div>
+
+		<a id="What is Bitcoin?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">What is Bitcoin?</h3>
+			<p>If you don't know what Bitcoin is, you should! <a href="http://www.weusecoins.com/en/">This short video</a> (1m44s) does an excellent job explaining it.</p>
+
+			<p>If you still don’t have a Bitcoin Wallet, it’s really easy to set up one – and it’s free.
+			You can either host your wallet on your computer using a Bitcoin client, or you can create a wallet online in a web wallet provider. Take a look at this link to learn more about those options: <a href="http://bitcoin.org/en/choose-your-wallet">http://bitcoin.org/en/choose-your-wallet</a></p>
+		</div>
+
+		<a id="Two developers are claiming to have resolved my issue. What should I do?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">Two developers are claiming to have resolved my issue. What should I do? </h3>
+			<p>First, verify that the issue is really solved. It's perfectly OK to pay only after your problem is really fixed.</p>
+			<p>Then you have to decide whether you'll pay developer A, developer B, or both. To make a fair choice, do a little digging and check out the original issue to see how it went down.</p>
+			<p>Maybe one person submitted a pull request for a bugfix, and another person had to rework it and then merged it. If so, they both deserve some thanks, and your money. You decide how much you pay to whom. The choice is yours.</p>
+		</div>
+		<a id="How a fix done by an independent developer will return back to the main project (trunk)?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">How a fix done by an independent developer will return back to the main project (trunk)?</h3>
+			<p>Ideally, there should be no "independent developers". 
+			The best way for a developer to contribute to an open source project is to actually get involved 
+			with the corresponding community.</p>
+			<p>In most cases, it is also a bad thing for the end user (meaning, the sponsor) if the work is done 
+			on a branch, or a fork of the main codebase, because then the user would not benefit from new improvements 
+			that eventually get added in the future.</p>
+			<p>The "Sponsor issue" form has a "No Forking" checkbox as part of the acceptance criteria. 
+			By checking it, the sponsor is telling that only solutions that are implemented on the main project's 
+			codebase will be accepted.</p>
+			<p>We want to encourage sponsors to actually fund the original projects, so that checkbox comes checked by default.</p>
+		</div>
+		<a id="I resolved an issue, but the sponsor just didn't pay me. What can I do?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">I resolved an issue, but the sponsor just didn't pay me. What can I do?</h3>
+			<p>Normally we have an atmosphere of gratitude and collaboration among sponsors and developers.
+			However we do know that conflict situations may come up.</p>
+			<p>Try to resolve conflict with compassion. 
+			An excellent book that explains how to do this is <a href="http://www.cnvc.org">Marshall Rosenberg's 
+			"Non-Violent Communication: A Language of Life"</a>.</p>
+			<p>Simply, tell them how you feel without judging them or evaluating the situation, then request a description 
+			of what their ideal situation is, and ask for suggestion about how to get there.</p>
+			<p>If you feel upset, and judge the sponsor as not trustworthy, remember that the issue - and its comment 
+			history - will be publicly linked to the sponsor's account. 
+			If you feel unhappy, we suggest you go to sleep before posting anything you might later regret.</p>
+			<!-- TODO In the worst case, you can mark an issue as 'CONFLICTED.' 
+			Next to every username is the PAID/CONFLICTED score, 
+			which shows the total number of issues the user is involved in that are now PAID or CONFLICTED. 
+			EG, "davelab6 57/1" in green/red. -->
+		</div>
+		<a id="Can I get paid before I complete the issue?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">Can I get paid before I complete the issue?</h3>
+			<p>Yes. When you start working on an issue, simply check the “start accepting payments” box, and kindly ask your patrons to pay you.</p>
+			<p>We recommend only doing this when you're confident that you will be able to complete the issue.
+               If you think the total payment should be higher, track down some other users who suffer
+                from this issue and ask them to check it out on {{SITE_NAME}}.</p>
+		</div>
+		<a id="Can I send a payment before the issue is completed?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">
+			Can I send a payment before the issue is completed?
+			</h3>
+			<p>It depends.</p>
+			<p>Normally you have to wait until the developer has marked the issue as “DONE”.</p>
+			<p>However you can do this when the issue is 
+			<!-- TODO remove the _ from this throughout the site --> 
+			“IN_PROGRESS” <span class="bold">and</span> the developer has indicated that they wish to start accepting payments.
+			But remember that it's ok to wait until the issue is finished before you pay the developer.</p>
+			<p>We encourage you to only pay beforehand to developers you know you can trust!</p>
+		</div>
+		<a id="I paid for an unfinished issue, and the developer won't deliver. What can I do?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">I paid for an unfinished issue, and the developer won't deliver. What can I do?</h3>
+			<p>Politely ask for a refund <span class="bold">&mdash; from the developer.</span>
+			We cannot refund you because payments are made directly to developers.</p>
+			<p>(This is why we encourage to only pay beforehand to developers you know you can trust.)</p>
+		</div>
+		<a id="Does {{SITE_NAME}} have any kind of integration API?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">Does {{SITE_NAME}} have any kind of integration API?</h3>
+            <p>
+                Yes but it's still very basic. Please check out the <a href="/developers">developers</a> section.
+                If you feel you need services there are not available, don't hesitate to open a <a href="/feedback">feedback</a>
+                issue.
+            </p>
+		</div>
+		<a id="Who is behind {{SITE_NAME}}?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">Who is behind {{SITE_NAME}}?</h3>
+			<p><span class="bold"><em>Calleri Informática</em></span> is the legal entity behind {{SITE_NAME}}.</p>
+			<div class="vgap-10"><!-- Vertical Gap 10px --></div>
+			<p style="margin-bottom:5px;" class="light-grey-text"><span class="bold" style="display:inline-block;width:120px;">CNPJ:</span>10.522.445/0001-95</p>
+			<p style="margin-bottom:5px;" class="light-grey-text"><span class="bold" style="display:inline-block;width:120px;">Address:</span>Rua Araçuaí, 89, Bosque dos Eucaliptos.>São José dos Campos - São Paulo - Brazil.</p>
+			<p style="margin-bottom:5px;" class="light-grey-text"><span class="bold" style="display:inline-block;width:120px;">CEP:</span>12233-380</p>
+			<p style="margin-bottom:5px;" class="light-grey-text"><span class="bold" style="display:inline-block;width:120px;">Phone numbers:</span>+55 12 39371638 / +55 12 81440013</p>
+		</div>
+		<div class="vgap-10"><!-- Vertical Gap 10px --></div>
+		<div class="fs-box">
+			<div style="height:80px;" class="column-wrapper vcenter-content">
+				<div><a href="/user/2"><img src="https://www.gravatar.com/avatar/4dbc40e7a6fa89a3568a926378c22ace?d=identicon&s=80"></a></div>
+				<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+				<div class="column fit">
+					<p class="font-size-14"><a href="/user/2">Tony Lampada</a></p>
+					<p class="no-margin">Is the CEO and the only person with access to the production database.</p>
+					<p class="no-margin">You can get in touch directly by sending an email to <a href="mailto:tony@freedomsponsors.org">tony@freedomsponsors.org</a></p>
+				</div>
+			</div>
+		</div>
+		<div class="vgap-10"><!-- Vertical Gap 10px --></div>
+		<div class="fs-box">
+			<p class="no-margin text-align-center">We've also had a lot of help from awesome people who love libre, to whom we are all deeply grateful</p>
+		</div>
+		<div class="vgap-10"><!-- Vertical Gap 10px --></div>
+		<div class="fs-box">
+			<div class="column-wrapper">
+				<ul>
+					<li>
+						<div style="height:64px;" class="column-wrapper vcenter-content">
+							<div><a href="/user/162"><img src="https://www.gravatar.com/avatar/82f8e1b821d570a689d407335de9b540?d=identicon&s=64"></a></div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<div class="column fit">
+								<p class="no-margin font-size-14"><a href="/user/162">Rafael Augusto dos Santos</a></p>
+								<p class="no-margin">Our favorite designer and front-end developer.</p>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div style="height:64px;" class="column-wrapper vcenter-content">
+							<div><a href="/user/165"><img src="https://www.gravatar.com/avatar/a4f43fa1eeac26199907acd3dde52328?d=identicon&s=64"></a></div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<div class="column fit">
+								<p class="no-margin font-size-14"><a href="/user/165">iurisilvio</a></p>
+								<p class="no-margin">#1 in pull requests.</p>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div style="height:64px;" class="column-wrapper vcenter-content">
+							<div><a href="/user/10"><img src="https://www.gravatar.com/avatar/6313ba8e0125421f953fad0c33dab74a?d=identicon&s=64"></a></div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<div class="column fit">
+								<p class="no-margin font-size-14"><a href="/user/10">Arthur Casals</a></p>
+								<p class="no-margin">Always provides great advice.</p>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div style="height:64px;" class="column-wrapper vcenter-content">
+							<div><a href="/user/420"><img src="https://www.gravatar.com/avatar/15e648f5b6b105f3ec0d084388df365f?d=identicon&s=64"></a></div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<div class="column fit">
+								<p class="no-margin font-size-14"><a href="/user/420">Campadrenalin</a></p>
+								<p class="no-margin">Heavy user and great feedback.</p>
+							</div>
+						</div>
+					</li>
+					<li class="no-margin">
+						<div style="height:64px;" class="column-wrapper vcenter-content">
+							<div><a href="/user/kang-zhao"><img src="https://avatars2.githubusercontent.com/u/1835678?v=2&s=460" style="width: 64px; height: 64px;"></a></div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<div class="column fit">
+								<p class="no-margin font-size-14"><a href="/user/kang-zhao">Zhao Kang</a></p>
+								<p class="no-margin">Heavy contributor to the Django codebase.</p>
+							</div>
+						</div>
+					</li>
+				</ul>
+				<div class="hgap-30"><!-- Horizontal Gap 30px --></div>
+				<ul>
+					<li>
+						<div style="height:64px;" class="column-wrapper vcenter-content">
+							<div><a href="/user/443"><img src="https://www.gravatar.com/avatar/cb272743ae9bbcab103b8589b5475173?d=identicon&s=64"></a> </div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<div class="column fit">
+								<p class="no-margin font-size-14"><a href="/user/443">Jarl Arntzen</a> </p>
+								<p class="no-margin">Valuable help with our front-end.</p>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div style="height:64px;" class="column-wrapper vcenter-content">
+							<div><a href="/user/348"><img src="https://www.gravatar.com/avatar/3b7e6c77a5412587152c9e3f22b41c2a?d=identicon&s=64"></a></div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<div class="column fit">
+								<p class="no-margin font-size-14"><a href="/user/348">zooko</a></p>
+								<p class="no-margin">Great help with the Bitcoin support.</p>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div style="height:64px;" class="column-wrapper vcenter-content">
+							<div><a href="/user/1317"><img src="https://www.gravatar.com/avatar/d47e5a6a94e793ad1a1c315d6ab63877?d=identicon&s=64"></a></div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<div class="column fit">
+								<p class="no-margin font-size-14"><a href="/user/1317">Henrique Bastos</a></p>
+								<p class="no-margin">Killer improvements to application architecture.</p>
+							</div>
+						</div>
+					</li>
+					<li class="no-margin">
+						<div style="height:64px;" class="column-wrapper vcenter-content">
+							<div><a href="/user/1292"><img src="https://www.gravatar.com/avatar/65c68dcaace6962cd1353c270eb0801b?d=identicon&s=64"></a></div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<div class="column fit">
+								<p class="no-margin font-size-14"><a href="/user/1292">Dave Crossland</a></p>
+								<p class="no-margin">An eloquent English product manager who helps us sound good.</p>
+							</div>
+						</div> 
+					</li>
+				</ul>
+			</div>
+		</div>
+		<a id="Tell me more about {{SITE_NAME}}!"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">Tell me more about {{SITE_NAME}}!</h3>
+			<p>You <em>are</em> keen! Here are 3 simple ways to get stuck in:</p>
+			<ul class="bullet">
+				<li>Read our <a href="http://blog.{{SITE_NAME}}.org/about">Blog</a>, starting on the About page to learn more about our history and what we'll do next</li>
+				<li>Follow tonylampada on <a href="http://twitter.com/tonylampada">Twitter</a> to keep easily informed about his progress (or Like us on <a href="http://www.facebook.com/{{SITE_NAME}}">Facebook</a> if that's your thing)</li>
+				<li>Join our <a href="https://groups.google.com/forum/?hl=en#!forum/{{SITE_NAME}}">mailing list</a> to chat with others in our community.</li>
+			</ul>
+		</div>
+
+		<a id="What technology and tools are used to build this website?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">What technology and tools are used to build this website?</h3>
+			<p>{{SITE_NAME}} is a <a href="https://www.djangoproject.com/">Django</a> web application using a Postgresql relational database. The front-end also uses a little bit of <a href="https://angularjs.org/">AngularJS</a>. </p>
+			<p>The source code is <a href="https://github.com/freedomsponsors/www.freedomsponsors.org">publicly hosted on Github</a> and we use <a href="http://jenkins.freedomsponsors.org/">Jenkins for continuous integration</a>.</p>
+			<p>A special thanks goes out to <a href="http://www.jetbrains.com/">JetBrains</a> for providing the <a href="http://www.jetbrains.com/pycharm/buy/buy.jsp#openSource">Open Source license</a> for its awesome <a href="http://www.jetbrains.com/pycharm/">Pycharm IDE</a>, which is heavily used for the development of {{SITE_NAME}}.</p>
+			<p>
+				<a href="http://www.jetbrains.com/"><img src="http://www.jetbrains.com/img/logos/logo_JB_tagline_small.png" width="120" style="max-width:100%;"></a> + 
+				<a href="http://www.jetbrains.com/pycharm/"><img src="http://www.jetbrains.com/img/logos/pycharm_logo142x29.gif" width="120" style="max-width:100%;"></a>
+			</p>
+		</div>
+		<a id="What can I do to help?"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">What can I do to help?</h3>
+			<p>
+                We need all kinds of help, not just coding.
+                Check out our README file's section on <a href="https://github.com/{{SITE_NAME}}/www.{{SITE_NAME}}.org#helping-out" >Helping out</a>.
+            </p>
+		</div>
+		<a id="I have more questions!"></a>
+		<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+		<div class="fs-box">
+			<h3 class="green-text">I have more questions!</h3>
+			<p>If you don't know what a Github is, but you found an issue with our website or have any suggestion or comment at all, we want to hear from you! Drop your thoughts on our <a href="{% url 'feedback' %}">feedback section</a>.</p>
+			<p>If you do know what Github is, log in and <!-- button this link --> <a href="https://github.com/{{SITE_NAME}}/www.{{SITE_NAME}}.org/issues/new">create a new issue</a> on our repo. Write what you wish to be better and we'll hop to it.</p>
+			<p>(If you don't know what a Github is but want to find out, spend 15 fun minutes on <a href="http://try.github.io">try.github.io</a>)</p>
+		</div>
+    </h2>
+
+{% endblock mainContent%}

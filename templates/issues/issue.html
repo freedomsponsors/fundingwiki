@@ -1,0 +1,578 @@
+{% extends "issues/base.html" %}
+{% load markdown %}
+{% load i18n %}
+{% load l10n %}
+
+{% block og_meta %}
+    <meta property="og:title" content="US$ {{ issue.total_open_offers_usd }} bounty on {{SITE_NAME}}: {{ issue.title }}" />
+    <meta name="description" content="US$ {{ issue.total_open_offers_usd }} bounty on {{SITE_NAME}}: {{ issue.title }}" />
+    <meta property="og:image" content="http://www.freedomsponsors.org/{{ issue.get_card_image }}" />
+    <meta name="image" content="http://www.freedomsponsors.org/{{ issue.get_card_image }}" />
+{% endblock og_meta %}
+
+{% block title %}
+    {{ issue.project.name }} - {{ issue.title }}
+{% endblock %}
+
+
+
+{% block head %}
+    <script>
+        if(!window.FS){
+            window.FS = {};
+        }
+        FS.dependencies = ['angularutils', 'fswatch'];
+    </script>
+    <script src="/static/js/angular.min.js"></script>
+    <script src="/static/js/angular-sanitize.min.js"></script>
+    <script src="/static/js-generated/fs.js?12"></script>
+    <script src="/static/bootstrap/js/markdown-it.min.js"></script>
+    <script src="/static/bootstrap/js/markdown-it-task-lists.min.js"></script>
+    <script src="/static/js/markdown-it-djangology-flavoured.js"></script>
+    <script src="/static/js/translate.js"></script>
+    <style type="text/css">
+        .content_section_title{
+            border-bottom:1px solid #ccc;
+            padding-top:0px
+        }
+        .content_empty{
+            text-align:center;padding:10px;color:#999
+        }
+    </style>
+    <script type="text/javascript">
+
+        function IssueCtrl($scope, markdownitFilter, editToggle) {
+            $scope.new_comment = '';
+
+            var is_authenticated = {% if user and user.is_authenticated %}true{% else %}false{% endif %};
+            $scope.watching = 'True' == '{{ is_watching }}';
+            $scope.watchLink = '';
+            if(!is_authenticated){
+                $scope.watchLink = '/login?next={{ issue.get_view_link }}';
+            }
+
+            $scope.description = '{{ issue.description|escapejs }}'
+
+            {% for comment in issue.getComments %}
+                $scope.comment_{{ comment.id }} = '{{ comment.content|escapejs }}';
+            {% endfor %}
+
+            // Djangology
+            $scope.csrfToken = "{% csrf_token %}"
+            {% for media in issue.getMedia %}
+                $scope.media_{{ media.id }}  = {}
+                $scope.media_{{ media.id }}.id =  {{ media.id }}
+                $scope.media_{{ media.id }}.type =  "{{ media.type }}"
+                $scope.media_{{ media.id }}.text =  "{{ media.text }}"
+                $scope.media_{{ media.id }}.content =  "{{ media.content|escapejs }}"
+                $scope.media_{{ media.id }}.title =  "{{ media.title }}"
+                $scope.media_{{ media.id }}.issue =  "{{ media.issue.id }}"
+            {% endfor %}
+            {%  for solution in issue.getTechSolution %}
+                $scope.solution{{ solution.id }} = '{{ solution.content|escapejs }}';
+                {%  for comment in solution.getTechSolution %}
+                    $scope.comment{{ comment.id }} = '{{ comment.content|escapejs }}';
+                {% endfor %}
+            {% endfor %}
+
+            $scope.offer_dic = {};
+            {% for offer in issue.getOffers %}
+                $scope.offer_dic[{{ offer.id }}] = {
+                    author: '{{ offer.sponsor.username }}',
+                    acceptance_criteria: '<markdown-text text="{{ offer.acceptanceCriteria }}"></markdown-text>'
+                };
+            {% endfor %}
+
+            $scope.actionmodal = {};
+
+            {% if myoffer %}
+                $scope.myoffer = {
+                    id : "{{myoffer.id}}",
+                    acceptanceCriteria : "{{myoffer.acceptanceCriteria|escapejs}}",
+                    currency : '{{myoffer.currency}}',
+                    {% localize off %}
+                        price : {{myoffer.price}},
+                    {% endlocalize %}
+                    no_forking : '{{myoffer.no_forking}}' == 'True',
+                    require_release : '{{myoffer.require_release}}' == 'True',
+                    expires : '{{myoffer.expires}}' == 'True',
+                    expiration_time : {{myoffer.expiration_time}}
+                };
+            {% else %}
+                $scope.myoffer = {
+                    no_forking: true,
+                    require_release: true,
+                    currency: 'USD'
+                };
+            {% endif %}
+
+            $scope.editDescription = function(visible){
+                if(visible){
+                    $('#div_description_r').slideUp();
+                    $('#div_description_w').slideDown();
+                } else {
+                    $('#div_description_r').slideDown();
+                    $('#div_description_w').slideUp();
+                }
+            };
+
+            $scope.editComment = function(comment_id, visible){
+                if(visible){
+                    $('#div_comment_r_' + comment_id).slideUp();
+                    $('#div_comment_w_' + comment_id).slideDown();
+                } else {
+                    $('#div_comment_r_' + comment_id).slideDown();
+                    $('#div_comment_w_' + comment_id).slideUp();
+                }
+            };
+
+            function validate_submit_sponsor(){
+                var price = parseFloat($scope.myoffer.price);
+                var currency = $scope.myoffer.currency;
+                var acceptance = $scope.myoffer.acceptanceCriteria;
+                var expires = $scope.myoffer.expires;
+                if(isNaN(price)){
+                    alert('please specify an offer value');
+                    return false;
+                }
+                if(currency == 'USD'){
+                    if(price < 5){
+                        alert('The minimum offer is US$ 5.00');
+                        return false;
+                    }
+                }
+                if(!acceptance){
+                    alert('please specify your acceptance criteria for this offer');
+                    return false;
+                }
+                if(expires && !$('#expiration_time').val()){
+                    alert('please specify an expiration time (in days)');
+                    return false;
+                }
+                $('#action_form').submit()
+            }
+
+            function validate_submit_others(){
+                $('#action_form').submit()
+            }
+
+            $scope.sponsor = function(){
+                if($scope.myoffer.id){
+                    return $scope.change();
+                }
+                $scope.actionmodal.action = 'SPONSOR';
+                $scope.actionmodal.validate_and_submit = validate_submit_sponsor;
+                $scope.actionmodal.title = 'Sponsor issue';
+                $scope.actionmodal.formaction = '/issue/sponsor/submit';
+                $scope.actionmodal.buttonlabel = 'Sponsor!';
+                $scope.actionmodal.commentplaceholder = "Please put some thought into this one - it's a big help for the programmer who will work on this. What is your definition of 'done' for this task? Not just 'done', but 'so-done-that-I'm-willing-to-pay-for-it-done' :-)";
+                $('#action_modal').modal()
+            };
+
+            $scope.revoke = function(){
+                $scope.actionmodal.action = 'ACTION_AND_COMMENT';
+                $scope.actionmodal.validate_and_submit = validate_submit_others;
+                $scope.actionmodal.show_accept_payments = false;
+                $scope.actionmodal.title = 'Revoke offer';
+                $scope.actionmodal.formaction = '/offer/revoke/submit';
+                $scope.actionmodal.buttonlabel = 'Revoke offer';
+                $scope.actionmodal.commentplaceholder = "Add a comment to let everyone know that you're not willing to pay for this issue anymore.";
+                $('#action_modal').modal()
+            };
+
+            $scope.change = function(){
+                $scope.actionmodal.action = 'SPONSOR';
+                $scope.actionmodal.validate_and_submit = validate_submit_sponsor;
+                $scope.actionmodal.title = 'Change offer';
+                $scope.actionmodal.formaction = '/offer/edit/submit';
+                $scope.actionmodal.buttonlabel = 'Change offer';
+                $scope.actionmodal.commentplaceholder = "Please put some thought into this one - it's a big help for the programmer who will work on this. What is your definition of 'done' for this task? Not just 'done', but 'so-done-that-I'm-willing-to-pay-for-it-done' :-)";
+                $('#action_modal').modal()
+            };
+
+            $scope.work = function(){
+                $scope.actionmodal.action = 'ACTION_AND_COMMENT';
+                $scope.actionmodal.validate_and_submit = validate_submit_others;
+                $scope.actionmodal.show_accept_payments = true;
+                $scope.actionmodal.title = 'Work on issue';
+                $scope.actionmodal.formaction = '/solution/add/submit';
+                $scope.actionmodal.buttonlabel = 'Start work';
+                $scope.actionmodal.commentplaceholder = "Add a comment to let everyone know that you'll be working on this issue.";
+                $('#action_modal').modal()
+            };
+
+            $scope.resolve = function(){
+                $scope.actionmodal.action = 'ACTION_AND_COMMENT';
+                $scope.actionmodal.validate_and_submit = validate_submit_others;
+                $scope.actionmodal.show_accept_payments = false;
+                $scope.actionmodal.title = 'Resolve issue';
+                $scope.actionmodal.formaction = '/solution/resolve/submit';
+                $scope.actionmodal.buttonlabel = 'Resolve issue';
+                $scope.actionmodal.commentplaceholder = "Add a comment to let everyone know that you resolved the issue!";
+                $('#action_modal').modal()
+            };
+
+            $scope.abort = function(){
+                $scope.actionmodal.action = 'ACTION_AND_COMMENT';
+                $scope.actionmodal.validate_and_submit = validate_submit_others;
+                $scope.actionmodal.show_accept_payments = false;
+                $scope.actionmodal.title = 'Abort work';
+                $scope.actionmodal.formaction = '/solution/abort/submit';
+                $scope.actionmodal.buttonlabel = 'Abort work';
+                $scope.actionmodal.commentplaceholder = "Add a comment to let everyone know that you won't be working on this issue anymore.";
+                $('#action_modal').modal()
+            };
+
+            $scope.close_modal = function(id){
+                $(id).modal('hide')
+            };
+
+            $scope.acceptance_popup = function(offer_id){
+                $scope.current_offer = $scope.offer_dic[offer_id];
+                $('#acceptance_modal').modal()
+            }
+
+            {% if show_sponsor_popup %}
+                $scope.sponsor();
+            {% endif %}
+
+            // Djangology scripts
+            $scope.editMedia = function(media_id, visible){
+                if ( visible === undefined ) {
+                    extendedEditToggle($('#div_media_r_' + media_id), $('#div_media_w_' + media_id))
+                    return 0;
+                }
+                if(visible){
+                    $('#div_media_r_' + media_id).slideUp();
+                    $('#div_media_w_' + media_id).slideDown();
+                } else {
+                    $('#div_media_r_' + media_id).slideDown();
+                    $('#div_media_w_' + media_id).slideUp();
+                }
+            };
+
+            $scope.editToggle = editToggle
+        }
+
+        function activaTab(tab){
+            $('a[href="' + tab + '"]').trigger('click');
+        };
+
+        $(document).ready(function(){
+            $('a[data-toggle]').click(function (e) {
+              window.location.hash = e.target.hash;
+            });
+
+            var h = document.location.hash;
+            if(h) {
+                activaTab(h);
+            }
+            // editToggle('#div_project_w_news')
+
+            $('.vote_solution_a').click(function(){
+                var solution_id = $(this).data('solution_id');
+                var issue_id = $(this).data('issue_id');
+                var type = $(this).data('type');
+                $.post('/issue/vote_solution', {issue_id:issue_id, solution_id:solution_id, vote_type:type}, function(res){
+                    console.log(res)
+                    window.location.reload()
+                });
+            });
+
+            //editToggle("#div_icoment_{{ issue.id }}");
+        });
+    </script>
+{% endblock %}
+
+{% block mainContent%}
+
+    <div ng-app="fs" ng-controller="IssueCtrl">
+        <div class="content" align="center">
+        <div class="content-section" align="left">
+        <!-- Issue Title -->
+        <div>
+          <img src="{{issue.createdByUser.gravatar_url_medium}}">
+            {% if issue.project_id %}
+            <a href="{{ issue.project.get_view_link }}">{{issue.project.name}}</a> {% trans "Project" %}
+            {% else %}
+            <a href="javascript:;" ng-click='editToggle("#div_project_w_news")'>{% trans "Add idea to a project" %}</a>
+            {% endif %}
+            <div style="padding-top:10px">
+                {% with id='news' action='/issue/project/' %}
+                {% include 'issues/include/issueProject_form.html' %}
+                {% endwith %}
+            </div>
+        </div>
+            <h1 class="blue-text">
+                <a target="_blank" href="{{ issue.trackerURL }}"
+                   data-from="issue:{{issue.id}}"
+                   data-original_language="{{issue.language}}"
+                   class="lang_original_title"> {{ issue.title }} </a>
+            </h1>
+        <div style="display:flex">
+            {% include 'issues/include/issue_vote.html' %}
+            <div style="flex:1">
+                <div class="well lang_original_desc">
+                    {% if issue.description %}
+                        <markdown-text text="{{ issue.description }}"></markdown-text>
+                    {% else %}
+                        [No description]
+                    {% endif %}
+                </div>
+                <div style="text-align:right;padding-bottom:10px">
+                    {% for tag in issue.issue_tags %}
+<!--                        <a href="{% url 'issues_by_tag' tag.qid %}"><span class="label label-info">{{ tag.title }}</span></a>-->
+                        <span class="label label-info">{{ tag.title }}</span>
+                    {% endfor %}
+
+                    <a href class='translateToggle' data-trans_class="lang_original_title,lang_original_desc" style="margin-right:20px"></a>
+                    <a href ng-click='editToggle("#div_icoment_{{ issue.id }}")'>Issue Comments </a>
+                </div>
+                <div>
+                    {% include 'issues/include/issue_comments.html' %}
+                </div>
+            </div>
+        </div>
+
+        <!--Djangology add media and solution button-->
+        <div class="column-wrapper">
+
+        <!-- Issue Details -->
+        <div class="column fit">
+
+        <!--Djangology media carrousel-->
+        {% if issue.getMediaVideoOrImage %}
+            {% include 'issues/include/media_carrousel.html' %}
+        {% endif %}
+        <div>
+            {% with id='news' action='/issue/media/' %}
+                <a href="" class="fs-button blue" ng-click='editToggle("#div_media_w_{{ id }}")'><i class="fa fa-folder-open-o" aria-hidden="true"></i>Add new media</a>
+                {% include 'issues/include/media_form.html' %}
+            {% endwith %}
+        </div>
+        <!-- Tab Navigator -->
+            <div class="fs-tab-navigator">
+
+                <!-- Tab's Content -->
+                <div class="tab-content">
+                        <div>
+                            <div class="content_section_title">
+                                <h2>Proposals</h2>
+                            </div>
+                            <!--Djangology techsolutions-->
+                            {% include 'issues/include/issue_solution.html' %}
+                            <div>
+                                {% with id='news' action='/solution/' %}
+                                    {% include 'issues/include/techSolution_form_add.html' %}
+                                {% endwith %}
+                            </div>
+                        </div>
+
+                        <div class="content_section_title">
+                            <h2>Sponsors</h2>
+                        </div>
+                        <!-- Sponsors Tab -->
+                        <div class="" id="sponsors">
+
+                            <!-- Issue Sponsor Header-->
+                            <div class="fs-box">
+                                <div class="column-wrapper">
+                                    <div class="column" style="width:185px">
+                                        <span class="font-size-18 ubahn">Sponsor</span>
+                                    </div>
+                                    <div class="column fit">
+                                        <span class="font-size-18 ubahn">Offer</span>
+                                    </div>
+                                    <div class="column fit">
+                                        <span class="font-size-18 ubahn">Acceptance</span>
+                                    </div>
+                                    <div class="column fit centered-text">
+                                        <span class="font-size-18 ubahn">Status</span>
+                                    </div>
+                                    <div class="column fit">
+                                        <span class="font-size-18 ubahn">Date</span>
+                                    </div>
+                                    <div class="column fit">
+                                        <span class="font-size-18 ubahn">Expire Date</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if issue.getOffers %}
+                            {% for offer in issue.getOffers %}
+                                <!-- Issue Sponsor Row-->
+                                <div class="fs-box">
+                                    <div class="column-wrapper vcenter-content" style="height:50px;">
+                                        <!-- Sponsor-->
+                                        <div class="column" style="width:170px;padding-right:15px;">
+                                            <div class="column-wrapper vcenter-content">
+                                                <div class="user-picture"><img src="{{offer.sponsor.gravatar_url_medium}}"></div>
+                                                <div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+                                                <!-- Sponsor Name -->
+                                                <div class="column fit">
+                                                    <a href="{{ offer.sponsor.get_view_link }}" class="arial">{{ offer.sponsor.username }}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Offer -->
+                                        <div class="column fit">
+                                            <p>{{offer.get_currency_symbol}} {{offer.price_formatted}}</p>
+                                        </div>
+                                        <!-- Acceptance -->
+                                        <div class="column fit">
+                                            {% if offer.no_forking %}
+                                                <div>
+                                                    {#                            <i class="icon-home popopo" rel="popover" data-content="{% trans "Solution must be available in the main project codebase. Forking is not OK." %}" data-original-title="{% trans "No forking" %}"></i>#}
+                                                    No forking
+                                                </div>
+                                            {% endif %}
+                                            {% if offer.require_release %}
+                                                <div>
+                                                    {#                            <i class="icon-gift popopo" rel="popover" data-content="{% trans "Solution must be available as a new released version. Just commiting is not enough." %}" data-original-title="{% trans "Release required" %}"></i>#}
+                                                    Release required
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <a href ng-click="acceptance_popup({{ offer.id }})">[More...]</a>
+                                            </div>
+                                        </div>
+                                        <!-- Status -->
+                                        <div class="column fit text-align-center">
+                                            <p>{% if offer.is_expired %}{% trans "EXPIRED" %}{% else %}{{offer.status}}{% endif %}</p>
+                                        </div>
+                                        <!-- Date -->
+                                        <div class="column fit">
+                                            <p><span title="{{ offer.creationDate }}">{{ offer.creationDate|date:"M/d/Y" }}</span></p>
+                                        </div>
+                                        <!-- Expire Date -->
+                                        <div class="column fit">
+                                            <p><span title="{{ offer.expirationDate }}">{{ offer.expirationDate|date:"M/d/Y" }}</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="content_empty">No sponsors yet</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade in" id="acceptance_modal">
+                            <div class="modal-dialog column-wrapper vertical">
+                                <div class="column fit"></div>
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" ng-click="close_modal('#acceptance_modal')" >&times;</button>
+                                        <span class="modal-title font-size-20 ubahn grey-text">{[{ current_offer.author }]}'s acceptance criteria</span>
+                                    </div>
+                                    <div class="divider small"></div>
+
+                                    <div class="modal-body" ng-bind-html-unsafe="current_offer.acceptance_criteria">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href ng-click="close_modal('#acceptance_modal')" class="fs-button green medium">Close</a>
+                                    </div>
+                                </div>
+                                <div class="column fit"></div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+
+            </div>
+
+            <div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+
+            <!-- Issue Overview -->
+            <div class="column medium issue-overview">
+<!--                <h3 class="boxed" style="margin-top:0">Overview</h3>-->
+                <div class="fs-box issue-creator">
+                    <div class="column-wrapper" style="align-items:center;justify-content: flex-start; gap: 4px;">
+                        <!-- Creator Picture-->
+                        <div class="user-picture"><img src="{{issue.createdByUser.gravatar_url_medium}}"></div>
+                        <!-- Creator Name-->
+                        <div style="flex:1">
+                            <div>
+                                <a href="{{ issue.createdByUser.get_view_link }}" class="arial font-size-14">{{ issue.createdByUser.username }}</a>
+                                <span class="arial">created</span>
+                            </div>
+                            <div>{{issue.createdByUser.getReputation}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+                <!-- Overview Info -->
+                <div class="fs-box push-footer overview-card">
+                    <a href="{{ issue.project.get_view_link }}"> <span class="font-size-18 darkblue-text ubahn issue-title"> {{ issue.project.name }}</span> </a>
+                    <div class="divider small"><!--Small Divider--></div>
+                    <!-- Issue Project Logo -->
+                    <a href="{{ issue.project.get_view_link }}">
+                        <div class="project-logo">
+                            linefix<img src="{{ issue.get_card_image }}"/>
+                        </div>
+                    </a>
+                    <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+                    <!--Issue Values-->
+                    <div class="issue-values">
+                        {% if issue.total_open_offers_usd or issue.total_open_offers_btc %}
+                            <h1 class="orange-text arial">
+                                {% if issue.total_open_offers_btc %}
+                                    <span>BTC {{ issue.total_open_offers_btc|floatformat:4 }}</span>
+                                {% endif %}
+                                {% if issue.total_open_offers_usd and issue.total_open_offers_btc %}<div class="vgap-5"><!-- Vertical Gap 5px --></div>{% endif %}
+                                {% if issue.total_open_offers_usd %}
+                                    <span>US$ {{ issue.total_open_offers_usd|floatformat:2 }}</span>
+                                {% endif %}
+                            </h1>
+                            <h4 class="orange-text arial">Offered</h4>
+                        {% endif %}
+                        </br>
+                        {% if issue.total_paid_offers_usd or issue.total_paid_offers_btc %}
+                            <h1 class="arial">
+                                {% if issue.total_paid_offers_btc %}
+                                    <span>BTC {{ issue.total_paid_offers_btc|floatformat:4 }}</span>
+                                {% endif %}
+                                {% if issue.total_paid_offers_usd and issue.total_paid_offers_btc %}<div class="vgap-5"><!-- Vertical Gap 5px --></div>{% endif %}
+                                {% if issue.total_paid_offers_usd %}
+                                    <span>US$ {{ issue.total_paid_offers_usd|floatformat:2 }}</span>
+                                {% endif %}
+                            </h1>
+                            <h4 class="arial">Paid</h4>
+                        {% endif %}
+                    </div>
+                    <!-- Issue Status -->
+                    <div class="card-status {{ issue.get_status }}"></div>
+                    <!-- Box Footer -->
+                    <div class="fs-box-footer">
+                        <watch-entity entity="ISSUE" objid="{{ issue.id }}" watching="watching" watch-link="watchLink"></watch-entity>
+                    </div>
+                </div>
+
+                <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+
+                <!-- Action Buttons -->
+                {% include 'issues/include/issue_offer_action_bar.html' %}
+                <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+                <!-- Issue Creator -->
+
+
+                <!-- Share Buttons -->
+                <h3 class="text-align-right">Help fund this issue. Share on:</h3>
+                <div class="text-align-right">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.freedomsponsors.org/issue/{{ issue.id }}" class="social-button facebook"></a>
+                    <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>
+                    <a href="https://twitter.com/intent/tweet?url=http://www.freedomsponsors.org/issue/{{ issue.id }}&text=US$ {{ issue.total_open_offers_usd }} bounty on {{SITE_NAME}}: {{ issue.title }}" class="social-button twitter"></a>
+                    <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>
+                    <a href="https://plus.google.com/share?url=http%3A%2F%2Fwww.freedomsponsors.org/issue/{{ issue.id }}" class="social-button google"></a>
+                </div>
+
+            </div>
+        </div>
+        </div>
+        </div>
+        </div>
+
+
+    </div>
+
+{% endblock %}

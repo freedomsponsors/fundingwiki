@@ -1,0 +1,33 @@
+{% load i18n %}
+
+{% if issue.getMediaVideoOrImage %}
+<div style="display:flex;">
+{% for media in issue.getMediaVideoOrImage %}
+<div class="media_item" style="padding:10px">
+    {% if media.url and media.type == "video" and media.video_iframe %}
+        <div class="video-container">
+            {{ media.video_iframe | safe }}
+            <div class="iframeBlocker"></div>
+        </div>
+    {% elif media.image_url and media.type == "image" %}
+        <a href="{{media.image_url}}" target="_blank">
+            <img src="{{media.image_url}}" alt="" style="width:200px">
+        </a>
+    {% endif %}
+
+    {% if media.title or media.content %}
+        <div class="">
+          <h4>{{media.title}}</h4>
+          <p style="color:#999">{{media.content}}</p>
+        </div>
+    {% endif %}
+</div>
+    <div class="carousel-content">
+
+    </div>
+
+{% endfor %}
+</div>
+{% else %}
+<div style="text-align:center;padding:10px">{% trans "The list is empty" %}</div>
+{% endif %}

@@ -1,0 +1,426 @@
+<div>
+    <div ng-repeat="activity in activities">
+        <div ng-switch on="activity.action">
+            <div ng-switch-when="EDIT_PROJECT">
+				<!-- Edit Project Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.username }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">edited project details.</span>
+								<a href ng-click="show_detail(activity)">View changes &raquo;</a>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="PROJECT_ADD_TAG">
+				<!-- Project Add Tag Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.username }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">added tag <span class="tag-list"><span class="tag">{[{ activity.new_json }]}</span></span> to project.</span>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="PROJECT_REMOVE_TAG">
+				<!-- Project Remove Tag Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.username }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">removed tag <span class="tag-list"><span class="tag">{[{ activity.new_json }]}</span></span> from project.</span>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="SPONSOR">
+				<!-- Sponsor Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.username }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text"><span class="green-text">sponsored</span> issue <a href="{[{ activity.issue.link }]}">{[{ activity.issue.title }]}</a> with a <span class="green-text">{[{ activity.new_dic.currency }]} {[{ activity.new_dic.price }]} offer</span>.</span>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="CHANGE_OFFER">
+				<!-- Change Offer Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.username }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">changed an offer on issue <a href="{[{ activity.issue.link }]}">{[{ activity.issue.title }]}</a> from <span class="green-text">USD 10</span> to <span class="green-text">USD 20</span>.</span>
+							</div>
+						</div>
+                    </div>
+                </div>
+				<!-- TODO old new-->
+            </div>
+            <div ng-switch-when="REVOKE">
+				<!-- Revoke Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.user_screenname }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">revoked an <span class="green-text">{[{ activity.new_dic.currency }]} {[{ activity.new_dic.price }]} offer</span> on issue <a href="{[{ activity.issue.link }]}">{[{ activity.issue.title }]}</a>. Why?</span>
+								<a href ng-click="show_detail(activity)">View comment &raquo;</a>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="PROPOSE">
+				<!-- Propose Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.user_screenname }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">proposed issue <a href="{[{ activity.issue.link }]}">{[{ activity.issue.title }]}</a>.</span>
+							</div>
+							<div class="card-status open" style="bottom:0"></div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="WORK">
+				<!-- Work Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.user_screenname }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">started working on issue <a href="{[{ activity.issue.link }]}">{[{ activity.issue.title }]}</a><span ng-hide="activity.issue_comment_content">.</span><span ng-show="activity.issue_comment_content"> and added a comment.</span>
+								<a href ng-click="show_detail(activity)" ng-show="activity.issue_comment_content">View comment &raquo;</a>
+							</div>
+							<div style="width:100px;"></div>
+						</div>
+						<div class="card-status working" style="bottom:0"></div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="ABORT">
+				<!-- Abort Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.user_screenname }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">stopped working on issue <a href="{[{ activity.issue.link }]}">{[{ activity.issue.title }]}</a>.</span><span ng-show="activity.issue_comment_content"> Why?</span>
+								<a href ng-click="show_detail(activity)" ng-show="activity.issue_comment_content">View comment &raquo;</a>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="RESOLVE">
+				<!-- Resolve Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.user_screenname }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">resolved issue <a href="{[{ activity.issue.link }]}">{[{ activity.issue.title }]}</a><span ng-hide="activity.issue_comment_content">.</span><span ng-show="activity.issue_comment_content"> and added a comment.</span>
+								<a href ng-click="show_detail(activity)" ng-show="activity.issue_comment_content">View comment &raquo;</a>
+								<div class="card-status done" style="bottom:0"></div>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="ADD_ISSUE_COMMENT">
+				<!-- Add Issue Comment Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.user_screenname }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">added a comment on issue <a href="{[{ activity.issue.link }]}">{[{ activity.issue.title }]}</a>.</span>
+								<a href ng-click="show_detail(activity)">View comment &raquo;</a>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="EDIT_ISSUE_COMMENT">
+				<!-- Edit Issue Comment Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.user_screenname }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">edited a comment on issue <a href="{[{ activity.issue.link }]}">{[{ activity.issue.title }]}</a>.</span>
+								<a href ng-click="show_detail(activity)">View changes &raquo;</a>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="PAY">
+				<!-- Payment Activity -->
+                <div class="column-wrapper">
+                    <div class="fs-box column fit">
+                        <div class="column-wrapper vcenter-content" style="height:50px;">
+							<div class="column">
+								<div class="user-picture"><a href="{[{ activity.user_link }]}"><img ng-src="{[{activity.user_image}]}"></a></div>
+							</div>
+							<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+							<!-- User Name / Date -->
+							<div class="column fit">
+								<div class="arial">
+									<a href="{[{ activity.user_link }]}" class="font-size-14" title="Click to see user profile">{[{ activity.user_screenname }]}</a><div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div><span class="light-grey-text font-size-12" title="{[{ activity.creationDate }]}">{[{ activity.when }]}</span>
+								</div>
+								<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+								<span class="light-grey-text">made a <span class="green-text">{[{ activity.payment.currency }]} {[{ activity.payment.total }]} payment</span> for issue <a href="{[{ activity.issue.link }]}">{[{ activity.issue.title }]}</a>.</span>
+                            </div>
+                        </div>
+						<div class="vgap-15"><!-- Vertical Gap 15px --></div>
+						<div class="reply-area">
+							<div ng-repeat="part in activity.payment.parts">
+								<div class="column-wrapper vcenter-content" style="height:40px;">
+									<div style="width:50px;" class="text-align-right">
+										<div><img class="user-picture thumb40" ng-src="{[{part.programmer_image}]}"></div>
+									</div>
+									<div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+									<div class="column fit">
+										<h4 class="arial no-margin font-size-12"><a href="{[{ part.programmer_link }]}">{[{ part.programmer_screenname }]}</a></h4>
+										<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+										<span>received<span class="green-text"> {[{ activity.payment.currency }]} {[{ part.price }]}</span></span>
+									</div>
+								</div>
+								<div ng-if="!$last" class="vgap-15"><!-- Vertical Gap 15px --></div>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-default>
+                Unknown activity: {[{activity.action }]}
+            </div>
+        </div>
+		<div class="vgap-15"><!-- Vertical Gap 15px --></div>
+    </div>
+    <div ng-show="loading"><img src="/static/img2/ajax-loader.gif"></div>
+    <div ng-show="show_more()">
+        <a href ng-click="more()" class="fs-button grey">More...</a>
+    </div>
+
+
+    <div class="modal fade in" id="activity_detail">
+        <div class="modal-dialog column-wrapper vertical">
+            <div class="column fit"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" onclick="$('#activity_detail').modal('hide')">&times;</button>
+                    <span class="modal-title font-size-20 ubahn grey-text">{[{ selected_activity.action }]}</span>
+                </div>
+                <div class="divider small"></div>
+                <div class="modal-body">
+                    <div ng-switch on="selected_activity.action">
+                        <div ng-switch-when="EDIT_PROJECT">
+                            <ul>
+                                <li>
+                                    old image: {[{ selected_activity.old_dic.image3x1 }]}
+                                </li>
+                                <li>
+                                    new image: {[{ selected_activity.new_dic.image3x1 }]}
+                                </li>
+                                <li>
+                                    old home URL: {[{ selected_activity.old_dic.homeURL }]}
+                                </li>
+                                <li>
+                                    new home URL: {[{ selected_activity.new_dic.homeURL }]}
+                                </li>
+                                <li>
+                                    old description:<br>
+                                    <pre>{[{ selected_activity.old_dic.description }]}</pre>
+                                </li>
+                                <li>
+                                    new description:<br>
+                                    <pre>{[{ selected_activity.new_dic.description }]}</pre>
+                                </li>
+                            </ul>
+                        </div>
+                        <div ng-switch-when="CHANGE_OFFER">
+                            <ul>
+                                <li>
+                                    old value: {[{ selected_activity.old_dic.currency }]} {[{ selected_activity.old_dic.price }]}
+                                </li>
+                                <li>
+                                    new value: {[{ selected_activity.new_dic.currency }]} {[{ selected_activity.new_dic.price }]}
+                                </li>
+                                <li>
+                                    old acceptance criteria:<br>
+                                    <pre>{[{ selected_activity.old_dic.acceptanceCriteria }]}</pre>
+                                </li>
+                                <li>
+                                    new acceptance criteria:<br>
+                                    <pre>{[{ selected_activity.new_dic.acceptanceCriteria }]}</pre>
+                                </li>
+                            </ul>
+                        </div>
+                        <div ng-switch-when="REVOKE">
+                            Revoke comment:
+                            <pre>
+                                {[{ selected_activity.issue_comment_content }]}
+                            </pre>
+                        </div>
+                        <div ng-switch-when="WORK">
+                            Work start comment:
+                            <pre>
+                                {[{ selected_activity.issue_comment_content }]}
+                            </pre>
+                        </div>
+                        <div ng-switch-when="ABORT">
+                            Abort work comment:
+                            <pre>
+                                {[{ selected_activity.issue_comment_content }]}
+                            </pre>
+                        </div>
+                        <div ng-switch-when="RESOLVE">
+                            Resolve comment:
+                            <pre>
+                                {[{ selected_activity.issue_comment_content }]}
+                            </pre>
+                        </div>
+                        <div ng-switch-when="ADD_ISSUE_COMMENT">
+                            New comment:
+                            <pre>
+                                {[{ selected_activity.issue_comment_content }]}
+                            </pre>
+                        </div>
+                        <div ng-switch-when="EDIT_ISSUE_COMMENT">
+                            <ul>
+                                <li>
+                                    old comment:<br>
+                                    <pre>{[{ selected_activity.old_dic.content }]}</pre>
+                                </li>
+                                <li>
+                                    new comment:<br>
+                                    <pre>{[{ selected_activity.new_dic.content }]}</pre>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer inline-content">
+                    <div class="column-wrapper vcenter-content" style="height:28px;">
+                        <div class="hgap-15 inline"><!-- Horizontal Gap 15px --></div>
+                        <div><a href="#" onclick="$('#activity_detail').modal('hide')" class="fs-button green medium">OK</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="column fit"></div>
+        </div>
+    </div>
+
+</div>

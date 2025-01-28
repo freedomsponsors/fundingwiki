@@ -1,0 +1,77 @@
+{% extends "issues/base.html" %}
+
+{% block title %}
+    Change username
+{% endblock %}
+
+{% block head %}
+    <script>
+        if(!window.FS){
+            window.FS = {};
+        }
+        FS.dependencies = ['fsapi'];
+    </script>
+    <script src="/static/js/angular.min.js"></script>
+    <script src="/static/js/angular-sanitize.min.js"></script>
+    <script src="/static/js-generated/fs.js"></script>
+    <script>
+        angular.module('fs').controller('ChangeUsernameCtrl', function ChangeUsernameCtrl($scope, FSApi){
+            $scope.new_username = '{{ user.username }}';
+
+            $scope.keypress = function(evt){
+                if(evt.charCode == 13){
+                    $scope.check();
+                    evt.preventDefault();
+                }
+                return false;
+            };
+
+            $scope.check = function(){
+                $scope.checking = true;
+                var new_username = $scope.new_username;
+                FSApi.check_username_availability(new_username).onResult(function(result){
+                    $scope.$apply(function(){
+                        $scope.available = result.ok;
+                        $scope.message = result.message;
+                        $scope.checking = false;
+                    });
+                });
+            }
+
+            $scope.submit = function(){
+                $('#le_form').submit();
+            }
+        });
+
+    </script>
+{% endblock head %}
+
+
+{% block mainContent%}
+<div class="content" align="center" ng-app="fs" ng-controller="ChangeUsernameCtrl">
+    <div class="content-section" align="left">
+    {% if can_change %}
+        <h2>Change username</h2>
+        <h3 class="blue-text">Attention: you can only change your username once. Make it a good one :-)</h3>
+        <hr>
+        <form id="le_form" method="post" action="/user/change_username">
+            {% csrf_token %}
+            <div>
+                New username:
+                <input type="text" name="new_username"
+                       ng-model="new_username"
+                       ng-keypress="keypress($event)">
+                <a href ng-click="check()" class="fs-button blue medium">Available?</a>
+                <a href ng-show="available" class="fs-button green medium" ng-click="submit()">Change!</a>
+            </div>
+            <div>
+                <img src="/static/img2/ajax-loader.gif" ng-show="checking">
+                <h2 ng-class="{success:available, fail:!available}">{[{ message }]}</h2>
+            </div>
+        </form>
+    {% else %}
+        <h3>You already changed your username.</h3>
+    {% endif %}
+    </div>
+</div>
+{% endblock mainContent%}

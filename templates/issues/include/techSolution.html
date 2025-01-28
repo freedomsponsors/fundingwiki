@@ -1,0 +1,88 @@
+{% load markdown %}
+{% load i18n %}
+{% load extras %}
+<!-- TechSolution Djangology -->
+<div class="column-wrapper">
+    <div class="fs-box push-footer column fit" id="div_tsolution_r_{{ solution.id }}">
+        <div id="solution-{{ solution.id }}">
+            <div id="bootstrap-content">
+                {% autoescape off %}
+                    <markdown-text class="solution_{{solution.id}}"
+                                   data-from="solution:{{solution.id}}"
+                                   data-original_language="{{solution.language}}"
+                                   text="{{ solution.content }}"></markdown-text>
+                {% endautoescape %}
+            </div>
+        </div>
+        <!-- solution Footer -->
+        <div class="fs-box-footer card-footer">
+            <div class="column-wrapper">
+                <div class="column fit" style="flex:2">
+                    <span>{{ solution.creationDate|date:"D, d/M/Y" }}</span>
+                    <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>
+                    <a href="/solution/{{solution.id}}" ><i class="fa fa-external-link" aria-hidden="true"></i></a>
+                    <a href="#sol{{ solution.id }}">Permalink</a>
+                    <a href ng-click='editToggle("#div_tcoment_{{ solution.id }}")'>Comments</a>
+                    {% if solution.getHistEvents %}
+                        <a href ng-click='editToggle("#div_trevision_{{ solution.id }}")'>Revisions</a>
+                    {% endif %}
+
+                    <a class="translateToggle" data-trans_class="solution_{{solution.id}}" style="margin-left:10px"></a>
+                </div>
+
+                {% ifequal solution.createdByUser.id user.id %}
+                    <div class="column fit" align="right">
+                        <a href ng-click='editToggle("#div_tsolution_w_{{ solution.id }}", "#div_tsolution_r_{{ solution.id }}")'>Edit</a>
+                        <delete-button action="/solution/{{ solution.id }}" ></delete-button>
+                        <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>
+                    </div>
+                {% endifequal %}
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display:flex;flex-direction: row-reverse;">
+    <div class="" style="display:flex;padding:4px">
+        <img src="{{solution.createdByUser.gravatar_url_medium}}" style="width:40px;height:40px">
+        <div style="padding-left:4px">
+           <a href="{{ solution.createdByUser.get_view_link }}" >{{solution.createdByUser.username}}</a>
+            <div>{{solution.createdByUser.getReputation}}</div>
+        </div>
+    </div>
+</div>
+
+<!--Edit tech solution-->
+{% ifequal solution.createdByUser.id user.id %}
+    {% with id=solution.id %}
+        {% include 'issues/include/techSolution_form.html' %}
+    {% endwith %}
+{% endifequal %}
+
+<!--Comments of the  tech solution-->
+<div id='div_tcoment_{{ solution.id }}' style="display: none">
+{% for comment in solution.getComments %}
+    {% if forloop.counter > 1 %}
+        <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+    {% endif %}
+    {% with action='/solution/comment/'|addstr:comment.id section='/sol'|addstr:solution.id from='solution_comments' %}
+        {% include 'issues/include/comment.html' %}
+    {% endwith %}
+{% endfor %}
+
+<!-- Leave a Comment -->
+<div class="vgap-15"><!-- Vertical Gap 60px --></div>
+    {% if user and user.is_authenticated %}
+        {% with  id='tcom'|addstr:solution.id action='/solution/'|addstr:solution.id|addstr:'/comment/' %}
+            {% include 'issues/include/comment_add.html' %}
+        {% endwith %}
+    {% endif %}
+</div>
+<!--diff of tech solution-->
+{% if solution.getHistEvents %}
+    {% with actual=solution %}
+        <div id='div_trevision_{{ solution.id }}' style="display: none">
+        {% include 'issues/include/history_list.html' %}
+    {% endwith %}
+    </div>
+{% endif %}
+

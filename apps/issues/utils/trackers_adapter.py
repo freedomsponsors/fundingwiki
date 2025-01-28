@@ -1,10 +1,10 @@
 import html2text
 import httplib2
-from urlparse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs
 import re
 from xml.dom.minidom import parseString
 import json
-from core.services.mail_services import notify_admin
+from apps.issues.services.mail_services import notify_admin
 from django.conf import settings
 import socket
 import urllib
@@ -41,7 +41,7 @@ def fetchIssueInfo(issueURL):
         info = IssueInfo()
 
     if info.error:
-        print 'Error fetching info for: '+issueURL+' - '+info.error
+        print ('Error fetching info for: '+issueURL+' - '+info.error)
         notify_admin('Error fetching info for: '+issueURL, info.error)
     return info
 

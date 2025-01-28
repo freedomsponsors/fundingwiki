@@ -1,0 +1,102 @@
+<!--List to show hist events-->
+{% if from and to %}
+    <script type="text/javascript" src="/static/bootstrap/js/difflib-browser.js"></script>
+    <script type="text/javascript" src="/static/bootstrap/js/diff2html.min.js"></script>
+    <script type="text/javascript" src="/static/bootstrap/js/diff2html-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/diff2html.min.css">
+{% endif %}
+<div  ng-controller="RevisionController{{actual.getHistType}}{{actual.id}}">
+    <div>
+        <h2><a href="{{actual.getUrl}}/history">[Revision history for {{actual.getHistType}}] {{actual.title}}</a></h2>
+    </div>
+    <h3><a href ng-click='editToggle("#revision_{{ actual.id }}")'>Revisions</a></h3>
+    {% if from and to %}
+    <div id="revision_{{actual.id}}" class="column-wrapper revisionlist" style="display:none;">
+    {% else %}
+    <div id="revision_{{actual.id}}" class="column-wrapper revisionlist">
+    {% endif %}
+        <div class="column">
+            <h3>Number of revisions: {{actual.getHistEvents.count}}</h3>
+            <h4>Created on: {{actual.creationDate}}</h4>
+            <h3>Compare</h3>
+            <button type="submit" class="btn btn-success" ng-click="btnCompare()">Compare</button>
+        </div>
+        <div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+        <ul>
+            <li>
+                <span><input type="radio" name="from"  value='0' ng-model="from" required></span>
+                <span><input type="radio" name="to"  value='0' ng-model="to" required></span>
+                <span>LAST</span>
+                <span> - </span>
+                <span>{{actual.updatedDate}}</span>
+            </li>
+        {% for revision in actual.getHistEvents %}
+            <li>
+                <span><input type="radio" name="from"  value='{{revision.id}}' ng-model="from"></span>
+                <span><input type="radio" name="to"  value='{{revision.id}}' ng-model="to" selected></span>
+                <span>{{revision.event}}</span>
+                <span> - </span>
+                <span>{{revision.eventDate}}</span>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% if from and to %}
+    <div id="diffContainer" class="column-wrapper" >
+
+    </div>
+    {% endif %}
+</div>
+    <script>
+    function RevisionController{{actual.getHistType}}{{actual.id}}($scope, editToggle) {
+        $scope.editToggle = editToggle
+
+        $scope.validIds = []
+        $scope.validIds.push("0")
+        {% for revision in actual.getHistEvents %}
+            $scope.validIds.push("{{revision.id}}")
+        {% endfor %}
+        $scope.btnCompare = function (){
+            if ($scope.validIds.includes($scope.from.toString()) && $scope.validIds.includes($scope.to.toString())){
+                window.location.href = '{{actual.getUrl}}/compare?from='+$scope.from+'&to='+$scope.to;
+            }
+        }
+        {% if from and fromPk %}
+            $scope.from = {{fromPk}}
+        {% endif %}
+        {% if to and toPk %}
+            $scope.to = {{toPk}}
+        {% endif %}
+
+        {% if from and to %}
+            var unifiedDiff = ""
+            {% for title, value in compare.items %}
+                sFrom = `{{value.from}}`
+                sTo = `{{value.to}}`
+                var sUnifiedDiff = difflib.unifiedDiff(
+                                                    sFrom.split("\n"),
+                                                    sTo.split("\n"),{
+                                                    fromfile:'From {{title}}',
+                                                    tofile:'To {{title}}',
+                                                    fromfiledate: '{{ from.eventDate |date:"M/d/Y h:m:s" }}',
+                                                    tofiledate: '{{ to.eventDate |date:"M/d/Y h:m:s" }}',
+                                                    })
+
+                for (i = 0; i < sUnifiedDiff.length; i++) {
+                    if (!sUnifiedDiff[i].endsWith("\n")){
+                        sUnifiedDiff[i] = sUnifiedDiff[i].concat("\n")
+                    }
+                }
+                sUnifiedDiff = sUnifiedDiff.join("")
+                unifiedDiff = unifiedDiff + sUnifiedDiff
+            {% endfor %}
+
+            var diff2htmlUi = new Diff2HtmlUI({diff: unifiedDiff});
+            diff2htmlUi.draw('#diffContainer',
+                            { inputFormat: 'diff', showFiles: true, matching: 'lines', outputFormat: 'side-by-side' });
+            diff2htmlUi.fileListCloseable('#diffContainer', false);
+
+        {% endif %}
+    }
+
+</script>

@@ -1,0 +1,15 @@
+<div>
+    <div style="font-weight: 700;font-size:18px">Related tags</div>
+    {% for key, value in related_tags.items %}
+    <div style="display:flex;margin-top:10px">
+        <div>
+            <span class="label label-info tag_item_related"
+                  data-qid="{{ key }}"
+                  data-title="{{value.title}}"
+                  data-description="{{value.description}}"
+                  style="cursor:pointer">{{value.title}}</span>
+        </div>
+        <div><span style="padding:0 4px">x</span>{{value.count}}</div>
+    </div>
+    {%endfor%}
+</div>

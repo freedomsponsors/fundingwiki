@@ -1,0 +1,85 @@
+<!-- Header -->
+<div class="header" align="center">
+    <!-- Header Top Section-->
+    <div class="header-top-section" align="right">
+        {% if user and user.is_authenticated %}
+            <div class="dropdown-button">
+                <a class="dropdown-label" id="drop_user" data-toggle="dropdown" href="#">
+                    {{ user.username }}
+                    <span class="arrow-down"></span>
+                </a>
+                <ul id="menu1" class="dropdown-menu" aria-labelledby="drop_user">
+                    <li><a href="{{ user.get_view_link }}">View Profile</a></li>
+                    <li><a href="/user/edit">Edit Profile</a></li>
+                    {% if user.has_usable_password %}
+                        <li><a href="/accounts/password/change">Change password</a></li>
+                    {% endif %}
+                    <li class="divider"></li>
+                    <li><a href="/myissues">My issues</a></li>
+                    {% if user.github_username %}
+                        <li class="divider"></li>
+                        <li><a href="/github/configure">Github Settings</a></li>
+                    {% endif %}
+                    <li class="divider"></li>
+                    <li><a href="/logout">Sign Out</a></li>
+                </ul>
+            </div>
+        {% else %}
+            <div class="login-section">
+                Login or Sign up with:
+                <a href="/login/google-openidconnect" rel="nofollow" class="social-login google"></a>
+                <a href="/login/github" rel="nofollow" class="social-login github"></a>
+                <a href="/login/facebook" rel="nofollow" class="social-login facebook"></a>
+                <a href="/login/twitter" rel="nofollow" class="social-login twitter"></a>
+                <a href="/login">More »</a>
+            </div>
+        {% endif %}
+    </div>
+    <!-- Header Middle Section-->
+    <div class="header-middle-section  border-box">
+        <div class="column-wrapper vcenter-content">
+            <div class="column fit">
+                <a href="/" class="menu-option">Home</a>
+                <a href="/search" class="menu-option">Search</a>
+                <a href="/stats" class="menu-option">Stats</a>
+                <a href="/faq" class="menu-option">FAQ</a>
+                <a href="/feedback" class="menu-option">Feedback</a>
+                <a class="menu-option" id="switch_to_new" href="javascript:;">switch to new look</a>
+            </div>
+            <div>
+                <form method="get" action="/search">
+                    <input name="s" type="text" placeholder="Quick search" class="fs-input medium black search right"/>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Header Bottom Section-->
+    <div class="header-bottom-section">
+        {% if crumbs %}
+        <div class="breadcumb-section left">
+            You are here: {
+				<span class="breadcumbs-list">
+                    {% for crumb in crumbs %}
+                        {% if forloop.counter > 1 %}
+                            /
+                        {% endif %}
+                        <a href="{{ crumb.link }}" {% if crumb.blank %}target="_blank"{% endif %} >{{ crumb.name }}</a>
+                    {% endfor %}
+				</span>
+            };
+        </div>
+        {% endif %}
+        <div class="buttons-section right">
+            <a href="" class="fs-button square blue mini">+</a><a href="/issue/add?operation=KICKSTART" class="propose-new font-size-14 blue-text">Propose new issue</a>
+        </div>
+    </div>
+</div>
+{% csrf_token %}
+<script type="text/javascript">
+  $('#switch_to_new').click(function(){
+    var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val()
+    $.post('/home/switchOldPage', {csrfmiddlewaretoken:csrfmiddlewaretoken, to:'new'}, function(res){
+      window.location.reload()
+    });
+  });
+</script>

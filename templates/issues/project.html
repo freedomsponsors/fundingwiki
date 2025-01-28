@@ -1,0 +1,401 @@
+{% extends "issues/base.html" %}
+{% load i18n %}
+{% load markdown %}
+{% load l10n %}
+
+{% block title %}
+    Project {{ project.name }}
+{% endblock %}
+
+
+{% block head %}
+    <script>
+        if(!window.FS){
+            window.FS = {};
+        }
+        FS.dependencies = ['issuecards', 'angularutils', 'taglist', 'activitylist', 'fswatch', 'contenteditable'];
+    </script>
+    <script src="/static/js/angular.min.js"></script>
+    <script src="/static/js/angular-sanitize.min.js"></script>
+    <script src="/static/js-generated/fs.js"></script>
+    <script src="/static/bootstrap/js/markdown-it.min.js"></script>
+    <script src="/static/bootstrap/js/markdown-it-task-lists.min.js"></script>
+    <script src="/static/js/markdown-it-djangology-flavoured.js"></script>
+    <script src="/static/js/translate.js"></script>
+    <script>
+        angular.module('fs').controller("MyCtrl", function($scope){
+            $scope.tags = {{ tags|safe }};
+            $scope.authenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+            $scope.watching = 'True' == '{{ is_watching }}';
+            $scope.watchLink = '';
+            if(!$scope.authenticated){
+                $scope.watchLink = '/login?next=/project/{{ project.id }}';
+            }
+
+            var issues_sponsoring = {{ issues_sponsoring|safe }};
+            for(var i=0; i < issues_sponsoring.length; i++){
+                var issue = issues_sponsoring[i];
+                issue.four_sponsors_places = get4Sponsors(issue);
+            }
+
+            $scope.issues_sponsoring = issues_sponsoring;
+            $scope.issues_proposed = {{ issues_kickstarting|safe }};
+
+        });
+    </script>
+{% endblock %}
+
+
+{% block mainContent%}
+    <div class="content" align="center" ng-app="fs" ng-controller="MyCtrl">
+    <div class="home-content-section" align="left">
+    <!-- Project Header -->
+    <div style="height:160px">
+        <div class="column-wrapper vcenter-content">
+            <!-- Project Logo -->
+            <div class="column fit text-align-center">
+                <img src="{{ project.get_image3x1 }}" style="max-height:140px;max-width:450px;"/>
+            </div>
+            <div class="hgap-15 inline"><!-- Horizontal Gap 15px --></div>
+            <!-- Project Stats -->
+            <div class="column" style="width:200px;">
+                <!-- BarGraph -->
+                <div class="column-wrapper">
+                    <div class="column">
+                        <div class="column-wrapper fs-bargraph bottom-align-content" style="height:100px">
+                            <div class="bar green" style="height:{{ stats.percent_usd_paid }}%" title="US$ {{ stats.usd_paid|floatformat:2 }} already paid to developers"><!-- US$ Paid GraphBar --></div>
+                            <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>
+                            <div class="bar" style="height:{{ stats.percent_usd_open }}%" title="US$ {{ stats.usd_open|floatformat:2 }} being offered to developers on issues"><!-- US$ Open GraphBar --></div>
+                        </div>
+                        <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+                        <h4 class="arial text-align-center">US$</h4>
+                    </div>
+                    <div class="column">
+                        <div class="column-wrapper fs-bargraph bottom-align-content" style="height:100px">
+                            <div class="bar green" style="height:{{ stats.percent_btc_paid }}%" title="BTC {{ stats.btc_paid|floatformat:4 }} already paid to developers"><!-- BTC Paid GraphBar --></div>
+                            <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>
+                            <div class="bar" style="height:{{ stats.percent_btc_open }}%" title="BTC {{ stats.btc_open|floatformat:4 }} being offered to developers on issues"><!-- BTC Open GraphBar --></div>
+                        </div>
+                        <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+                        <h4 class="arial text-align-center">BTC</h4>
+                    </div>
+                    <div class="column">
+                        <div class="column-wrapper fs-bargraph bottom-align-content" style="height:100px">
+                            <div class="bar green" style="height:{{ stats.percent_issues_done }}%" title="{{ stats.issues_done }} issues solved"><!-- Issues Solved GraphBar --></div>
+                            <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>
+                            <div class="bar" style="height:{{ stats.percent_issues_open }}%" title="{{ stats.issues_open }} issues open"><!-- Issues Open GraphBar --></div>
+                        </div>
+                        <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+                        <h4 class="arial text-align-center">Issues</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="column-wrapper">
+        <!-- Project Info -->
+        <div class="column fit">
+            <div class="fs-box border-box" style="min-height:166px;">
+                <div class="column-wrapper">
+                    <!-- Project Name -->
+                    <div class="column fit">
+                        <h3 class="arial green-text">{{ project.name }}</h3>
+                    </div>
+                    <!-- Buttons -->
+                    <div>
+                        <a class="iconized edit" href="/project/{{ project.id }}/edit">edit project</a>
+                        <div class="hgap-10 inline"><!-- Horizontal Gap 10px --></div>
+                        <watch-entity entity="PROJECT" objid="{{ project.id }}" watching="watching" watch-link="watchLink"></watch-entity>
+                    </div>
+                </div>
+				<span class="word-break">Official site: <a class="external-link" href="{{ project.homeURL }}">{{ project.homeURL }}</a></span>
+				<div class="vgap-5"><!-- Vertical Gap 5px --></div>
+				<span class="word-break">Issue tracker: <a class="external-link" href="{{ project.trackerURL }}">{{ project.trackerURL }}</a></span>
+				<div class="vgap-15"><!-- Vertical Gap 15px --></div>
+{#              <p class="text-align-justify" style="min-height:52px;"><markdown-text text="{{ project.description }}"></markdown-text></p>#}
+                <div id="bootstrap-content" class="text-align-justify">
+                    <markdown-text class="project_desc"
+                                   data-original_language="{{project.language}}"
+                                   text="{{ project.description }}"></markdown-text>
+                </div>
+                <div><a href class="translateToggle" data-trans_class="project_desc"></a></div>
+                <!-- Tags -->
+				<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+                <div class="tag-list" ng-show="false"> <!-- SEO -->
+                    {% for tag in project.get_tags %}
+                    <a href="" class="tag">{{ tag }}</a>
+                    {% endfor %}
+                </div>
+                <div class="tag-list">
+                    <taglist tags="tags" type="Project" objid="{{ project.id }}" editable="authenticated"></taglist>
+                </div>
+            </div>
+        </div>
+        <div class="hgap-15 inline"><!-- Horizontal Gap 15px --></div>
+        <!-- Stats Info -->
+        <div class="column" style="width:200px;">
+            <div class="fs-box border-box">
+                <h4 class="arial">Total Offered</h4>
+                <div><span class="green-text" title="US$ {{ stats.usd_paid|floatformat:2 }} already paid to developers">US$ {{ stats.usd_paid|floatformat:2 }}</span> / <span title="US$ {{ stats.total_usd|floatformat:2 }} offered to developers on issues">{{ stats.total_usd|floatformat:2 }}</span></div>
+                <div class="vgap-5"><!-- Vertical Gap 5px --></div>
+                <div><span class="green-text" title="BTC {{ stats.btc_paid|floatformat:4 }} already paid to developers">BTC {{ stats.btc_paid|floatformat:4 }}</span> / <span title="BTC {{ stats.total_btc|floatformat:4 }} being offered to developers on issues">{{ stats.total_btc|floatformat:4 }}</span></div>
+                <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+                <h4 class="arial">Total Issues</h4>
+                <p><span class="green-text" title="{{ stats.issues_done }} issues solved">{{ stats.issues_done }} Solved</span> / <span title="{{ stats.issues_open }} issues open">{{ stats.issues_open }} Open</span></p>
+            </div>
+        </div>
+    </div>
+    <div class="vgap-15"><!-- Vertical Gap 15px --></div>
+    <div class="column-wrapper vcenter-content" style="height:90px;">
+        <div class="hgap-30 inline"><!-- Horizontal Gap 30px --></div>
+        <!-- Top Sponsors -->
+        <div class="column fit">
+            <p class="font-size-16 text-align-center">Top Sponsors</p>
+            <div class="column-wrapper">
+                {% for sponsor in top_sponsors %}
+                    <div class="user-picture" title="{{ sponsor.username }}">
+                        <a href="{{ sponsor.get_view_link }}">
+                            <img src="{{ sponsor.gravatar_url_medium }}">
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="text-align-center" style="padding:30px 30px 0 30px;width:100px"><img src="/static/img2/top_list_img.png" style="width:100%;"></div>
+        <!-- Top Programmers -->
+        <div class="column fit">
+            <p class="font-size-16 text-align-center">Top Programmers</p>
+            <div class="column-wrapper">
+                {% for programmer in top_programmers %}
+                    <div class="user-picture" title="{{ programmer.username }}">
+                        <a href="{{ programmer.get_view_link }}">
+                            <img src="{{ programmer.gravatar_url_medium }}">
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="hgap-30 inline"><!-- Horizontal Gap 30px --></div>
+    </div>
+
+    <div class="divider"><!-- Divider --></div>
+
+    <!-- TODO: Insert Project Issues List HERE -->
+
+    <!-- Tab Navigator -->
+    <div class="fs-tab-navigator">
+
+        <!-- Tab's List -->
+        <ul class="tab-list" id="myTab">
+            <li class="active"><a href="#issues" data-toggle="tab">Issues</a></li>
+{#            <li><a href="#comunity" data-toggle="tab">Comunity</a></li>#}
+            <li><a href="#activities" data-toggle="tab">Activities</a></li>
+        </ul>
+
+        <!-- Tab's Content -->
+        <div class="tab-content">
+
+            <!-- Issues Tab -->
+            <div class="tab-pane active" id="issues">
+                <!-- Sponsored Issues -->
+                <issue-cards issues="issues_sponsoring" label="Sponsored Issues" sponsoring="true" project-id="{{ project.id }}"></issue-cards>
+
+                <div class="divider"><!-- Divider --></div>
+
+                <!-- Proposed Issues -->
+                <issue-cards issues="issues_proposed" label="Proposed Issues" sponsoring="false" project-id="{{ project.id }}"></issue-cards>
+            </div>
+
+            <!-- Comunity Tab -->
+{#            <div class="tab-pane" id="comunity">#}
+{#                <div class="fs-box">#}
+{#                    <p>Insert some text about the community tab here. What people can do here?</p>#}
+{#                </div>#}
+{#                <!-- Leave a Comment -->#}
+{#                <div class="vgap-15"><!-- Vertical Gap 60px --></div>#}
+{#                <div class="column-wrapper">#}
+{#                    <div class="column">#}
+{#                        <div class="user-picture"></div>#}
+{#                    </div>#}
+{#                    <div class="hgap-15"><!-- Horizontal Gap 15px --></div>#}
+{#                    <div class="column fs-box fit">#}
+{#                        <textarea class="no-margin" rows="3"></textarea>#}
+{#                        <div class="column-wrapper vcenter-content" style="height:26px;margin-top:10px;">#}
+{#                            <div class="column-fit"><p class="no-margin">You can use <a href="http://blog.freedomsponsors.org/markdown_formatting/" class="external-link">markdown</a> for formatting </p></div>#}
+{#                            <div class="text-align-right"><a href="" class="fs-button blue medium">Submit</a></div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{##}
+{##}
+{#                <div class="divider"><!-- Divider --></div>#}
+{##}
+{#                <!-- Comment -->#}
+{#                <div class="column-wrapper">#}
+{#                    <div class="column">#}
+{#                        <div class="user-picture"></div>#}
+{#                    </div>#}
+{#                    <div class="hgap-15"><!-- Horizontal Gap 15px --></div>#}
+{#                    <div class="fs-box column fit">#}
+{#                        <!-- Comment Header -->#}
+{#                        <div class="column-wrapper vcenter-content" style="height:16px;">#}
+{#                            <!-- User Name / Date -->#}
+{#                            <div class="column inline-content">#}
+{#                                <h4 class="arial no-margin"><a href="" title="Click to see user profile">Rafael Augusto</a></h4>#}
+{#                                <div class="hgap-5"><!-- Horizontal Gap 5px --></div>#}
+{#                                <span class="font-size-11 light-grey-text">Aug/20/2013</span>#}
+{#                            </div>#}
+{#                            <!-- Buttons -->#}
+{#                            <div class="column fit" align="right">#}
+{#                                <a href="" class="iconized link icon-only" title="Copy permalink to clipboard"></a>#}
+{#                                <div class="hgap-5 inline "><!-- Horizontal Gap 5px --></div>#}
+{#                                <a href="" class="iconized edit icon-only" title="Edit comment"></a>#}
+{#                                <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>#}
+{#                                <a href="" class="iconized delete icon-only" title="Delete comment"></a>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="vgap-10"><!-- Vertical Gap 10px --></div>#}
+{#                        <!-- Comment Text -->#}
+{#                        <p>Hi - I saw your comment on the issue and the related new issue https://drupal.org/node/2087487.#}
+{#                            If there is a way to configure the Webform textfield to use the WYSIWYG editor and not rely on the#}
+{#                            additional module, then that is also an acceptable outcome here (and preferred as it is one less#}
+{#                            module to use).</p><p>For me, an alternative and good outcome would be instructions on how to enable#}
+{#                        and use a WYSIWYG editor on the Webform textfield. I need the default text in the Webform to be HTML#}
+{#                        with links and enable the user to enter additional text as HTML as well.</p>#}
+{#                        <!-- Comment Reply Area -->#}
+{#                        <div class="reply-area"><!-- TODO: ng-class="reply-area:replies.length>=1" -->#}
+{#                            <!-- Reply -->#}
+{#                            <div class="column-wrapper"><!-- TODO: ng-repeat-start="reply in replies" -->#}
+{#                                <div class="column">#}
+{#                                    <div class="user-picture thumb40"></div>#}
+{#                                </div>#}
+{#                                <div class="hgap-15"><!-- Horizontal Gap 15px --></div>#}
+{#                                <div class="column fit">#}
+{#                                    <!-- Reply Header -->#}
+{#                                    <div class="column-wrapper vcenter-content" style="height:16px;">#}
+{#                                        <!-- User Name / Date -->#}
+{#                                        <div class="column inline-content">#}
+{#                                            <h4 class="arial no-margin"><a href="" title="Click to see user profile">Rafael Augusto</a></h4>#}
+{#                                            <div class="hgap-5"><!-- Horizontal Gap 5px --></div>#}
+{#                                            <span class="font-size-11 light-grey-text">Aug/20/2013</span>#}
+{#                                        </div>#}
+{#                                        <!-- Buttons -->#}
+{#                                        <div class="column fit" align="right">#}
+{#                                            <a href="" class="iconized link icon-only tooltip" title="Copy permalink to clipboard"></a>#}
+{#                                            <div class="hgap-5 inline "><!-- Horizontal Gap 5px --></div>#}
+{#                                            <a href="" class="iconized edit icon-only" title="Edit comment"></a>#}
+{#                                            <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>#}
+{#                                            <a href="" class="iconized delete icon-only" title="Delete comment"></a>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                    <div class="vgap-10"><!-- Vertical Gap 10px --></div>#}
+{#                                    <!-- Reply Text -->#}
+{#                                    <p>For me, an alternative and good outcome would be instructions on how to enable#}
+{#                                        and use a WYSIWYG editor on the Webform textfield. I need the default text in the Webform to be HTML#}
+{#                                        with links and enable the user to enter additional text as HTML as well.</p>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="vgap-15"><!-- Vertical Gap 15px --></div><!-- TODO: ng-repeat-end ng-if="!$last" -->#}
+{#                            <!-- Reply -->#}
+{#                            <div class="column-wrapper"><!-- TODO: delete example" -->#}
+{#                                <div class="column">#}
+{#                                    <div class="user-picture thumb40"></div>#}
+{#                                </div>#}
+{#                                <div class="hgap-15"><!-- Horizontal Gap 15px --></div>#}
+{#                                <div class="column fit">#}
+{#                                    <!-- Reply Header -->#}
+{#                                    <div class="column-wrapper vcenter-content" style="height:16px;">#}
+{#                                        <!-- User Name / Date -->#}
+{#                                        <div class="column inline-content">#}
+{#                                            <h4 class="arial no-margin"><a href="" title="Click to see user profile">Rafael Augusto</a></h4>#}
+{#                                            <div class="hgap-5"><!-- Horizontal Gap 5px --></div>#}
+{#                                            <span class="font-size-11 light-grey-text">Aug/20/2013</span>#}
+{#                                        </div>#}
+{#                                        <!-- Buttons -->#}
+{#                                        <div class="column fit" align="right">#}
+{#                                            <a href="" class="iconized link icon-only tooltip" title="Copy permalink to clipboard"></a>#}
+{#                                            <div class="hgap-5 inline "><!-- Horizontal Gap 5px --></div>#}
+{#                                            <a href="" class="iconized edit icon-only" title="Edit comment"></a>#}
+{#                                            <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>#}
+{#                                            <a href="" class="iconized delete icon-only" title="Delete comment"></a>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                    <div class="vgap-10"><!-- Vertical Gap 10px --></div>#}
+{#                                    <!-- Reply Text -->#}
+{#                                    <p>I am putting this enhancement request here so I can point freedomcoders to it, to get some funding to program it.</p>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <!-- Add Reply -->#}
+{#                            <div class="column-wrapper add-reply content-box">#}
+{#                                <div class="column">#}
+{#                                    <div class="user-picture thumb22"></div>#}
+{#                                </div>#}
+{#                                <div class="hgap-15"><!-- Horizontal Gap 15px --></div>#}
+{#                                <div class="column fit">#}
+{#                                    <textarea placeholder="Add you comment..." rows="1" class="no-margin"></textarea><!-- TODO: resize textarea height dinamicaly -->#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="vgap-15"><!-- Vertical Gap 15px --></div>#}
+{#                <!-- Comment -->#}
+{#                <div class="column-wrapper">#}
+{#                    <div class="column">#}
+{#                        <div class="user-picture"></div>#}
+{#                    </div>#}
+{#                    <div class="hgap-15"><!-- Horizontal Gap 15px --></div>#}
+{#                    <div class="fs-box column fit">#}
+{#                        <!-- Comment Header -->#}
+{#                        <div class="column-wrapper vcenter-content" style="height:16px;">#}
+{#                            <!-- User Name / Date -->#}
+{#                            <div class="column inline-content">#}
+{#                                <h4 class="arial no-margin"><a href="" title="Click to see user profile">Rafael Augusto</a></h4>#}
+{#                                <div class="hgap-5"><!-- Horizontal Gap 5px --></div>#}
+{#                                <span class="font-size-11 light-grey-text">Aug/20/2013</span>#}
+{#                            </div>#}
+{#                            <!-- Buttons -->#}
+{#                            <div class="column fit" align="right">#}
+{#                                <a href="" class="iconized link icon-only" title="Copy permalink to clipboard"></a>#}
+{#                                <div class="hgap-5 inline "><!-- Horizontal Gap 5px --></div>#}
+{#                                <a href="" class="iconized edit icon-only" title="Edit comment"></a>#}
+{#                                <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>#}
+{#                                <a href="" class="iconized delete icon-only" title="Delete comment"></a>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="vgap-10"><!-- Vertical Gap 10px --></div>#}
+{#                        <!-- Comment Text -->#}
+{#                        <p>Hi - I saw your comment on the issue and the related new issue https://drupal.org/node/2087487.#}
+{#                            If there is a way to configure the Webform textfield to use the WYSIWYG editor and not rely on the#}
+{#                            additional module, then that is also an acceptable outcome here (and preferred as it is one less#}
+{#                            module to use).</p><p>For me, an alternative and good outcome would be instructions on how to enable#}
+{#                        and use a WYSIWYG editor on the Webform textfield. I need the default text in the Webform to be HTML#}
+{#                        with links and enable the user to enter additional text as HTML as well.</p>#}
+{#                        <!-- Comment Reply Area -->#}
+{#                        <div><!-- TODO: ng-class="reply-area:replies.length>=1" -->#}
+{#                            <!-- Add Reply -->#}
+{#                            <div class="column-wrapper add-reply content-box">#}
+{#                                <div class="column">#}
+{#                                    <div class="user-picture thumb22"></div>#}
+{#                                </div>#}
+{#                                <div class="hgap-15"><!-- Horizontal Gap 15px --></div>#}
+{#                                <div class="column fit">#}
+{#                                    <textarea placeholder="Add you comment..." rows="1" class="no-margin"></textarea><!-- TODO: resize textarea height dinamicaly -->#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+
+            <!-- Activities Tab -->
+            <div class="tab-pane" id="activities">
+                <activitylist project-id="{{ project.id }}"></activitylist>
+            </div>
+
+        </div>
+    </div>
+    </div>
+    </div>
+{% endblock mainContent%}

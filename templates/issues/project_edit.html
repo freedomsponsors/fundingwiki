@@ -1,0 +1,90 @@
+{% extends "issues/base.html" %}
+{% load i18n %}
+
+
+{% block head %}
+    <script>
+        if(!window.FS){
+            window.FS = {};
+        }
+        FS.dependencies = ['angularutils'];
+    </script>
+    <script src="/static/js/angular.min.js"></script>
+	<script src="/static/js/angular-sanitize.min.js"></script>
+    <script src="/static/js-generated/fs.js"></script>
+    <script src="/static/bootstrap/js/markdown-it.min.js"></script>
+    <script src="/static/bootstrap/js/markdown-it-task-lists.min.js"></script>
+	<script src="/static/js/markdown-it-djangology-flavoured.js"></script>
+	<script>
+
+        angular.module('fs').controller("MyCtrl", function($scope){
+            $scope.description = '{{ project.description|escapejs }}';
+        });
+
+		$(function(){
+		  // check language
+		  var do_detect = true;
+		  $('#language').click(function(){
+			do_detect = false;
+		  })
+
+		  $('#description').blur(function(){
+			if(!do_detect){
+			  return;
+			}
+			var content = $(this).val();
+			if(!content){
+			  return;
+			}
+			$.post('/core/json/detectLanguage', {content:content}, function(res){
+				console.log(res)
+				$('#language').val(res.language)
+			})
+		  })
+		})
+    </script>
+{% endblock %}
+
+{% block mainContent%}
+    <div ng-app="fs" class="content" align="center" ng-controller="MyCtrl">
+		<div class="home-content-section" align="left">
+			<h1 class="green-text"> Editing project: {{ project.name }}</h1>
+			<div class="fs-box">
+				<form id="edit_project_form" method="POST" action="{% url 'edit_project' %}" enctype="multipart/form-data">
+					{% csrf_token %}
+					<input type="hidden" name="id" value="{{ project.id }}">
+					<div class="column-wrapper vcenter-content" style="height:30px">
+						<div style="width:80px"><label for="image3x1">Image: </label></div>
+						<div class="column fit"><input type="file" name="image3x1" id="image3x1"></div>
+					</div>
+					<div class="vgap-10"><!-- Vertical Gap 10px --></div>
+					<div class="column-wrapper vcenter-content" style="height:30px">
+						<div style="width:80px"><label for="homeURL">Home URL: </label></div>
+						<div class="column fit"><input type="text" class="fs-input" name="homeURL" id="homeURL" value="{{ project.homeURL }}"></div>
+					</div>
+					<div class="vgap-30"><!-- Vertical Gap 30px --></div>
+					<div>
+						<label for="description">Description</label>
+						<text-with-markdown-preview model="description" nameid="description"></text-with-markdown-preview>
+					</div>
+					<div style="display:flex;justify-content:space-between;align-items:center">
+						<div>
+							<select id="language" name="language">
+							{% for lang in available_languages %}
+								<option value="{{lang.code}}"
+								{% ifequal lang.code project.language %}
+								selected
+								{% endifequal %}
+								>
+									{{lang.name}}
+								</option>
+							{% endfor %}
+							</select>
+						</div>
+						<div class="text-align-right"><a href onclick="edit_project_form.submit()" class="fs-button blue medium">Submit</a></div>
+					</div>
+				</form>
+			</div>
+		</div>
+    </div>
+{% endblock mainContent%}

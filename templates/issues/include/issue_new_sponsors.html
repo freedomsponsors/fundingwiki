@@ -1,0 +1,49 @@
+{% load i18n %}
+{% load l10n %}
+
+{% if issue.getOffers %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Sponsor</th>
+        <th>Offer</th>
+        <th>Acceptance</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Expire Date</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for offer in issue.getOffers %}
+      <tr>
+        <td>
+            <div>
+                <img src="{{offer.sponsor.gravatar_url_medium}}">
+                <a href="{{ offer.sponsor.get_view_link }}" class="arial">{{ offer.sponsor.username }}</a>
+            </div>
+        </td>
+        <td>{{offer.get_currency_symbol}} {{offer.price_formatted}}</td>
+        <td>
+            {% if offer.no_forking %}
+                <div>
+                    {#                            <i class="icon-home popopo" rel="popover" data-content="{% trans "Solution must be available in the main project codebase. Forking is not OK." %}" data-original-title="{% trans "No forking" %}"></i>#}
+                    No forking
+                </div>
+            {% endif %}
+            {% if offer.require_release %}
+                <div>
+                    {#                            <i class="icon-gift popopo" rel="popover" data-content="{% trans "Solution must be available as a new released version. Just commiting is not enough." %}" data-original-title="{% trans "Release required" %}"></i>#}
+                    Release required
+                </div>
+            {% endif %}
+        </td>
+        <td><p>{% if offer.is_expired %}{% trans "EXPIRED" %}{% else %}{{offer.status}}{% endif %}</p></td>
+        <td><p><span title="{{ offer.creationDate }}">{{ offer.creationDate|date:"M/d/Y" }}</span></p></td>
+        <td><p><span title="{{ offer.expirationDate }}">{{ offer.expirationDate|date:"M/d/Y" }}</span></p></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+<div style="text-align:center;padding:10px">{% trans "The list is empty" %}</div>
+{% endif %}

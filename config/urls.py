@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from apps.issues.views import issue_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', issue_views.addIssueForm),
 ]

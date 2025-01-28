@@ -1,0 +1,85 @@
+{% extends "issues/base.html" %}
+
+{% block og_meta %}
+{% endblock og_meta %}
+
+{% block title %}
+    Solution {{ solution.title }}
+{% endblock %}
+
+{% block head %}
+    <script>
+        if(!window.FS){
+            window.FS = {};
+        }
+        FS.dependencies = ['angularutils'];
+    </script>
+    <script src="/static/js/angular.min.js"></script>
+    <script src="/static/js/angular-sanitize.min.js"></script>
+    <script src="/static/js-generated/fs.js"></script>
+    <script src="/static/bootstrap/js/markdown-it.min.js"></script>
+    <script src="/static/bootstrap/js/markdown-it-task-lists.min.js"></script>
+    <script src="/static/js/markdown-it-djangology-flavoured.js"></script>
+    <script src="/static/js/fsutil.js"></script>
+    <script type="text/javascript">
+        function SolutionCtrl($scope, markdownitFilter, editToggle) {
+            $scope.editToggle = editToggle
+
+        }
+    </script>
+{% endblock %}
+
+{% block mainContent%}
+
+    <div ng-app="fs" ng-controller="SolutionCtrl">
+        <div class="content" align="center">
+        <div class="content-section" align="left">
+
+        <div class="column-wrapper">
+            <div class="column fit">
+
+                <!-- Solution title-->
+                <h1 class="blue-text"><a target="_blank" href="#">[Solution] {{ solution.title }} </a></h1>
+                <!-- Show Solution -->
+                {% include 'core2/include/techSolution.html' %}
+            </div>
+
+            <div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+
+            <!-- Solution Overview -->
+            <div class="column medium issue-overview">
+                <h3 class="boxed">Overview</h3>
+                <!-- Solution Creator -->
+                <div class="fs-box issue-creator">
+                    <div class="column-wrapper">
+                        <!-- Creator Picture-->
+                        <div class="user-picture"><img src="{{solution.createdByUser.gravatar_url_medium}}"></div>
+                        <div class="hgap-15"><!-- Horizotal Gap 15px --></div>
+                        <!-- Creator Name-->
+                        <div class="column fit">
+                            <h5 class="arial">Created by</h5>
+                            <a href="{{ solution.createdByUser.get_view_link }}" class="arial font-size-11">{{ solution.createdByUser.username }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Issue associated -->
+                <div class="fs-box issue-creator">
+                    <div class="column-wrapper">
+                        <!-- Creator Name-->
+                        <div class="column fit">
+                            <h5 class="arial">Related issue</h5>
+                            <a href="{{ solution.issue.get_view_link }}" class="arial font-size-11">{{ solution.issue.title }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+
+
+
+    </div>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+<script>
+    function IssueGridCtrl($scope, SortHeaderModel){
+        var sortby = $('#sortby').val();
+        var asc = $('#asc').val() != 'False';
+        SortHeaderModel.init(sortby, asc);
+        SortHeaderModel.onchange = function(property, asc){
+            $('#sortby').val(property);
+            $('#asc').val(asc ? 'True' : 'False');
+            $('#search_form').submit();
+        }
+    }
+</script>
+{% load pagination %}
+<table class="table table-striped table-condensed"
+       ng-controller="IssueGridCtrl">
+  <thead>
+    <tr>
+      <th>Content</th>
+      <th>Title</th>
+      <th>Issue</th>
+      <th>Created at</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for item in datalist %}
+    <tr>
+      <td >
+        {%if item.type == 'image'%}
+        <a href="/static/media/{{ item.image }}" target="_blank">
+          <img src="/static/media/{{ item.image }}" style="width:80px"/>
+        </a>
+        {%elif item.type == 'url'%}
+        <a href="{{ item.url }}" target="_blank">{{ item.url }}</a>
+        {%endif%}
+      </td>
+      <td >{{ item.title }}</td>
+      <td ><a href="{{solution.issue.get_view_link}}">{{ item.issue.title }}</a></td>
+      <td >{{ item.creationDate }}/td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+<div class="pagination pagination-right">
+  {% pagination datalist %}
+</div>

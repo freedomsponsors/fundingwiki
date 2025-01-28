@@ -1,0 +1,130 @@
+{% load i18n %}
+{% load l10n %}
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+    <head>
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="{{SITE_HOME}}{{request.path}}" />
+	<meta property="og:site_name" content="i{{SITE_NAME}}" />
+        <meta property="fb:admins" content="1547283827" />
+	<meta name="viewport" content="initial-scale=1">
+        {% block og_meta %}
+            <meta property="og:title" content="Check this out! freedomsponsors.org - Crowdfunding Free Software, one issue at a time." />
+            <meta name="description" content="Check this out! freedomsponsors.org - Crowdfunding Free Software, one issue at a time." />
+            <meta property="og:image" content="http://www.freedomsponsors.org/static/img/FS_logo_512x512.png" />
+            <meta name="image" content="http://www.freedomsponsors.org/static/img/FS_logo_512x512.png" />
+        {% endblock og_meta %}
+
+
+        <title>
+            {% block title %}
+            {{SITE_NAME}}
+            {% endblock %}
+        </title>
+        <link href='/static/css2/reset.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css2/fs_style.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css2/fs_structure.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css2/fs_responsive.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css2/bootstrap_ish.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css2/markdown.css' rel='stylesheet' type='text/css'/>
+        <link href='/static/css/highlighting.css' rel='stylesheet' type='text/css'/>
+		<link href="/static/css2/freedom_bootstrap.css" rel="stylesheet" media="screen">
+        <!--Djangology Styles-->
+        <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/static/css2/djangology_style.css" rel="stylesheet">
+        <script>
+        /*
+        @licstart  The following is the entire license notice for the
+        JavaScript code in this page.
+
+        Copyright (C) 2012  Loic J. Duros
+
+        The JavaScript code in this page is free software: you can
+        redistribute it and/or modify it under the terms of the GNU
+        General Public License (GNU GPL) as published by the Free Software
+        Foundation, either version 3 of the License, or (at your option)
+        any later version.  The code is distributed WITHOUT ANY WARRANTY;
+        without even the implied warranty of MERCHANTABILITY or FITNESS
+        FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+        As additional permission under GNU GPL version 3 section 7, you
+        may distribute non-source (e.g., minimized or compacted) forms of
+        that code without the copy of the GNU GPL normally required by
+        section 4, provided you include this license notice and a URL
+        through which recipients can access the Corresponding Source.
+
+
+        @licend  The above is the entire license notice
+        for the JavaScript code in this page.
+        */
+        </script>
+
+        <script src="/static/bootstrap/js/jquery.min.js"></script>
+        <script>
+            $(function(){
+                $('.popopo').popover({trigger:'hover'});
+                $(".popopo_stay")
+                        .popover({
+                            offset: 10,
+                            trigger: 'manual',
+                            animate: false,
+                            html: true,
+                            {#                placement: 'right',#}
+                            template: '<div class="popover" onmouseover="$(this).mouseleave(function() {$(this).hide(); });"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>'
+
+                        }).click(function(e) {
+                            e.preventDefault() ;
+                        }).mouseenter(function(e) {
+                            $(this).popover('show');
+                        });
+            });
+        </script>
+        <script>
+            if (typeof String.prototype.startsWith != 'function') {
+                String.prototype.startsWith = function (str){
+                    return this.indexOf(str) == 0;
+                };
+            }
+        </script>
+        <script>
+            {% localize off %}
+                {% if BTC2USD %}
+                    var BTC2USD = {{ BTC2USD }};
+                {% else %}
+                    var BTC2USD = 351.04;
+                {% endif %}
+            {% endlocalize %}
+        </script>
+
+        {% block head %}
+        {% endblock %}
+
+        {% if ENABLE_PIWIK %}
+        <!-- Piwik -->
+        <script type="text/javascript">
+            var _paq = _paq || [];
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function() {
+                var u=(("https:" == document.location.protocol) ? "https" : "http") + "://piwik.freedomsponsors.org/";
+                _paq.push(['setTrackerUrl', u+'piwik.php']);
+                _paq.push(['setSiteId', 1]);
+                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript';
+                g.defer=true; g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+            })();
+
+        </script>
+        <noscript><p><img src="http://piwik.freedomsponsors.org/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+        <!-- End Piwik Tracking Code -->
+        {% endif %}
+    </head>
+
+    <body>
+    <!-- messages -->
+    {% include "issues/popup/popup_messages.html" %}
+    {% block body %}
+    {% endblock %}
+    <script src="/static/bootstrap3/js/bootstrap.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap-typeahead.js"></script>
+    </body>
+</html>

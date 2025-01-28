@@ -1,0 +1,42 @@
+{% load markdown %}
+{% load i18n %}
+<!-- This template is for shown media like "generic" and is deprected, instead we use carrousel  -->
+<!-- Media Djangology -->
+<div class="column-wrapper" >
+    <div class="column">
+        <div class="user-picture"><img src="{{media.createdByUser.gravatar_url_medium}}"><a href="{{media.createdByUser.get_view_link}}">{{ media.createdByUser.username }}</a></div>
+    </div>
+    <div class="hgap-15"><!-- Horizontal Gap 15px --></div>
+    <div class="fs-box push-footer column fit" id="div_media_r_{{ media.id }}">
+        <h4 class="arial">{{ media.title }}</h4>
+        <div id="media-{{ media.id }}">
+            <div id="bootstrap-content">
+                {% autoescape off %}
+                    <markdown-text text="{{ media.content }}"></markdown-text>
+                {% endautoescape %}
+            </div>
+        </div>
+        <!-- Media Footer -->
+        <div class="fs-box-footer card-footer">
+            <div class="column-wrapper">
+                <div class="column fit">
+                    <span>{{ media.creationDate|date:"D, d/M/Y" }}</span>
+                    <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>
+                    <a href="#media-{{ media.id }}">Permalink</a>
+                </div>
+                {% ifequal media.createdByUser.id user.id %}
+                    <div class="column fit" align="right">
+                        <a href ng-click="editMedia({{ media.id }}, true)">Edit</a>
+                        <delete-button action="/issue/media/{{ media.id }}" ></delete-button>
+                        <div class="hgap-5 inline"><!-- Horizontal Gap 5px --></div>
+                    </div>
+                {% endifequal %}
+            </div>
+        </div>
+    </div>
+</div>
+{% ifequal media.createdByUser.id user.id %}
+    {% with id=media.id %}
+        {% include 'issues/include/media_form.html' %}
+    {% endwith %}
+{% endifequal %}
