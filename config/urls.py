@@ -17,8 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from apps.issues.views import issue_views
+from django.urls import include
+from apps.issues import urls as core_urls
+import apps.issues.urls.issue_urls
+import apps.issues.urls.user_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', issue_views.addIssueForm),
+    path('core/', include(core_urls)),
+    path('issue/', include(core_urls.issue_urls)),
+    path('issues', issue_views.issue_search, name='issue_search'),
+    path('user/', include(core_urls.user_urls)),
 ]

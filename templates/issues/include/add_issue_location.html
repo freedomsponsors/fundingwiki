@@ -1,0 +1,147 @@
+<script>
+$(document).ready(function () {
+    //the geo input, when keyup, show the geo that can be selected
+    var geo_timer = null;
+    $('#geo_input').keyup(function(e){
+        var that = this;
+        var search = $(that).val();
+
+        if(isGeoTextEnded(search)){
+            chooseTheFirstGeo()
+            return;
+        }
+
+        clearTimeout(geo_timer);
+        geo_timer = setTimeout(function(){
+            if(search){
+                $.post('/core/json/suggestGeo', {search:search, language:$('#language').val()}, function(res){
+                    console.log(res)
+                    fillGeoInfo(res)
+                })
+            }else{
+                fillGeoInfo([])
+            }
+        }, 300)
+    })
+    $('#geo_input').keydown(function(e){
+        console.log((e.key, e.keyCode))
+        if (e.key === 'Enter' || e.keyCode === 13){ //enter key
+            e.preventDefault()
+            e.stopPropagation()
+            chooseTheFirstGeo()
+        }
+        if (e.keyCode === 9){   //tab key
+            chooseTheFirstGeo()
+        }
+    })
+    //select the first optional geo
+    function chooseTheFirstGeo(){
+        $('#geo_wapper').find('.geo_item:first').click()
+    }
+    // check if the geo text has finished
+    function isGeoTextEnded(value){
+        console.log('check if geo text ended:|'+value+'|')
+        var last_char = value.substr(value.length - 1);
+        if( last_char == ' ' || last_char == '.' || last_char == ',')
+            return true;
+        return false;
+    }
+    $('#geo_input').keyup()
+
+    // select one geo
+    $('#geo_wapper').on('click', '.geo_item', function(){
+        var qid = $(this).data('qid')
+        var title = $(this).data('title')
+        var description = $(this).data('description')
+        var lat = $(this).data('lat')
+        var lon = $(this).data('lon')
+        console.log(qid, title)
+        var geo = {
+            qid:qid,
+            title:title,
+            description:description,
+            lat:lat,
+            lon:lon
+        }
+        fillGeoSelected(geo)
+        $('#geo_input').val('')
+        fillGeoInfo([])
+    })
+
+    //remove one geo
+    $('#geo_select_wapper').on('click', '.close_icon', function(){
+        var qid = $(this).parent('.geo_item').data('qid')
+        removeGeoSelected(qid)
+    })
+
+    //show the geos to be selected
+    function fillGeoInfo(geo_list){
+        var html = [];
+        for(var i in geo_list){
+            var geo = {
+                qid:geo_list[i].osm_id,
+                title:geo_list[i].address,
+                lat:geo_list[i].lat,
+                lon:geo_list[i].lon,
+                description:''
+            }
+            html.push( getGeoItemHtml(geo) );
+        }
+        $('#geo_wapper').html(html.join(''))
+    }
+
+    //selected geos
+    var geo_selected = [];
+    function fillGeoSelected(geo){
+        geo_selected.push(geo)
+        console.log(geo_selected)
+        var html = [];
+        var qids = [];
+        for(var i in geo_selected){
+            qids.push(geo_selected[i].qid)
+            html.push( getGeoItemHtml(geo_selected[i]) );
+        }
+        $('#geo_select_wapper').html(html.join(''))
+        $('#geo_qids').val(qids.join(','))
+        $('#geo_info').val(JSON.stringify(geo_selected))
+    }
+
+    function removeGeoSelected(geo_qid){
+        var geo_selected_new = [];
+        for(var i in geo_selected){
+            if(geo_selected[i].qid == geo_qid){
+                continue;
+            }
+            geo_selected_new.push(geo_selected[i])
+        }
+        geo_selected = geo_selected_new;
+        renderGeoSelectedHtml()
+    }
+
+    function renderGeoSelectedHtml(){
+        var html = [];
+        var qids = [];
+        for(var i in geo_selected){
+            qids.push(geo_selected[i].qid)
+            html.push( getGeoItemHtml(geo_selected[i]) );
+        }
+        $('#geo_select_wapper').html(html.join(''))
+        //$('#geo_qids').val(JSON.stringify(qids))
+        $('#geo_info').val(JSON.stringify(geo_selected))
+    }
+
+    //get html by geo info
+    function getGeoItemHtml(geo){
+        var qid = geo.qid;
+        var title = geo.title;
+        var description = geo.description;
+        var lat = geo.lat;
+        var lon = geo.lon;
+        var html = '<div class="geo_item" data-qid="'+qid+'" data-title="'+title+'" data-description="'+description+'" data-lat="'+lat+'" data-lon="'+lon+'"><span class="las la-window-close close_icon"></span><div class="header">'+title+'</div><div class="description">'+description+'</div></div>'
+        return html;
+    }
+});
+</script>
+<div id="geo_select_wapper"></div>
+<input id="geo_input" type="text" value="" class="input-xlarge span8" placeholder="search location" autocomplete="off"/>
+<div id="geo_wapper" style="display:flex"></div>

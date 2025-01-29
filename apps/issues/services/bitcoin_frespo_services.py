@@ -1,13 +1,13 @@
 __author__ = 'tony'
-from core.models import *
-from core.utils.frespo_utils import get_or_none
-from core.services import mail_services, watch_services
-from bitcoin_frespo.utils import bitcoin_adapter
+from apps.issues.models import *
+from apps.issues.utils.frespo_utils import get_or_none
+from apps.issues.services import mail_services, watch_services
+# from bitcoin_frespo.utils import bitcoin_adapter
 import logging
 from django.db.models import Q
 import datetime
 from django.utils import timezone
-from bitcoin_frespo.services import bitcoin_services
+# from bitcoin_frespo.services import bitcoin_services
 from decimal import Decimal
 
 logger = logging.getLogger(__name__)

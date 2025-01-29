@@ -1,8 +1,8 @@
 from datetime import datetime
-from core.models import *
+from apps.issues.models import *
 from django.db import connection
 import math
-from frespo_currencies import currency_service
+# from frespo_currencies import currency_service
 
 SELECT_SPONSORS = """
 select 

@@ -1,4 +1,4 @@
-from core.models import ActionLog
+from apps.issues.models import ActionLog
 
 __author__ = 'tony'
 

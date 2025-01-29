@@ -13,3 +13,8 @@ def addstr(arg1, arg2):
 def lang_name(code):
     """concatenate arg1 & arg2"""
     return language_services.get_language_name_from_code(code)
+
+
+# @register.tags
+# def ifequal(value, arg):
+#     return value == arg

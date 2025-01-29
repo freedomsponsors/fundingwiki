@@ -13,6 +13,7 @@ from apps.issues.models import Issue, Project, Offer, Solution, IssueComment, Of
 from apps.issues.utils.trackers_adapter import fetchIssueInfo
 from apps.issues.models import IssueHistEvent
 import logging
+from django.contrib.gis.geos import Point
 
 logger = logging.getLogger(__name__)
 
@@ -190,6 +191,12 @@ def kickstart_new_issue(dict, user):
                "project.trackerURL: " + issue.project.trackerURL + "\n<br>"
     notify_admin("INFO: New issue proposed", msg)
 
+    # save geo info
+    if dict.get('geo', ''):
+        for item in json.loads(dict.get('geo')):
+            issue_geo = IssueGeo.create(issue, item['title'], Point(item['lon'], item['lat']), item['qid'])
+            issue_geo.save()
+
     user_services.add_reputation_by_new_issue(user)
 
     return issue
@@ -366,19 +373,19 @@ def _buildOfferFromDictionary(dict, user):
 
 
 def _buildIssueFromDictionary(dict, user):
-    check_noProject = dict.has_key('noProject')
+    check_noProject = 'noProject' in dict
     issue_trackerURL = dict['trackerURL']
     issue_projectId = dict['project_id']
     issue_projectName = dict.get('project_name', '')
-    check_createProject = dict.has_key('createProject')
+    check_createProject = 'createProject' in dict
     newProject_name = dict.get('newProjectName', '')
     newProject_homeURL = dict.get('newProjectHomeURL', '')
     newProject_trackerURL = dict.get('newProjectTrackerURL', '')
-    issue_key = dict.get('key', '');
-    issue_title = dict.get('title', '');
-    issue_description = dict.get('description', '');
-    issue_language = dict.get('language', '');
-    tags = dict.get('tags', '');
+    issue_key = dict.get('key', '')
+    issue_title = dict.get('title', '')
+    issue_description = dict.get('description', '')
+    issue_language = dict.get('language', '')
+    tags = dict.get('tags', '')
     _throwIfIssueExists(issue_trackerURL, user)
     issue = None
     if (check_noProject):

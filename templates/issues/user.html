@@ -209,35 +209,35 @@
 	  <hr>
 	  <a name="entrepreneur"></a>
 	  <h3 class="section_title">Proposed issues</h3>
-	  {% include 'core2/include/issue_grid.html' %}
+	  {% include 'issues/include/issue_grid.html' %}
 	{% endif %}
 {% elif page_section == 'proponent' %}
 	{% if le_user.getTechSolutions %}
 	  <hr>
 	  <a name="proponent"></a>
 	  <h3 class="section_title">Proposed solutions</h3>
-	  {% include 'core2/include/proposed_solutions.html' %}
+	  {% include 'issues/include/proposed_solutions.html' %}
 	{% endif %}
 {% elif page_section == 'sponsor' %}
 	{% if le_user.getOffers %}
 	  <hr>
 	  <a name="sponsor"></a>
 	  <h3 class="section_title">Sponsoring issues</h3>
-	  {% include 'core2/include/offer_grid.html' %}
+	  {% include 'issues/include/offer_grid.html' %}
 	{% endif %}
 {% elif page_section == 'communicator' %}
 	{% if le_user.getOffers %}
 	  <hr>
 	  <a name="communicator"></a>
 	  <h3 class="section_title">Media uploaded</h3>
-	  {% include 'core2/include/media_uploaded.html' %}
+	  {% include 'issues/include/media_uploaded.html' %}
 	{% endif %}
 {% elif page_section == 'developer' %}
 	{% if le_user.getSolutions %}
 	  <hr>
 	  <a name="developer"></a>
 	  <h3 class="section_title">Working on issues</h3>
-	  {% include 'core2/include/solution_grid.html' %}
+	  {% include 'issues/include/solution_grid.html' %}
 	{% endif %}
 {%endif%}
 

@@ -24,7 +24,10 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, Tag as TaggitTag
 #from core.services import language_services
 import json
-from django.db import models
+# from django.db import models
+# from django.contrib.gis.db import models as models_gis
+from django.contrib.gis.db import models
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -130,6 +133,7 @@ def getUserInfo(self):
 
 def addReputation(self, reputation=1):
     userinfo = self.getUserInfo()
+    print(userinfo)
     userinfo.reputation += reputation
     userinfo.save()
     return userinfo
@@ -1590,6 +1594,22 @@ class MultilingualTagIssue(models.Model):
         return obj
     def test(self):
         return '11'
+
+
+class IssueGeo(models.Model):
+    issue = models.ForeignKey(Issue, null=True, on_delete=models.DO_NOTHING)
+    name = models.CharField(max_length=500, default='')
+    location = models.PointField(geography=True)
+    osm_id = models.IntegerField(default=0)
+
+    @classmethod
+    def create(cls, issue, name, location, osm_id):
+        obj = cls()
+        obj.issue = issue
+        obj.name = name
+        obj.location = location
+        obj.osm_id = osm_id
+        return obj
 
 
 # -------------------------

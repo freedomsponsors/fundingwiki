@@ -52,7 +52,7 @@ def getConceptByQid(qid):
     info = response['entities'][qid]
     result = []
 
-    for item in info['labels'].itervalues():
+    for item in info['labels'].values():
         language = item['language']
         value = item['value']
         description = ''

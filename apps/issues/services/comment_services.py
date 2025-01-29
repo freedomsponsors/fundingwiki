@@ -1,6 +1,6 @@
-from core.services.mail_services import notifyWatchers_newissuecomment
-from core.models import IssueComment, Issue, ActionLog
-from core.services import watch_services
+from apps.issues.services.mail_services import notifyWatchers_newissuecomment
+from apps.issues.models import IssueComment, Issue, ActionLog
+from apps.issues.services import watch_services
 
 __author__ = 'tony'
 

@@ -186,7 +186,7 @@ def _listIssues(request):
 #     paginated_issues = pagina(request, _issues)
 #     #issues = pagina(request, _issues)
 #
-#     return render(request, 'core2/issue_list.html', {
+#     return render(request, 'issues/issue_list.html', {
 #           'issues': paginated_issues,
 #           's': search_terms,
 #           'project_id': project_id,
@@ -228,7 +228,7 @@ def listIssues(request, tag_slug=None):
     # Paginate final results
     paginated_issues = pagina(request, issues)
 
-    return render(request, 'core2/issue_list.html', {
+    return render(request, 'issues/issue_list.html', {
           'issues': paginated_issues,
           's': search_terms,
           'project_id': project_id,
@@ -266,7 +266,7 @@ def issue_search(request):
     for item in paginated_issues:
         item.issueTagsList = tag_services.getIssueTagsForLanguage(item.id, user_language)
 
-    return render(request, 'core2/issue_search.html', {
+    return render(request, 'issues/issue_search.html', {
         'issues_count': issues.count(),
         'issues': paginated_issues,
         'language_list': issue_services.get_all_issue_languages(),
@@ -321,7 +321,7 @@ def myissues(request):
         return redirect('editUserForm')
     _issues = request.user.getWatchedIssues()
     issues = pagina(request, _issues)
-    return render(request, 'core2/myissues.html', {'issues':issues})
+    return render(request, 'issues/myissues.html', {'issues':issues})
 
 
 @login_required
@@ -397,9 +397,9 @@ def viewIssue(request, issue_id):
     show_sponsor_popup = (request.GET.get('show_sponsor') == 'true')
     alert = request.GET.get('alert')
     if alert == 'KICKSTART':
-        show_alert = 'core2/popup/popup_just_kickstarted.html'
+        show_alert = 'issues/popup/popup_just_kickstarted.html'
     if alert == 'SPONSOR':
-        show_alert = 'core2/popup/popup_just_sponsored.html'
+        show_alert = 'issues/popup/popup_just_sponsored.html'
     alert_reputation_revoking = mysolution and mysolution.status == Solution.IN_PROGRESS and mysolution.get_received_payments().count() > 0
 
     is_watching = request.user.is_authenticated() and watch_services.is_watching_issue(request.user, issue.id)
@@ -435,7 +435,7 @@ def viewIssue(request, issue_id):
         'crumbs': crumbs,
         'actionbar': _actionbar(issue, myoffer, mysolution, request.user)}
 
-    return render(request, 'core2/issue.html', context)
+    return render(request, 'issues/issue.html', context)
 
 
 def viewIssueNew(request, issue_id):
@@ -458,9 +458,9 @@ def viewIssueNew(request, issue_id):
     show_sponsor_popup = (request.GET.get('show_sponsor') == 'true')
     alert = request.GET.get('alert')
     if alert == 'KICKSTART':
-        show_alert = 'core2/popup/popup_just_kickstarted.html'
+        show_alert = 'issues/popup/popup_just_kickstarted.html'
     if alert == 'SPONSOR':
-        show_alert = 'core2/popup/popup_just_sponsored.html'
+        show_alert = 'issues/popup/popup_just_sponsored.html'
     alert_reputation_revoking = mysolution and mysolution.status == Solution.IN_PROGRESS and mysolution.get_received_payments().count() > 0
 
     is_watching = request.user.is_authenticated() and watch_services.is_watching_issue(request.user, issue.id)
@@ -481,7 +481,7 @@ def viewIssueNew(request, issue_id):
         'crumbs': crumbs,
         'actionbar': _actionbar(issue, myoffer, mysolution, request.user)}
 
-    return render(request, 'core2/issue_new.html', context)
+    return render(request, 'issues/issue_new.html', context)
 
 
 def vote(request):
@@ -651,7 +651,7 @@ def payOfferForm(request, offer_id):
             'imglink': solution.programmer.gravatar_url_small()
         })
     currency_options = _currency_options(offer)
-    return render(request, 'core2/pay_offer_angular.html',
+    return render(request, 'issues/pay_offer_angular.html',
                               {
                                   'offer': offer,
                                   'count': len(solutions_dict),

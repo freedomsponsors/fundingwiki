@@ -1,8 +1,8 @@
-from core.services.mail_services import notifyWatchers_newissuecomment
-from core.models import ActionLog, MediaHistEvent, Watch, HistEventTypes, Media
-from core.services import watch_services
+from apps.issues.services.mail_services import notifyWatchers_newissuecomment
+from apps.issues.models import ActionLog, MediaHistEvent, Watch, HistEventTypes, Media
+from apps.issues.services import watch_services
 from django.utils import timezone
-from core.services.mail_services import notifyWatchers_newissuecomment
+from apps.issues.services.mail_services import notifyWatchers_newissuecomment
 
 def delete_media(media, user):
     old_json = media.to_json()

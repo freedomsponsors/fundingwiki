@@ -79,7 +79,8 @@ PAGINATION_DEFAULT_ORPHANS = 5
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        # 'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': config('DATABASE_NAME', 'djangology'),
         'USER': config('DATABASE_USER', 'djangology'),
         'PASSWORD': config('DATABASE_PASS', 'djangology'),
@@ -132,3 +133,4 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+BITCOIN_ENABLED = True

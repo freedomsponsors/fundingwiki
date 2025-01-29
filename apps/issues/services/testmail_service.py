@@ -2,7 +2,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.template import loader
 from django.template.context import Context
-from core.services import mail_services
+from apps.issues.services import mail_services
 
 __author__ = 'tony'
 

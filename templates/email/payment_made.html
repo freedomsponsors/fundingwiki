@@ -1,0 +1,15 @@
+{% extends "email/base.html" %}
+{% block mainContent%}
+    Hello {{ you.username }}<br>
+    {{ offer.sponsor.username }} has paid his {{offer.get_currency_symbol}} {{offer.price}} offer for issue<br><br>
+
+    <a href="{{SITE_HOME}}{{ offer.issue.get_view_link }}" style="color: #08C;text-decoration: none;cursor: auto;">{{offer.issue.title}}</a><br><br>
+
+    You are receiving this email because you're subscribed as a watcher for that issue. <br>
+    Thank you for using {{SITE_NAME}}.<br>
+    We will let you know if there are any updates.
+
+<br><br>
+{% include 'email/include/email_settings_notice.html' %}
+
+{% endblock mainContent%}

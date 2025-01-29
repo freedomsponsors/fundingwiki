@@ -20,43 +20,50 @@
 <!--  <script src="/static/tag/bootstrap-tagsinput-angular.js"></script>-->
   <script src="/static/tag/typeahead.bundle.js"></script>
 <style>
-    .tag_item{
+    .tag_item, .geo_item{
         border:1px solid #ccc;
         padding:4px;
         margin-right:10px;
         margin-bottom:5px;
         margin-top:5px;
     }
-    .tag_item .header{
+    .tag_item .header,
+    .geo_item .header{
         font-weight:bold;
     }
-    .tag_item .description{
+    .tag_item .description, .geo_item .description{
         color:#999
     }
-    .tag_item .close_icon{
+    .tag_item .close_icon, .geo_item .close_icon{
         float: right;
         margin-top: -6px;
         margin-right: -6px;
         cursor: pointer;
         font-size: 22px;
     }
-    #tag_wapper .tag_item{
+    #tag_wapper .tag_item,
+    #geo_wapper .geo_item{
         cursor: pointer;
     }
-    #tag_wapper .tag_item:first-child{
+    #tag_wapper .tag_item:first-child,
+    #geo_wapper .geo_item:first-child{
         border:1px solid #999;
     }
-    #tag_wapper .tag_item .close_icon{
+    #tag_wapper .tag_item .close_icon,
+    #geo_wapper .geo_item .close_icon{
         display:none
     }
-    #tag_select_wapper{
+    #tag_select_wapper,
+    #geo_select_wapper{
         display:flex
     }
-    #tag_select_wapper .tag_item{
+    #tag_select_wapper .tag_item,
+    #geo_select_wapper .geo_item{
         background:#5bc0de;
         color:#fff;
     }
-    #tag_select_wapper .tag_item .description{
+    #tag_select_wapper .tag_item .description,
+    #geo_select_wapper .geo_item .description{
         color:#eee
     }
 </style>
@@ -393,6 +400,8 @@
 
       <input type="text" name="tag_qids" style="display:none;" >
       <input type="text" id="tag_info" name="tags" style="display:none;" >
+      <input type="text" name="geo_qids" style="display:none;" >
+      <input type="text" id="geo_info" name="geo" style="display:none;" >
 
       <div class="control-group">
         <div id="form_basic">
@@ -471,6 +480,11 @@
                   </option>
               {% endfor %}
               </select>
+          </div>
+          <br/>
+          <label class="control-label" for="language">Locations</label>
+          <div class="controls">
+            {% include "issues/include/add_issue_location.html" %}
           </div>
 <!--          <br>-->
 <!--          <label class="control-label"></label>-->
