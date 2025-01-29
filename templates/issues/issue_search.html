@@ -1,5 +1,5 @@
 {% extends "issues/newbase.html" %}
-
+{% load extras %}
 {% block head %}
 {% endblock %}
 
@@ -73,7 +73,7 @@
               <button type="button" id="filter_newest" class="btn btn-default"
                       {% ifequal sortby '-creationDate' %}disabled{% endifequal %}>Newest</button>
               <button type="button" id="filter_sponsored" class="btn btn-default"
-                      {%ifequal request.GET.has_sponsors '1'%}disabled{%endifequal%}>Sponsored</button>
+                      {%if 'has_sponsors' in request.GET and request.GET.has_sponsors == '1'%}disabled{%endif%}>Sponsored</button>
               <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">More <span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu">
@@ -92,10 +92,10 @@
               <div class="form-group">
                 <label for="email">Filter by</label>
                 <div class="checkbox">
-                  <label><input type="checkbox" name="no_proposals" value="1" {%ifequal request.GET.no_proposals '1'%}checked{%endifequal%}>No proposals</label>
+                  <label><input type="checkbox" name="no_proposals" value="1" {%if 'no_proposals' in request.GET and request.GET.no_proposals == '1'%}checked{%endif%}>No proposals</label>
                 </div>
                 <div class="checkbox">
-                  <label><input type="checkbox" name="has_sponsors" class="checkbox_sponsored" value="1" {%ifequal request.GET.has_sponsors '1'%}checked{%endifequal%}>Has sponsors</label>
+                  <label><input type="checkbox" name="has_sponsors" class="checkbox_sponsored" value="1" {%if 'has_sponsors' in request.GET and request.GET.has_sponsors == '1'%}checked{%endif%}>Has sponsors</label>
                 </div>
               </div>
               <div class="form-group">
@@ -121,7 +121,7 @@
                 <select id="tag_filter_form_language" class="form-control" name="language" style="width:200px">
                   <option value="">choose language</option>
                   {% for key, value in language_list.items %}
-                  <option value="{{key}}" {% ifequal request.GET.language key %}selected{% endifequal %}>{{value}}</option>
+                  <option value="{{key}}" {% if 'language' in request.GET and request.GET.language == key %}selected{% endif %}>{{value}}</option>
                   {% endfor %}
                 </select>
               </div>
