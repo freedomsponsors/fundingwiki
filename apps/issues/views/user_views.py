@@ -144,9 +144,3 @@ def cancel_account(request):
     user_services.deactivate_user(request.user)
     messages.info(request, 'Your account has been disabled.')
     return redirect('/logout')
-
-
-class CustomLogoutView(LogoutView):
-    def get(self, request, *args, **kwargs):
-        print(1111)
-        return self.post(request, *args, **kwargs)

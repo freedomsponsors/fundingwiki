@@ -1,0 +1,61 @@
+{% extends "issues/base.html" %}
+
+{% block title %}
+    Donation
+{% endblock %}
+
+{% block mainContent%}
+<div id="app" style="display:flex;justify-content:space-around;">
+    <v-app>
+        <div style="display:flex;justify-content:space-around;width:600px;flex-direction:column">
+            <div style="width:;text-align:center;">
+                <div style="padding:40px 0"><h2>Thank you for you donation</h2></div>
+<!--                <v-btn color="primary">Donate</v-btn>-->
+            </div>
+            <div>
+                <v-form v-model="valid" ref="form">
+                  <!-- Name Field -->
+                  <v-text-field
+                    v-model="name"
+                    label="Your name"
+                    :rules="nameRules"
+                    required
+                  ></v-text-field>
+
+                  <!-- Email Field -->
+                  <v-text-field
+                    v-model="email"
+                    label="Email"
+                    :rules="emailRules"
+                    required
+                    type="email"
+                  ></v-text-field>
+
+                  <!-- Password Field -->
+                  <v-text-field
+                    v-model="password"
+                    label="Phone number"
+                    :rules="passwordRules"
+                    required
+                  ></v-text-field>
+
+                  <!-- Submit Button -->
+                  <v-btn :disabled="!valid" @click="submitForm" color="success">Donate</v-btn>
+                </v-form>
+            </div>
+        </div>
+    </v-app>
+</div>
+
+<script>
+  new Vue({
+    el: '#app',
+    vuetify: new Vuetify(),
+    data(){
+        return {
+            valid:true
+        }
+    }
+  });
+</script>
+{% endblock mainContent%}

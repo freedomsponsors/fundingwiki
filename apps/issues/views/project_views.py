@@ -37,7 +37,7 @@ def view(request, project_id=None, project_name=None):
     issues_kickstarting = json.dumps(issue_services.to_card_dict(issues_kickstarting))
     top_sponsors = stats_services.project_top_sponsors(project_id)[0:5]
     top_programmers = stats_services.project_top_programmers(project_id)[0:5]
-    is_watching = request.user.is_authenticated() and watch_services.is_watching_project(request.user, project.id)
+    is_watching = request.user.is_authenticated and watch_services.is_watching_project(request.user, project.id)
     return render(request, 'issues/project.html',
                               {'project': project,
                                'stats': stats,

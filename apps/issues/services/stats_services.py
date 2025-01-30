@@ -241,7 +241,8 @@ def project_stats(project):
 
 
 def project_top_sponsors(project_id):
-    btc2usd = currency_service.get_rate('BTC', 'USD', False)
+    # btc2usd = currency_service.get_rate('BTC', 'USD', False)
+    btc2usd = 0
     SIZE = 10
     query = Payment.objects.select_related('offer__sponsor').filter(
         offer__issue__project__id=project_id,
@@ -304,12 +305,14 @@ def project_top_sponsors(project_id):
         if dif != 0:
             return int(math.copysign(1, dif))
         return 0
-    sponsors = sorted(sponsors.values(), compare_sponsors, reverse=True)
+    # sponsors = sorted(sponsors.values(), compare_sponsors, reverse=True)
+    sponsors = sorted(sponsors.values())
     return sponsors
 
 
 def project_top_programmers(project_id):
-    btc2usd = currency_service.get_rate('BTC', 'USD', False)
+    # btc2usd = currency_service.get_rate('BTC', 'USD', False)
+    btc2usd = 0
     SIZE = 10
     parts_usd = PaymentPart.objects.select_related('programmer', 'payment').filter(
         payment__offer__issue__project__id=project_id,
@@ -382,5 +385,6 @@ def project_top_programmers(project_id):
         if dif != 0:
             return int(math.copysign(1, dif))
         return 0
-    programmers = sorted(programmers.values(), compare_programmers, reverse=True)
+    # programmers = sorted(programmers.values(), compare_programmers, reverse=True)
+    programmers = sorted(programmers.values())
     return programmers

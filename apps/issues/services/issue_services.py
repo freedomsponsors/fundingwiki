@@ -335,7 +335,8 @@ def to_card_dict(issues):
                'sponsor_status': 'SPONSORED' if issue.is_sponsored else 'PROPOSED',
                'project_link': '#',
                'issue_link': issue.get_view_link(),
-               'description': strip_markdown(issue.description),  # TODO Is it working?
+               # 'description': strip_markdown(issue.description),  # TODO Is it working?
+               'description': issue.description,  # TODO Is it working?
                'total_paid_offers_usd': str(issue.total_paid_offers_usd),
                'total_paid_offers_btc': str(issue.total_paid_offers_btc),
                'total_open_offers_usd': str(issue.total_open_offers_usd),

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,11 @@ SECRET_KEY = 'django-insecure-k*@fnm%ey)=zce=1ndp4yx05i$44y(dilmd#tks$#2e2od+cqg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    '192.168.8.101',
+    '192.168.8.4'
+]
 
 
 # Application definition
@@ -135,3 +140,16 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 BITCOIN_ENABLED = True
+
+FETCH_ISSUE_TIMEOUT = 10.0
+
+SOCIAL_AUTH_TWITTER_KEY                 = os.getenv('TWITTER_CONSUMER_KEY')
+SOCIAL_AUTH_TWITTER_SECRET              = os.getenv('TWITTER_CONSUMER_SECRET')
+SOCIAL_AUTH_FACEBOOK_KEY                = os.getenv('FACEBOOK_APP_ID')
+SOCIAL_AUTH_FACEBOOK_SECRET             = os.getenv('FACEBOOK_API_SECRET')
+SOCIAL_AUTH_GITHUB_KEY                  = os.getenv('GITHUB_APP_ID')
+SOCIAL_AUTH_GITHUB_SECRET               = os.getenv('GITHUB_API_SECRET')
+SOCIAL_AUTH_BITBUCKET_KEY               = os.getenv('BITBUCKET_CONSUMER_KEY')
+SOCIAL_AUTH_BITBUCKET_SECRET            = os.getenv('BITBUCKET_CONSUMER_SECRET')
+SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_KEY    = os.getenv('SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_KEY')
+SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_SECRET')

@@ -30,6 +30,7 @@ import apps.issues.urls.feedback_urls
 import apps.issues.urls.payment_urls
 import apps.issues.urls.offer_urls
 import apps.issues.urls.api_urls
+import apps.issues.urls.donate_urls
 from apps.issues.views import main_views
 from django.views.generic import TemplateView
 from apps.issues.views import user_views
@@ -44,6 +45,7 @@ urlpatterns = [
 
     #old
     path('solution/', include(core_urls.solution_urls)),
+    path('donate/', include(core_urls.donate_urls)),
     path('logout', django.contrib.auth.views.LogoutView.as_view(), {'next_page': '/'}),
     # path('', include(django.contrib.auth.urls)),
 
