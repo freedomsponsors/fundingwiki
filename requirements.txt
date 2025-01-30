@@ -12,6 +12,7 @@ cryptography==44.0.0
 defusedxml==0.7.1
 dj-database-url==2.3.0
 Django==5.1.5
+django-emailmgr @ git+https://github.com/freedomsponsors/django-emailmgr.git@f509c3d7af1381866f955eda6845a73efce20310
 django-paypal==2.1
 django-recaptcha==4.0.0
 django-registration==5.1.0
