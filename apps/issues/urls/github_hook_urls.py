@@ -1,6 +1,6 @@
-from django.conf.urls import url
-from core.views import github_hook_views
+from django.urls import path
+from apps.issues.views import github_hook_views
 
 urlpatterns = [
-    url(r'^(?P<token>\w+)/$', github_hook_views.hook),
+    path('(?P<token>\w+)/', github_hook_views.hook),
 ]

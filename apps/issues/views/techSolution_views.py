@@ -1,9 +1,9 @@
 import logging
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
-from core.models import TechSolution, TechSolutionComment, Issue
-from core.services import techSolution_services
-from core.serializers import TechSolutionsSerializer, TechSolutionCommentSerializer
+from apps.issues.models import TechSolution, TechSolutionComment, Issue
+from apps.issues.services import techSolution_services
+from apps.issues.serializers import TechSolutionsSerializer, TechSolutionCommentSerializer
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework.response import Response
@@ -11,8 +11,8 @@ from rest_framework import status
 from rest_framework.renderers import TemplateHTMLRenderer
 from django.utils.decorators import method_decorator
 from rest_framework.decorators import api_view
-from main_views import _throwIfNotObjAuthor
-from core.utils.djangology_utils import djangology_quote, djangology_unquote
+from apps.issues.views.main_views import _throwIfNotObjAuthor
+from apps.issues.utils.djangology_utils import djangology_quote, djangology_unquote
 
 logger = logging.getLogger(__name__)
 

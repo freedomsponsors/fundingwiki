@@ -1,7 +1,7 @@
 import json
 from django.http.response import HttpResponse
-from core.models import Project
-from core.services import stats_services, issue_services
+from apps.issues.models import Project
+from apps.issues.services import stats_services, issue_services
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import auth
 

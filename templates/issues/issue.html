@@ -58,7 +58,7 @@
             {% endfor %}
 
             // Djangology
-            $scope.csrfToken = "{% csrf_token %}"
+            $scope.csrfToken = '{% csrf_token %}'
             {% for media in issue.getMedia %}
                 $scope.media_{{ media.id }}  = {}
                 $scope.media_{{ media.id }}.id =  {{ media.id }}

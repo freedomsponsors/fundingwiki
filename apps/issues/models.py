@@ -14,7 +14,7 @@ from django.dispatch import receiver
 from decimal import Decimal
 from apps.issues.utils.frespo_utils import twoplaces
 # from bitcoin_frespo.models import *
-# from frespo_currencies import currency_service
+from apps.frespo_currencies import currency_service
 from django.conf import settings
 from enum import Enum
 from django.db.models import Q
@@ -148,13 +148,14 @@ def getUserLanguage(self):
 
 
 def getSocialAuths(self):
-    return UserSocialAuth.objects.filter(user=self)
+    return None
+    # return UserSocialAuth.objects.filter(user=self)
 
 
 def github_username(self):
-    for social_auth in self.getSocialAuths():
-        if social_auth.provider == 'github' and social_auth.extra_data.has_key('social_username'):
-            return social_auth.extra_data['social_username']
+    # for social_auth in self.getSocialAuths():
+    #     if social_auth.provider == 'github' and social_auth.extra_data.has_key('social_username'):
+    #         return social_auth.extra_data['social_username']
     return None
 
 

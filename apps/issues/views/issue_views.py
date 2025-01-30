@@ -12,7 +12,7 @@ from django.template import RequestContext
 from apps.issues.decorators import only_post
 from apps.issues.models import *
 from apps.issues.services import issue_services, watch_services, paypal_services, mail_services, language_services, tag_services
-# from apps.issues.views import paypal_views, bitcoin_views, HOME_CRUMB
+from apps.issues.views import paypal_views, bitcoin_views, HOME_CRUMB
 # from frespo_currencies import currency_service
 from taggit.models import Tag
 
@@ -317,7 +317,7 @@ class LatestIssuesFeed(Feed):
 
 @login_required
 def myissues(request):
-    if(request.user.is_authenticated() and request.user.getUserInfo() == None):
+    if(request.user.is_authenticated and request.user.getUserInfo() == None):
         return redirect('editUserForm')
     _issues = request.user.getWatchedIssues()
     issues = pagina(request, _issues)
@@ -360,11 +360,11 @@ def sponsorIssue(request):
 
 def _actionbar(issue, myoffer, mysolution, user):
     bar = {}
-    bar['sponsor'] = not user.is_authenticated() or not myoffer or myoffer.status != Offer.OPEN
+    bar['sponsor'] = not user.is_authenticated or not myoffer or myoffer.status != Offer.OPEN
     bar['pay'] = myoffer and myoffer.status == Offer.OPEN
     bar['change'] = bar['pay']
     bar['revoke'] = bar['pay']
-    bar['work'] = not user.is_authenticated() or not mysolution or mysolution.status != Solution.IN_PROGRESS
+    bar['work'] = not user.is_authenticated or not mysolution or mysolution.status != Solution.IN_PROGRESS
     bar['resolve'] = mysolution and mysolution.status == Solution.IN_PROGRESS
     bar['abort'] = bar['resolve']
     return bar
@@ -390,7 +390,7 @@ def viewIssue(request, issue_id):
     mysolution = None
     show_alert = None
 
-    if(request.user.is_authenticated()):
+    if request.user.is_authenticated:
         myoffer = get_or_none(Offer, issue=issue, sponsor=request.user, status__in=[Offer.OPEN, Offer.REVOKED])
         mysolution = get_or_none(Solution, issue=issue,programmer=request.user)
 
@@ -402,7 +402,7 @@ def viewIssue(request, issue_id):
         show_alert = 'issues/popup/popup_just_sponsored.html'
     alert_reputation_revoking = mysolution and mysolution.status == Solution.IN_PROGRESS and mysolution.get_received_payments().count() > 0
 
-    is_watching = request.user.is_authenticated() and watch_services.is_watching_issue(request.user, issue.id)
+    is_watching = request.user.is_authenticated and watch_services.is_watching_issue(request.user, issue.id)
 
     issue.if_voted_up = issue.if_voted_up_by_user(request.user)
     issue.if_voted_down = issue.if_voted_down_by_user(request.user)
@@ -451,7 +451,7 @@ def viewIssueNew(request, issue_id):
     mysolution = None
     show_alert = None
 
-    if(request.user.is_authenticated()):
+    if(request.user.is_authenticated):
         myoffer = get_or_none(Offer, issue=issue, sponsor=request.user, status__in=[Offer.OPEN, Offer.REVOKED])
         mysolution = get_or_none(Solution, issue=issue,programmer=request.user)
 
@@ -463,7 +463,7 @@ def viewIssueNew(request, issue_id):
         show_alert = 'issues/popup/popup_just_sponsored.html'
     alert_reputation_revoking = mysolution and mysolution.status == Solution.IN_PROGRESS and mysolution.get_received_payments().count() > 0
 
-    is_watching = request.user.is_authenticated() and watch_services.is_watching_issue(request.user, issue.id)
+    is_watching = request.user.is_authenticated and watch_services.is_watching_issue(request.user, issue.id)
     crumbs = [HOME_CRUMB, {
         'link': issue.trackerURL,
         'name': 'issue: ' + issue.title,

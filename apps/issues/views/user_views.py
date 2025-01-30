@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 from apps.issues.services import user_services, mail_services, FSException
 from django.conf import settings
 from apps.issues.services import language_services
+from django.contrib.auth.views import LogoutView
 
 
 def viewUserById(request, user_id, user_slug=None):
@@ -31,8 +32,8 @@ def viewUserByUsername(request, username):
     if not user.is_active and not request.user.is_superuser:
         return render(request, 'issues/user_inactive.html', {'le_user': user})
     unconnectedSocialAccounts = None
-    if user.id == request.user.id:
-        unconnectedSocialAccounts = user.getUnconnectedSocialAccounts()
+    # if user.id == request.user.id:
+    #     unconnectedSocialAccounts = user.getUnconnectedSocialAccounts()
     alert_strings = user_services.getAlertsForViewUser(
         request.user, user,
         changedPrimaryEmail=request.GET.get('prim') == 'true',
@@ -45,7 +46,8 @@ def viewUserByUsername(request, username):
     context = {
         'le_user': user,
         'page_section':page_section,
-        'stats': user.getStats(),
+        # 'stats': user.getStats(),
+        'stats': '',
         'unconnectedSocialAccounts': unconnectedSocialAccounts,
     }
     if page_section == 'entrepreneur':
@@ -142,3 +144,9 @@ def cancel_account(request):
     user_services.deactivate_user(request.user)
     messages.info(request, 'Your account has been disabled.')
     return redirect('/logout')
+
+
+class CustomLogoutView(LogoutView):
+    def get(self, request, *args, **kwargs):
+        print(1111)
+        return self.post(request, *args, **kwargs)

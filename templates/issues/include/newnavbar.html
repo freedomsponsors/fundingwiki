@@ -41,8 +41,13 @@
 </div>
 <div class="col-sm-4" style="">
   {% if user and user.is_authenticated %}
-    <div style="padding:10px 0;width:90%">
-      Hello, <a href="/user/{{ user.username }}">{{ user.username }}</a>, <a href="/user/edit">edit</a>, <a href="/logout">Sign Out</a>
+    <div style="padding:10px 0;width:90%;display:flex; align-items:center;">
+      Hello, <a href="/user/{{ user.username }}">{{ user.username }}</a>, <a href="/user/edit">edit</a>,
+<!--      <a href="/logout">Sign Out</a>-->
+      <form method="post" action="logout">
+          {% csrf_token %}
+          <button type="submit">logout</button>
+      </form>
     </div>
     <div><a href="/myissues"><span class="las la-clipboard-list" style="margin-right:6px; font-size:20px"></span>Personal Task Manager</a></div>
   {% else %}

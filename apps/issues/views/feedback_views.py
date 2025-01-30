@@ -1,14 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponse
-from core.templatetags.pagination import pagina
-from django.utils.translation import ugettext as _
+from apps.issues.templatetags.pagination import pagina
+from django.utils.translation import gettext as _
 from django.shortcuts import render, redirect
 from django.template import RequestContext
-from core.decorators import only_post
+from apps.issues.decorators import only_post
 
-from core.models import Issue, Watch
-from core.services import watch_services
-from core.services.mail_services import notify_admin
+from apps.issues.models import Issue, Watch
+from apps.issues.services import watch_services
+from apps.issues.services.mail_services import notify_admin
 
 
 def feedback(request):

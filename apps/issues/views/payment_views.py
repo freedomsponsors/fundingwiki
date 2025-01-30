@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render
 from django.template.context import RequestContext
-from core.models import Payment
+from apps.issues.models import Payment
 
 __author__ = 'tony'
 

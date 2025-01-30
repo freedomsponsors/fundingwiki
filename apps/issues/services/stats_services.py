@@ -13,7 +13,7 @@ select
   sum(case when (o.status = 'OPEN' and (o."expirationDate" is null or o."expirationDate" > now()) and o.currency = 'USD') then o.price else 0 end) sopenUSD,
   sum(case when (o.status = 'PAID' and o.currency = 'BTC') then o.price else 0 end) spaidBTC,
   sum(case when (o.status = 'OPEN' and (o."expirationDate" is null or o."expirationDate" > now()) and o.currency = 'BTC') then o.price else 0 end) sopenBTC
-from auth_user u, core_offer o
+from auth_user u, issues_offer o
 where
   o.sponsor_id = u.id
 group by u.id, u.username
@@ -36,7 +36,7 @@ select
   sum(case when (o.status = 'OPEN' and (o."expirationDate" is null or o."expirationDate" > now()) and o.currency = 'USD') then o.price else 0 end) sopenUSD,
   sum(case when (o.status = 'PAID' and o.currency = 'BTC') then o.price else 0 end) spaidBTC,
   sum(case when (o.status = 'OPEN' and (o."expirationDate" is null or o."expirationDate" > now()) and o.currency = 'BTC') then o.price else 0 end) sopenBTC
-from core_project pr, core_issue i, core_offer o
+from issues_project pr, issues_issue i, issues_offer o
 where pr.id = i.project_id 
 and i.id = o.issue_id
 group by pr.id, pr.name
@@ -49,56 +49,56 @@ order by sum(case when (o.status = 'PAID' and o.currency = 'USD') then o.price e
      desc
 """
 
-COUNT_SPONSORS = "select count(distinct sponsor_id) from core_offer"
-COUNT_PROGRAMMERS = "select count(distinct programmer_id) from core_solution"
+COUNT_SPONSORS = "select count(distinct sponsor_id) from issues_offer"
+COUNT_PROGRAMMERS = "select count(distinct programmer_id) from issues_solution"
 COUNT_PAID_PROGRAMMERS = """select count(distinct pr.programmer_id) 
-from core_paymentpart pr, core_payment pa
+from issues_paymentpart pr, issues_payment pa
 where pr.payment_id = pa.id
 and pa.status = 'CONFIRMED_IPN'"""
 
-COUNT_OFFERS = "select count(*) from core_offer"
-COUNT_ISSUES = "select count(*) from core_issue where is_feedback = false"
-COUNT_ISSUES_SPONSORING = "select count(*) from core_issue where is_feedback = false and is_sponsored = true"
-COUNT_ISSUES_KICKSTARTING = "select count(*) from core_issue where is_feedback = false and is_sponsored = false"
-COUNT_OFFERS_PAID = "select count(*) from core_offer where status = 'PAID'"
-COUNT_OFFERS_OPEN = "select count(*) from core_offer where status = 'OPEN'"
-COUNT_OFFERS_REVOKED = "select count(*) from core_offer where status = 'REVOKED'"
-COUNT_PROJECTS = "select count(distinct project_id) from core_issue where is_feedback = false"
+COUNT_OFFERS = "select count(*) from issues_offer"
+COUNT_ISSUES = "select count(*) from issues_issue where is_feedback = false"
+COUNT_ISSUES_SPONSORING = "select count(*) from issues_issue where is_feedback = false and is_sponsored = true"
+COUNT_ISSUES_KICKSTARTING = "select count(*) from issues_issue where is_feedback = false and is_sponsored = false"
+COUNT_OFFERS_PAID = "select count(*) from issues_offer where status = 'PAID'"
+COUNT_OFFERS_OPEN = "select count(*) from issues_offer where status = 'OPEN'"
+COUNT_OFFERS_REVOKED = "select count(*) from issues_offer where status = 'REVOKED'"
+COUNT_PROJECTS = "select count(distinct project_id) from issues_issue where is_feedback = false"
 
-COUNT_ISSUES_SPONSORING_OPEN_OR_WORKING_BY_PROJECT = """select count(*) from core_issue i
+COUNT_ISSUES_SPONSORING_OPEN_OR_WORKING_BY_PROJECT = """select count(*) from issues_issue i
 where i.project_id = %s
 and i.status in ('open', 'working')
 and i.is_feedback = false
 and i.is_sponsored = true"""
-COUNT_ISSUES_SPONSORING_DONE_BY_PROJECT = """select count(*) from core_issue i
+COUNT_ISSUES_SPONSORING_DONE_BY_PROJECT = """select count(*) from issues_issue i
 where i.project_id = %s
 and i.status = 'done'"""
 
 
-SUM_PAID_USD = "select sum (price) from core_offer where status = 'PAID' and currency = 'USD'"
-SUM_PAID_BTC = "select sum (price) from core_offer where status = 'PAID' and currency = 'BTC'"
+SUM_PAID_USD = "select sum (price) from issues_offer where status = 'PAID' and currency = 'USD'"
+SUM_PAID_BTC = "select sum (price) from issues_offer where status = 'PAID' and currency = 'BTC'"
 
-SUM_OPEN_USD = """select sum (price) from core_offer where status = 'OPEN' and currency = 'USD' and ("expirationDate" is null or "expirationDate" > now())"""
-SUM_OPEN_BTC = """select sum (price) from core_offer where status = 'OPEN' and currency = 'BTC' and ("expirationDate" is null or "expirationDate" > now())"""
+SUM_OPEN_USD = """select sum (price) from issues_offer where status = 'OPEN' and currency = 'USD' and ("expirationDate" is null or "expirationDate" > now())"""
+SUM_OPEN_BTC = """select sum (price) from issues_offer where status = 'OPEN' and currency = 'BTC' and ("expirationDate" is null or "expirationDate" > now())"""
 
-SUM_PAID_USD_BY_PROJECT = """select sum (o.price) from core_offer o, core_issue i
+SUM_PAID_USD_BY_PROJECT = """select sum (o.price) from issues_offer o, issues_issue i
 where i.project_id = %s
 and i.id = o.issue_id
 and o.status = 'PAID'
 and o.currency = 'USD'"""
-SUM_PAID_BTC_BY_PROJECT = """select sum (o.price) from core_offer o, core_issue i
+SUM_PAID_BTC_BY_PROJECT = """select sum (o.price) from issues_offer o, issues_issue i
 where i.project_id = %s
 and i.id = o.issue_id
 and o.status = 'PAID'
 and o.currency = 'BTC'"""
 
-SUM_OPEN_USD_BY_PROJECT = """select sum (o.price) from core_offer o, core_issue i
+SUM_OPEN_USD_BY_PROJECT = """select sum (o.price) from issues_offer o, issues_issue i
 where i.project_id = %s
 and i.id = o.issue_id
 and o.status = 'OPEN'
 and o.currency = 'USD'
 and (o."expirationDate" is null or o."expirationDate" > now())"""
-SUM_OPEN_BTC_BY_PROJECT = """select sum (o.price) from core_offer o, core_issue i
+SUM_OPEN_BTC_BY_PROJECT = """select sum (o.price) from issues_offer o, issues_issue i
 where i.project_id = %s
 and i.id = o.issue_id
 and o.status = 'OPEN'
@@ -106,18 +106,19 @@ and o.currency = 'BTC'
 and (o."expirationDate" is null or o."expirationDate" > now())"""
 
 
-SUM_EXPIRED_USD = """select sum (price) from core_offer where status = 'OPEN' and currency = 'USD' and "expirationDate" <= now()"""
-SUM_EXPIRED_BTC = """select sum (price) from core_offer where status = 'OPEN' and currency = 'BTC' and "expirationDate" <= now()"""
+SUM_EXPIRED_USD = """select sum (price) from issues_offer where status = 'OPEN' and currency = 'USD' and "expirationDate" <= now()"""
+SUM_EXPIRED_BTC = """select sum (price) from issues_offer where status = 'OPEN' and currency = 'BTC' and "expirationDate" <= now()"""
 
-SUM_REVOKED_USD = "select sum (price) from core_offer where status = 'REVOKED' and currency = 'USD'"
-SUM_REVOKED_BTC = "select sum (price) from core_offer where status = 'REVOKED' and currency = 'BTC'"
+SUM_REVOKED_USD = "select sum (price) from issues_offer where status = 'REVOKED' and currency = 'USD'"
+SUM_REVOKED_BTC = "select sum (price) from issues_offer where status = 'REVOKED' and currency = 'BTC'"
 
 LAUNCH_DATE = datetime(2012, 7, 8)
 
 
 def get_stats():
-    btc2usd = currency_service.get_rate('BTC', 'USD', False)
-    btc2usd_decimal = Decimal(str(btc2usd))
+    # btc2usd = currency_service.get_rate('BTC', 'USD', False)
+    # btc2usd_decimal = Decimal(str(btc2usd))
+    btc2usd_decimal = 0
 
     open_sum_btc        = _sum(SUM_OPEN_BTC)
     open_sum_btc_in_usd = open_sum_btc * btc2usd_decimal

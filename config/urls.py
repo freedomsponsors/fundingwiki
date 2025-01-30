@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import django.contrib.auth.views
 from django.contrib import admin
 from django.urls import path
 from apps.issues.views import issue_views
@@ -21,6 +22,17 @@ from django.urls import include
 from apps.issues import urls as core_urls
 import apps.issues.urls.issue_urls
 import apps.issues.urls.user_urls
+import apps.issues.urls.solution_urls
+import apps.issues.urls.project_urls
+import apps.issues.urls.issuenew_urls
+import apps.issues.urls.github_hook_urls
+import apps.issues.urls.feedback_urls
+import apps.issues.urls.payment_urls
+import apps.issues.urls.offer_urls
+import apps.issues.urls.api_urls
+from apps.issues.views import main_views
+from django.views.generic import TemplateView
+from apps.issues.views import user_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +41,43 @@ urlpatterns = [
     path('issue/', include(core_urls.issue_urls)),
     path('issues', issue_views.issue_search, name='issue_search'),
     path('user/', include(core_urls.user_urls)),
+
+    #old
+    path('solution/', include(core_urls.solution_urls)),
+    path('logout', django.contrib.auth.views.LogoutView.as_view(), {'next_page': '/'}),
+    # path('', include(django.contrib.auth.urls)),
+
+    # path('paypal/', include(paypal.standard.ipn.urls)),
+    # path('paypal/test', paypal_sample.process_payment),
+    # path('accounts/password/reset/', django.contrib.auth.views.password_reset, {'password_reset_form': FrespoPasswordResetForm}, name='password_reset'),
+    # path('accounts/register/', RegistrationView.as_view(form_class=MyRegForm), name='registration_register'),
+    # path('accounts/', include(registration.backends.default.urls)),
+    path('home/startIssue', main_views.homestartIssue),
+    path('home/randomIssue', main_views.randomIssue),
+    path('home/switchOldPage', main_views.switchOldPage),
+    path('oldhome/', main_views.home, name='home'),
+    path('rates', main_views.rates, name='rates'),
+    path('404', TemplateView.as_view(template_name='404.html')),
+    path('faq', TemplateView.as_view(template_name='issues/faq.html')),
+    path('developers', TemplateView.as_view(template_name='issues/developers.html')),
+    path('project/', include(core_urls.project_urls)),
+    path('issuenew/', include(core_urls.issuenew_urls)),
+    path('api/', include(core_urls.api_urls)),
+    path('myissues/', issue_views.myissues),
+    path('offer/', include(core_urls.offer_urls)),
+    path('search/', issue_views.listIssues),   #should be without the slash
+    path('tag/(?P<tag_slug>[-\w]+)/', issue_views.listIssues, name='issue-list-by-tag'),
+    path('translate/', issue_views.listIssues),
+    path('stats/',  main_views.stats),
+    path('spa', TemplateView.as_view(template_name='spa.html')),
+    path('jslic', TemplateView.as_view(template_name='issues/jslic.html')),
+    path('github-hook/', include(core_urls.github_hook_urls)),
+    path('feedback', include(core_urls.feedback_urls)),
+    path('payment/', include(core_urls.payment_urls)),
+    # path('github/', include(gh_frespo_integration.urls)),
+    path('login-error/', main_views.login_error),
+    path('robots.txt', TemplateView.as_view(template_name='issues/robots.txt', content_type='text/plain')),
+    path('sitemap.xml', main_views.sitemap),
+    path('email/', user_views.redirect_to_user_page, {'email_verified': 'true'}, name='emailmgr_email_list')
+    # path('email/activate/(?P<identifier>\w+)/', emailmgr.views.email_activate, name='emailmgr_email_activate'
 ]

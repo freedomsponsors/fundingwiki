@@ -349,7 +349,7 @@ def _notify_watchers(send_func, watches, already_sent_to = None):
     if not already_sent_to:
         already_sent_to = {}
     for watch in watches:
-        if not already_sent_to.has_key(watch.user.email):
+        if not watch.user.email in already_sent_to:
             send_func(watch)
             already_sent_to[watch.user.email] = True
 

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from apps.issues.views import issue_views
 from apps.issues.views import comment_views
 from apps.issues.views import media_views
@@ -15,12 +15,12 @@ urlpatterns = [
     path('edit/submit', issue_views.editIssue),
     path('saveProjectName', issue_views.saveProjectName),
     # Djangology urls
-    path('(?P<issue_id>\d+)/history', revision_views.IssueHistory.as_view()),
-    path('(?P<issue_id>\d+)/compare', revision_views.IssueCompare.as_view()),
+    re_path('(?P<issue_id>\d+)/history', revision_views.IssueHistory.as_view()),
+    re_path('(?P<issue_id>\d+)/compare', revision_views.IssueCompare.as_view()),
     # End djangology urls
-    path('(?P<issue_id>\d+)/', issue_views.viewIssue),
-    path('(?P<issue_id>\d+)/.*', issue_views.viewIssue),
-    path('new/(?P<issue_id>\d+)/.*', issue_views.viewIssueNew),
+    re_path('(?P<issue_id>\d+)/', issue_views.viewIssue),
+    re_path('(?P<issue_id>\d+)/.*', issue_views.viewIssue),
+    re_path('new/(?P<issue_id>\d+)/.*', issue_views.viewIssueNew),
     path('vote', issue_views.vote),
     path('vote_solution', issue_views.voteSolution),
 ]

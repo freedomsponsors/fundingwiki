@@ -1,7 +1,7 @@
-import urllib
+from urllib.parse import quote
 
 def djangology_quote(s):
-    return urllib.quote(s.replace(" ", "_").encode('utf-8'))
+    return quote(s.replace(" ", "_").encode('utf-8'))
 
 def djangology_unquote(s):
     return s.replace("_", " ")

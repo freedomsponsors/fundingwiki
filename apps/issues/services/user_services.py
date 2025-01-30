@@ -43,13 +43,13 @@ def edit_existing_user(user, request_dict):
     userinfo.website = request_dict['website']
     userinfo.about = request_dict['about']
     userinfo.realName = request_dict['realName']
-    userinfo.receiveEmail_issue_comments = request_dict.has_key('receiveEmail_issue_comments')
-    userinfo.receiveEmail_issue_work = request_dict.has_key('receiveEmail_issue_work')
-    userinfo.receiveEmail_issue_offer = request_dict.has_key('receiveEmail_issue_offer')
-    userinfo.receiveEmail_issue_payment = request_dict.has_key('receiveEmail_issue_payment')
-    userinfo.receiveEmail_announcements = request_dict.has_key('receiveEmail_announcements')
-    userinfo.brazilianPaypal = request_dict.has_key('brazilianPaypal')
-    userinfo.hide_from_userlist = request_dict.has_key('hide_from_userlist')
+    userinfo.receiveEmail_issue_comments = 'receiveEmail_issue_comments' in request_dict
+    userinfo.receiveEmail_issue_work = 'receiveEmail_issue_work' in request_dict
+    userinfo.receiveEmail_issue_offer = 'receiveEmail_issue_offer' in request_dict
+    userinfo.receiveEmail_issue_payment = 'receiveEmail_issue_payment' in request_dict
+    userinfo.receiveEmail_announcements = 'receiveEmail_announcements' in request_dict
+    userinfo.brazilianPaypal = 'brazilianPaypal' in request_dict
+    userinfo.hide_from_userlist = 'hide_from_userlist' in request_dict
     userinfo.preferred_language_code = request_dict['preferred_language_code']
     userinfo.date_last_updated = now
     if settings.BITCOIN_ENABLED:
@@ -130,8 +130,8 @@ def _changePaypalEmailIfNeeded(userinfo, newPaypalEmail):
         newPaypalEmail != oldPaypalEmail or
         not userinfo.is_paypal_email_verified)
     if do_it:
-        emailActivation = _makeEmailActivation(userinfo.user, newPaypalEmail, 'PAYPAL')
-        _send_activation(emailActivation)
+        # emailActivation = _makeEmailActivation(userinfo.user, newPaypalEmail, 'PAYPAL')
+        # _send_activation(emailActivation)
         userinfo.is_paypal_email_verified = False
         return True
     return False
@@ -140,15 +140,15 @@ def _changePaypalEmailIfNeeded(userinfo, newPaypalEmail):
 def _changePrimaryEmailIfNeeded(userinfo, newEmail):
     user = userinfo.user
     if(user.email != newEmail):
-        emailActivation = _makeEmailActivation(user, newEmail, 'PRIMARY')
-        _send_activation(emailActivation)
+        # emailActivation = _makeEmailActivation(user, newEmail, 'PRIMARY')
+        # _send_activation(emailActivation)
         user.email = newEmail
         user.save()
         userinfo.is_primary_email_verified = False
         return True
     if(not userinfo.is_primary_email_verified):
-        emailActivation = _makeEmailActivation(user, user.email, 'PRIMARY')
-        _send_activation(emailActivation)
+        # emailActivation = _makeEmailActivation(user, user.email, 'PRIMARY')
+        # _send_activation(emailActivation)
         return True
     return False
 

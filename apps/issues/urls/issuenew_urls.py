@@ -1,11 +1,11 @@
-from django.conf.urls import url
-from core.views import issue_views
-from core.views import issuenew_views
-from core.views import comment_views
-from core.views import media_views
-from core.views import revision_views
+from django.urls import path
+from apps.issues.views import issue_views
+from apps.issues.views import issuenew_views
+from apps.issues.views import comment_views
+from apps.issues.views import media_views
+from apps.issues.views import revision_views
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
-    url(r'^addSolution$', issuenew_views.addSolution),
+    path('addSolution', issuenew_views.addSolution),
 ]

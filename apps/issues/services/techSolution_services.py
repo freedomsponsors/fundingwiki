@@ -1,6 +1,6 @@
-from core.services.mail_services import notifyWatchers_newissuecomment
-from core.models import ActionLog, TechSolutionHistEvent, Watch, HistEventTypes, TechSolutionCommentHistEvent
-from core.services import watch_services
+from apps.issues.services.mail_services import notifyWatchers_newissuecomment
+from apps.issues.models import ActionLog, TechSolutionHistEvent, Watch, HistEventTypes, TechSolutionCommentHistEvent
+from apps.issues.services import watch_services
 from django.utils import timezone
 
 def delete_techSolution(techSolution, user):

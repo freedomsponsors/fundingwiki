@@ -1,3 +1,4 @@
+{% load extras %}
 <style type="text/css">
     .role_icon span{
         font-size:44px;
@@ -21,35 +22,35 @@
     <div class="role_item role_item_{{stats.issuesProposed}}"">
         <div class="role_icon"><span class="las la-lightbulb"></span></div>
         <div class="role_number">
-            <a href="{%ifequal stats.issuesProposed 0%}/faq#{%else%}?section={%endifequal%}entrepreneur">{{stats.issuesProposed}}</a>
+            <a href="{%if stats.issuesProposed == 0 %}/faq#{%else%}?section={%endif%}entrepreneur">{{stats.issuesProposed}}</a>
         </div>
         <div class="role_name">Entrepreneur</div>
     </div>
     <div class="role_item role_item_{{stats.issuesProponent}}"">
         <div class="role_icon"><span class="las la-hand-pointer"></span></div>
         <div class="role_number">
-            <a href="{%ifequal stats.issuesProponent 0%}/faq#{%else%}?section={%endifequal%}proponent">{{stats.issuesProponent}}</a>
+            <a href="{%if stats.issuesProponent == 0%}/faq#{%else%}?section={%endif%}proponent">{{stats.issuesProponent}}</a>
         </div>
         <div class="role_name">Proponent</div>
     </div>
     <div class="role_item role_item_{{stats.issuesSponsored}}"">
         <div class="role_icon"><span class="las la-money-bill-wave-alt"></span></div>
         <div class="role_number">
-            <a href="{%ifequal stats.issuesSponsored 0%}/faq#{%else%}?section={%endifequal%}sponsor">{{stats.issuesSponsored}}</a>
+            <a href="{%if stats.issuesSponsored == 0%}/faq#{%else%}?section={%endif%}sponsor">{{stats.issuesSponsored}}</a>
         </div>
         <div class="role_name">Sponsor</div>
     </div>
     <div class="role_item role_item_{{stats.issuesCommunicator}}">
         <div class="role_icon"><span class="las la-bullhorn"></span></div>
         <div class="role_number">
-            <a href="{%ifequal stats.issueCommunicator 0%}/faq#{%else%}?section={%endifequal%}communicator">{{stats.issuesCommunicator}}</a>
+            <a href="{%if stats.issueCommunicator == 0%}/faq#{%else%}?section={%endif%}communicator">{{stats.issuesCommunicator}}</a>
         </div>
         <div class="role_name">Communicator</div>
     </div>
     <div class="role_item role_item_{{stats.issuesDeveloper}}"">
         <div class="role_icon"><span class="las la-hammer"></span></div>
         <div class="role_number">
-            <a href="{%ifequal stats.issuesDeveloper 0%}/faq#{%else%}?section={%endifequal%}developer">{{stats.issuesDeveloper}}</a>
+            <a href="{%if stats.issuesDeveloper == 0%}/faq#{%else%}?section={%endif%}developer">{{stats.issuesDeveloper}}</a>
         </div>
         <div class="role_name">Developer</div>
     </div>

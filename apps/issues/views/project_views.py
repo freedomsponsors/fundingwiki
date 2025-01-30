@@ -1,14 +1,14 @@
 import json
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from core.templatetags.pagination import pagina
+from apps.issues.templatetags.pagination import pagina
 from django.shortcuts import render, redirect
-from core.decorators import only_post
-from core.models import Project, ActionLog, Languages
-from core.services import stats_services, issue_services, watch_services, mail_services
+from apps.issues.decorators import only_post
+from apps.issues.models import Project, ActionLog, Languages
+from apps.issues.services import stats_services, issue_services, watch_services, mail_services
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
-from core.utils.djangology_utils import djangology_quote, djangology_unquote
+from apps.issues.utils.djangology_utils import djangology_quote, djangology_unquote
 from django.views.decorators.cache import never_cache
 import logging
 
