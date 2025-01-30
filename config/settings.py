@@ -26,8 +26,15 @@ SECRET_KEY = 'django-insecure-k*@fnm%ey)=zce=1ndp4yx05i$44y(dilmd#tks$#2e2od+cqg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'funding.wiki',
+    'freedomsponsors.org',
+    '.funding.wiki',
+    '.freedomsponsors.org',
+#    os.getenv('DJANGO_ALLOWED_HOST', 'x.y.z'),
+]
 
 # Application definition
 
