@@ -12,6 +12,8 @@ from django.contrib import messages
 import logging
 from apps.issues.services import testmail_service
 # from apps.issues.views import HOME_CRUMB
+from django.contrib.auth import authenticate, login as auth_login
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,16 +29,22 @@ def logout(request):
 
 
 def login(request):
-    getparams = ''
-    if request.GET.has_key('next') : 
-        getparams = '?next='+request.GET['next'];
-    if request.user.is_authenticated():
-        if getparams:
-            return redirect(getparams)
-        else:
-            return redirect('/')
-    return render(request, 'issues/login.html',
-        {'getparams':getparams})
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)  # Logs the user in
+            print('user logged in')
+        if request.user.is_authenticated:
+            print('user authenticated')
+            if 'next' in request.GET:
+                return redirect(request.GET['next'])
+            else:
+                return redirect('/')
+
+    return render(request, 'registration/login.html',
+        {})
 
 
 def admail(request):

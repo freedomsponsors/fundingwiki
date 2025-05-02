@@ -46,8 +46,8 @@ def viewUserByUsername(request, username):
     context = {
         'le_user': user,
         'page_section':page_section,
-        # 'stats': user.getStats(),
-        'stats': '',
+        'stats': user.getStats(),
+        # 'stats': '',
         'unconnectedSocialAccounts': unconnectedSocialAccounts,
     }
     if page_section == 'entrepreneur':

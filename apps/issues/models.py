@@ -4,6 +4,8 @@ import logging
 from datetime import timedelta
 from django.contrib.auth.models import User, AnonymousUser
 import hashlib, time, random
+
+from apps.issues.utils.djangology_utils import djangology_quote
 from apps.issues.utils.frespo_utils import get_or_none, strip_protocol, as_time_string
 from social.apps.django_app.default.models import UserSocialAuth
 # from django.utils.http import urlquote
@@ -110,7 +112,7 @@ class UserInfo(models.Model):
 
 
 def gravatar_url_small(self):
-    gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(self.email.lower()).hexdigest() + "?"
+    gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(self.email.lower().encode('utf-8')).hexdigest() + "?"
     # return gravatar_url + urllib.urlencode({'d':settings.SITE_HOME+"/static/img/user_23.png", 's':"23"})
     return gravatar_url + "d=identicon&s=23"
 
@@ -236,7 +238,8 @@ def getStats(self):
             elif offer.currency == 'BTC':
                 stats['sponsoredPaidPriceBTC'] += offer.price
 
-    btc2usd = currency_service.get_rate('BTC', 'USD', False)
+    # btc2usd = currency_service.get_rate('BTC', 'USD', False)
+    btc2usd = 1
     btc2usd_decimal = Decimal(str(btc2usd))
     stats['sponsoredOpenPriceBTC_inUSD'] = stats['sponsoredOpenPriceBTC'] * btc2usd_decimal
     stats['sponsoredRevokedPriceBTC_inUSD'] = stats['sponsoredRevokedPriceBTC'] * btc2usd_decimal
@@ -372,7 +375,8 @@ class Project(models.Model):
         return project
 
     def get_view_link(self):
-        return '/project/%s/%s' % (self.id, urlquote(self.name))
+        # return '/project/%s/%s' % (self.id, urlquote(self.name))
+        return '/project/%s/%s' % (self.id, djangology_quote(self.name))
 
     def get_image3x1(self):
         if not self.image3x1:
@@ -857,9 +861,9 @@ class Offer(models.Model):
         self.currency = offerdict['currency']
         self.price = Decimal(offerdict['price'])
         self.acceptanceCriteria = offerdict['acceptanceCriteria']
-        self.no_forking = offerdict.has_key('no_forking')
-        self.require_release = offerdict.has_key('require_release')
-        if (offerdict.has_key('expires')):
+        self.no_forking = 'no_forking' in offerdict
+        self.require_release = 'require_release' in offerdict
+        if ('expires' in offerdict):
             self.set_expiration_days(int(offerdict['expiration_time']))
         else:
             self.expirationDate = None

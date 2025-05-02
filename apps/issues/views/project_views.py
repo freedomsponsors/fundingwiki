@@ -20,7 +20,6 @@ def view(request, project_id=None, project_name=None):
     if project_id is not None:
         project = get_object_or_404(Project, pk=project_id)
         return redirect('/project/' + djangology_quote(project.name), permanent=True)
-
     project = get_object_or_404(Project, name=djangology_unquote(project_name))
     if project.redirectto_project:
         do_redirect = 'false' != request.GET.get('redirect')

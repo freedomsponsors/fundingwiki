@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,8 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.issues',
-    'apps.frespo_currencies'
+    'apps.frespo_currencies',
+    'registration',
+    'django.contrib.sites'  # Required!
 ]
+
+SITE_ID = 1
+ACCOUNT_ACTIVATION_DAYS = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -142,3 +148,25 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 BITCOIN_ENABLED = True
+
+# Email settings for sending emails via Gmail
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Gmail's SMTP server
+EMAIL_PORT = 587  # Standard port for Gmail SMTP
+EMAIL_USE_TLS = True  # Use TLS for secure connection
+EMAIL_HOST_USER = 'zgmysyj@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'your_password'  # Your Gmail password (or an app password if 2FA is enabled)
+
+FETCH_ISSUE_TIMEOUT = 10.0
+
+SOCIAL_AUTH_TWITTER_KEY                 = os.getenv('TWITTER_CONSUMER_KEY')
+SOCIAL_AUTH_TWITTER_SECRET              = os.getenv('TWITTER_CONSUMER_SECRET')
+SOCIAL_AUTH_FACEBOOK_KEY                = os.getenv('FACEBOOK_APP_ID')
+SOCIAL_AUTH_FACEBOOK_SECRET             = os.getenv('FACEBOOK_API_SECRET')
+SOCIAL_AUTH_GITHUB_KEY                  = os.getenv('GITHUB_APP_ID')
+SOCIAL_AUTH_GITHUB_SECRET               = os.getenv('GITHUB_API_SECRET')
+SOCIAL_AUTH_BITBUCKET_KEY               = os.getenv('BITBUCKET_CONSUMER_KEY')
+SOCIAL_AUTH_BITBUCKET_SECRET            = os.getenv('BITBUCKET_CONSUMER_SECRET')
+SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_KEY    = os.getenv('SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_KEY')
+SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_SECRET')

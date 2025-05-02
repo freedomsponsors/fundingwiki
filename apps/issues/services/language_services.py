@@ -7,7 +7,7 @@ import redis
 
 logger = logging.getLogger(__name__)
 
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
 
 def get_language_name_from_code(code):
     if not code:

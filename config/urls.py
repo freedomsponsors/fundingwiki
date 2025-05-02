@@ -34,6 +34,9 @@ import apps.issues.urls.donate_urls
 from apps.issues.views import main_views
 from django.views.generic import TemplateView
 from apps.issues.views import user_views
+import registration.backends.default.urls
+import registration.backends.simple.urls
+# from registration.backends.default.views import RegistrationView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -46,14 +49,18 @@ urlpatterns = [
     #old
     path('solution/', include(core_urls.solution_urls)),
     path('donate/', include(core_urls.donate_urls)),
-    path('logout', django.contrib.auth.views.LogoutView.as_view(), {'next_page': '/'}),
+    # path('logout', django.contrib.auth.views.LogoutView.as_view(), {'next_page': '/'}),
     # path('', include(django.contrib.auth.urls)),
+    path('login/', main_views.login),
+    path('logout', main_views.logout),
 
     # path('paypal/', include(paypal.standard.ipn.urls)),
     # path('paypal/test', paypal_sample.process_payment),
     # path('accounts/password/reset/', django.contrib.auth.views.password_reset, {'password_reset_form': FrespoPasswordResetForm}, name='password_reset'),
     # path('accounts/register/', RegistrationView.as_view(form_class=MyRegForm), name='registration_register'),
-    # path('accounts/', include(registration.backends.default.urls)),
+    path('accounts/', include(registration.backends.default.urls)),   #for email activation
+    # path('accounts/', include(registration.backends.simple.urls)),    #without email activation
+
     path('home/startIssue', main_views.homestartIssue),
     path('home/randomIssue', main_views.randomIssue),
     path('home/switchOldPage', main_views.switchOldPage),

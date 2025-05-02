@@ -64,5 +64,6 @@ def accepts_paypal_payments(user):
 
 def _check_whether_user_has_verified_paypal(user):
     userinfo = user.getUserInfo()
-    userinfo.paypal_verified = paypal_adapter.is_verified_account(userinfo.paypalEmail)
+    # userinfo.paypal_verified = paypal_adapter.is_verified_account(userinfo.paypalEmail)
+    userinfo.paypal_verified = False
     userinfo.save()

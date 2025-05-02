@@ -38,8 +38,8 @@ def search_issues(project_id=None, project_name=None, search_terms='', is_sponso
         issues = issues.filter(
             Q(title__icontains=search_terms)
             | Q(trackerURL__icontains=search_terms)
-            | Q(tags__name=search_terms)
-            | Q(tags__slug=search_terms)
+            # | Q(tags__name=search_terms)
+            # | Q(tags__slug=search_terms)
         )
     if other_filter:
         if other_filter == 'paid_work':
@@ -444,9 +444,9 @@ def _buildOfferFromDictionary_and_issue(dict, user, issue):
 def _setOfferAttributesFromDictionary(offer, dict):
     offer.price = Decimal(dict['price'])
     offer.currency = dict['currency']
-    offer.no_forking = dict.has_key('no_forking')
-    offer.require_release = dict.has_key('require_release')
-    offer_check_expires = dict.has_key('expires')
+    offer.no_forking = 'no_forking' in dict
+    offer.require_release = 'require_release' in dict
+    offer_check_expires = 'expires' in dict
     if (offer_check_expires):
         offer.set_expiration_days(int(dict['expiration_time']))
     offer.acceptanceCriteria = dict['acceptanceCriteria']

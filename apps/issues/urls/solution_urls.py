@@ -17,7 +17,7 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    path('([0-9]+)/comment', techSolution_views.TechSolutionCommentList.as_view()),
+    path('([0-9]+)/comment/', techSolution_views.TechSolutionCommentList.as_view()),
     path('(?P<solution_id>\d+)', techSolution_views.TechSolutionDetail.as_view()),
     path('(?P<solution_name>.+)', techSolution_views.TechSolutionDetail.as_view()),
     path('comment/([0-9]+)', techSolution_views.TechSolutionCommentDetail.as_view()),

@@ -77,7 +77,7 @@ def addSolution(request):
     """Start working on this issue"""
     issue_id = int(request.POST['issue_id'])
     comment_content = request.POST['comment']
-    accepting_payments = request.POST.has_key('accept_payments')
+    accepting_payments = 'accept_payments' in request.POST
     solution, comment = issue_services.add_solution_to_existing_issue(issue_id, comment_content, accepting_payments, request.user)
     watch_services.watch_issue(request.user, solution.issue.id, Watch.STARTED_WORKING)
     ActionLog.log_start_work(solution=solution, issue_comment=comment)
