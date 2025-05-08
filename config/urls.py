@@ -36,6 +36,10 @@ from django.views.generic import TemplateView
 from apps.issues.views import user_views
 import registration.backends.default.urls
 import registration.backends.simple.urls
+
+from config import settings
+from django.conf.urls.static import static
+
 # from registration.backends.default.views import RegistrationView
 
 urlpatterns = [
@@ -44,6 +48,8 @@ urlpatterns = [
     path('core/', include(core_urls)),
     path('issue/', include(core_urls.issue_urls)),
     path('issues', issue_views.issue_search, name='issue_search'),
+    path('issuesvue', issue_views.issue_search_vue),
+    path('issuesvue_language', issue_views.issue_search_language),
     path('user/', include(core_urls.user_urls)),
 
     #old
@@ -87,6 +93,12 @@ urlpatterns = [
     path('login-error/', main_views.login_error),
     path('robots.txt', TemplateView.as_view(template_name='issues/robots.txt', content_type='text/plain')),
     path('sitemap.xml', main_views.sitemap),
-    path('email/', user_views.redirect_to_user_page, {'email_verified': 'true'}, name='emailmgr_email_list')
+    path('email/', user_views.redirect_to_user_page, {'email_verified': 'true'}, name='emailmgr_email_list'),
+
+    path('vuetest/', TemplateView.as_view(template_name='vuetest.html'))
     # path('email/activate/(?P<identifier>\w+)/', emailmgr.views.email_activate, name='emailmgr_email_activate'
 ]
+
+# Add this only in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_ROOT_URL, document_root=settings.MEDIA_ROOT)

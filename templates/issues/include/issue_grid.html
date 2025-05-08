@@ -93,7 +93,7 @@
       {% endifequal %}
 
       <td><span title="{{ issue.creationDate }}">{{ issue.creationDate|date:"D, d/M/Y" }}</span></td>
-      <td><span title="{{ issue.language }}">{{ issue.language }}</span></td>
+      <td><span title="{{ issue.language }}">{{ issue.language|lang_name }}</span></td>
     </tr>
 {% endfor %}
   </tbody>

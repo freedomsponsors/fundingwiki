@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
     'freedomsponsors.org',
     '.funding.wiki',
     '.freedomsponsors.org',
+    '192.168.8.101'
 #    os.getenv('DJANGO_ALLOWED_HOST', 'x.y.z'),
 ]
 
@@ -142,6 +143,9 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "statfiles/" / "static",
 ]
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT_URL = '/media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

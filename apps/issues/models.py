@@ -85,6 +85,9 @@ class UserInfo(models.Model):
         userinfo.date_last_updated = now
         return userinfo
 
+    def __str__(self):
+        return self.realName
+
     def is_differentPaypalEmail(self):
         is_different = self.paypalEmail and self.paypalEmail != self.user.email
         return is_different
@@ -374,6 +377,9 @@ class Project(models.Model):
         project.language = language
         return project
 
+    def __str__(self):
+        return self.name
+
     def get_view_link(self):
         # return '/project/%s/%s' % (self.id, urlquote(self.name))
         return '/project/%s/%s' % (self.id, djangology_quote(self.name))
@@ -502,6 +508,9 @@ class Issue(models.Model):
 
     def issueMultiligualTags(self):
         return MultilingualTagIssue.objects.filter(issue=self)
+
+    def __str__(self):
+        return self.title
 
     # def issueMultiligualTagsForLanguage(self, qid, language):
     #     return MultilingualTagIssue.objects.filter(issue=self)

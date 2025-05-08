@@ -282,6 +282,91 @@ def issue_search(request):
     })
 
 
+def issue_search_vue(request):
+    if 'oldpage' in request.COOKIES and request.COOKIES['oldpage'] == '1':
+        return redirect('/search/')
+
+    project_id = request.GET.get('project_id')
+    project_name = request.GET.get('project_name')
+    search_terms = request.GET.get('s')
+    operation = request.GET.get('operation', '')
+    sortby = request.GET.get('sortby', '')
+    asc = request.GET.get('asc', '')
+
+    issues = _listIssues(request)
+
+    # Redirect when only 1 result
+    # if issues.count() == 1:
+    #     return redirect(issues[0].get_view_link())
+
+    # Paginate final results
+    # paginated_issues = pagina(request, issues)
+
+    # issue tags
+    user_language = request.user.getUserLanguage()
+    # for item in paginated_issues:
+    #     item.issueTagsList = tag_services.getIssueTagsForLanguage(item.id, user_language)
+
+    return render(request, 'issues/issue_search_vue.html', {
+        'issues_count': issues.count(),
+        # 'issues': paginated_issues,
+        'issues': list(issues.values()),
+        'language_list': issue_services.get_all_issue_languages(),
+        's': search_terms,
+        'project_id': project_id,
+        'project_name': project_name,
+        'operation': operation,
+        'related_tags': issue_services.get_related_tags_multilingual(issues, user_language),
+        'sortby': sortby,
+        'asc': asc,
+        'sortable': True,
+        'tag_selected_init': request.GET.get('tags', ''),
+    })
+
+
+def issue_search_language(request):
+    if 'oldpage' in request.COOKIES and request.COOKIES['oldpage'] == '1':
+        return redirect('/search/')
+
+    project_id = request.GET.get('project_id')
+    project_name = request.GET.get('project_name')
+    search_terms = request.GET.get('s')
+    operation = request.GET.get('operation', '')
+    sortby = request.GET.get('sortby', '')
+    asc = request.GET.get('asc', '')
+
+    issues = _listIssues(request)
+
+    # Redirect when only 1 result
+    # if issues.count() == 1:
+    #     return redirect(issues[0].get_view_link())
+
+    # Paginate final results
+    # paginated_issues = pagina(request, issues)
+
+    # issue tags
+    user_language = request.user.getUserLanguage()
+    # for item in paginated_issues:
+    #     item.issueTagsList = tag_services.getIssueTagsForLanguage(item.id, user_language)
+
+    return render(request, 'issues/issue_search_vue_language.html', {
+        'issues_count': issues.count(),
+        # 'issues': paginated_issues,
+        'issues': list(issues.values()),
+        'language_list': issue_services.get_all_issue_languages(),
+        's': search_terms,
+        'project_id': project_id,
+        'project_name': project_name,
+        'operation': operation,
+        'related_tags': issue_services.get_related_tags_multilingual(issues, user_language),
+        'sortby': sortby,
+        'asc': asc,
+        'sortable': True,
+        'tag_selected_init': request.GET.get('tags', ''),
+    })
+
+
+
 def listIssuesFeed(request):
     feed_class = LatestIssuesFeed()
     return feed_class(request)

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body style="padding:20px">
+<div style="">
+<div><h2>content from languageList</h2></div>
+<div>
+    {{ language_list|json_script:'languages' }}
+    <div data-component="LanguageList"></div>
+</div>
+
+<div><h2>content from issues comment</h2></div>
+<div>
+    <div data-component="issues/comments"></div>
+</div>
+
+<div style="margin-top:20px"><h2>content from IssueList</h2></div>
+<div>
+    {{ issues|json_script:'issues' }}
+    <div data-component="IssueList"></div>
+</div>
+</div>
+
+<script type="module" src="http://localhost:5173/src/main.ts"></script>
+</body>
+</html>
