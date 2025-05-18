@@ -5,7 +5,7 @@
 <div style="display: flex;align-items: center;margin-top: 50px;margin-bottom: 100px;flex-direction: column;">
     <div style="display: flex;flex-direction: column; align-items: center;width: 650px;gap: 20px;">
         <div style="display:flex;align-items:center;">
-            <img src="http://127.0.0.1:8000/static/img/fundingwiki-logo-fit_80x107px-v1.0.png" style="width: 70px;"/>
+            <img src="https://alfinal.eu.pythonanywhere.com/static/img/fundingwiki-logo-fit_80x107px-v1.0.png" style="width: 70px;"/>
             <h1 style="padding-left:10px">I have an idea!</h1>
         </div>
         <v-form 
@@ -73,7 +73,7 @@
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import {getCookie, setUserCookie} from '../utils/cookies.js'
-import {getIdeas, getIdeasInterested} from '../services/ideas.js'
+import {getIdeas, getIdeasInterested, saveIdea} from '../services/ideas.js'
 import {isUserLogin} from '../services/user.js'
 
 import User from './User.vue'
@@ -99,14 +99,16 @@ const content_not_empty = [
 const submitForm = async () => {
     const { valid } = await form.value.validate()
     if (valid) {
-        var response = await axios.post('http://127.0.0.1:8000/vueapi/ideas', {
-            idea_content: idea_content.value
-        },{
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json'
-            }
-        })
+        //var response = await axios.post('http://127.0.0.1:8000/vueapi/ideas', {
+        //    idea_content: idea_content.value
+        //},{
+        //    headers: {
+        //        'X-CSRFToken': getCookie('csrftoken'),
+        //        'Content-Type': 'application/json'
+        //   }
+        //})
+
+        let response = await saveIdea(idea_content.value)
 
         console.log(response.data)
         form_success.value = true

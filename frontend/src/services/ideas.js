@@ -1,5 +1,13 @@
 import {post, get, delete_by_id} from '../utils/request.js'
 
+export async function saveIdea(idea_content) {
+    let data = {
+        idea_content:idea_content
+    }
+    var response = await post('vueapi/ideas', data)
+    return response
+}
+
 export async function getIdeas(data) {
     var response = await get('vueapi/ideas', data)
     return response
