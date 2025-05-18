@@ -46,7 +46,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', issue_views.addIssueForm),
+    path('issue_submit', issue_views.addIssueForm),
     path('core/', include(core_urls)),
     path('issue/', include(core_urls.issue_urls)),
     path('issues', issue_views.issue_search, name='issue_search'),
@@ -56,7 +56,7 @@ urlpatterns = [
 
     #vue url
     path('vuedev', TemplateView.as_view(template_name='vue/dev.html')),
-    path('vuehome', TemplateView.as_view(template_name='vue/index.html')),
+    path('', TemplateView.as_view(template_name='vue/index.html')),
     path('vueapi/', include(core_urls.vue_api)),
 
     #old
