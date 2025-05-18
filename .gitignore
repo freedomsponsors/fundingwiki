@@ -7,3 +7,6 @@ staticfiles/
 media/
 .idea
 faiss_index.index
+config/settings/local.py
+config/settings/development.py
+config/settings/production.py
