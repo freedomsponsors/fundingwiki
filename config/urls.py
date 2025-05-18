@@ -31,11 +31,13 @@ import apps.issues.urls.payment_urls
 import apps.issues.urls.offer_urls
 import apps.issues.urls.api_urls
 import apps.issues.urls.donate_urls
+import apps.issues.urls.vue_api
 from apps.issues.views import main_views
 from django.views.generic import TemplateView
 from apps.issues.views import user_views
 import registration.backends.default.urls
 import registration.backends.simple.urls
+from apps.issues.views import vue_views
 
 from config import settings
 from django.conf.urls.static import static
@@ -51,6 +53,11 @@ urlpatterns = [
     path('issuesvue', issue_views.issue_search_vue),
     path('issuesvue_language', issue_views.issue_search_language),
     path('user/', include(core_urls.user_urls)),
+
+    #vue url
+    path('vuedev', TemplateView.as_view(template_name='vue/dev.html')),
+    path('vuehome', TemplateView.as_view(template_name='vue/index.html')),
+    path('vueapi/', include(core_urls.vue_api)),
 
     #old
     path('solution/', include(core_urls.solution_urls)),

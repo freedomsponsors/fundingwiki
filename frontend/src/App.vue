@@ -1,10 +1,10 @@
-<script setup lang="ts">
-import IssueList from './components/IssueList.vue';
-</script>
-
 <template>
-  <IssueList msg="Vite + Vue" />
+  <Home></Home>
 </template>
+
+<script setup lang="ts">
+import Home from './components/Home.vue';
+</script>
 
 <style scoped>
 .logo {

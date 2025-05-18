@@ -1,6 +1,5 @@
 import { createApp } from 'vue'
 import './style.css'
-// import App from './App.vue'
 
 // Vuetify setup
 import 'vuetify/styles'
@@ -8,22 +7,16 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
+import App from './App.vue'
+
+// import 'mdi/font/css/materialdesignicons.css';
+
 const vuetify = createVuetify({ components, directives })
 
-// const app = createApp(App)
-// app.use(vuetify).mount('#app')  .rst
+const app = createApp(App)
 
-document.querySelectorAll('[data-component]').forEach(el => {
-    const componentName = el.dataset.component
-    console.log(componentName)
-    // import(`./components/${componentName}.vue`).then(PageComponent => {
-    
-    import('./components/'+componentName+'.vue').then(PageComponent => {
-        console.log(componentName)
-        console.log(PageComponent)
+// register global component
+import ConfirmDialog from './components/common/ConfirmDialog.vue'
+app.component('ConfirmDialog', ConfirmDialog)
 
-        // app.component(componentName, PageComponent.default)
-        // app.use(vuetify).mount(el)
-        createApp(PageComponent.default).use(vuetify).mount(el)
-    })
-})
+app.use(vuetify).mount('#app')

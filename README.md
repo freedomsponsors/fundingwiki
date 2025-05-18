@@ -50,7 +50,7 @@ exit # go back to your normal user
 ### 3.1 Most GNU/Linux and MacOS
 ```bash
 python3 -m venv venv
-source .venv/bin/activate
+source venv/bin/activate
 ```
 ### 3.2 Windows
 ```bash

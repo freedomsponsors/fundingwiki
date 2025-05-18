@@ -42,6 +42,7 @@ class TechSolutionsHistEventSerializer(serializers.ModelSerializer):
         model = TechSolutionHistEvent
         fields = ('id', 'eventDate', 'json', 'event', 'techSolution')
 
+
 class IssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
@@ -50,3 +51,16 @@ class IssueSerializer(serializers.ModelSerializer):
     # Create an object without save it on db
     def create(self):
         return Issue(**self.validated_data)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email']
+
+
+class IdeasSerializer(serializers.ModelSerializer):
+    createdByUser = UserSerializer()
+    class Meta:
+        model = Ideas
+        fields = '__all__'

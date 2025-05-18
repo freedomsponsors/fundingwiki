@@ -23,6 +23,10 @@ class IssueCommentAdmin(admin.ModelAdmin):
 class TechSolutionAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'content', 'creationDate', 'createdByUser_id', 'issue_id')
 
+
+class IdeasAdmin(admin.ModelAdmin):
+    list_display = ('id', 'content', 'reputation', 'date_created')
+
 admin.site.register(UserInfo)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Issue, IssueAdmin)
@@ -35,3 +39,4 @@ admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Media)
 admin.site.register(TechSolution, TechSolutionAdmin)
 admin.site.register(TechSolutionComment)
+admin.site.register(Ideas, IdeasAdmin)

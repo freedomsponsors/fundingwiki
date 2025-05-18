@@ -49,14 +49,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.issues',
     'apps.frespo_currencies',
+    'rest_framework',
     'registration',
-    'django.contrib.sites'  # Required!
+    'django.contrib.sites',  # Required!
+    'corsheaders'
 ]
 
 SITE_ID = 1
 ACCOUNT_ACTIVATION_DAYS = 1
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -64,6 +67,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
 ]
 
 ROOT_URLCONF = 'config.urls'
