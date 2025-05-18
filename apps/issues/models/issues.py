@@ -1610,20 +1610,20 @@ class MultilingualTagIssue(models.Model):
         return '11'
 
 
-class IssueGeo(models.Model):
-    issue = models.ForeignKey(Issue, null=True, on_delete=models.DO_NOTHING)
-    name = models.CharField(max_length=500, default='')
-    location = models.PointField(geography=True)
-    osm_id = models.IntegerField(default=0)
-
-    @classmethod
-    def create(cls, issue, name, location, osm_id):
-        obj = cls()
-        obj.issue = issue
-        obj.name = name
-        obj.location = location
-        obj.osm_id = osm_id
-        return obj
+# class IssueGeo(models.Model):
+#     issue = models.ForeignKey(Issue, null=True, on_delete=models.DO_NOTHING)
+#     name = models.CharField(max_length=500, default='')
+#     location = models.PointField(geography=True)
+#     osm_id = models.IntegerField(default=0)
+#
+#     @classmethod
+#     def create(cls, issue, name, location, osm_id):
+#         obj = cls()
+#         obj.issue = issue
+#         obj.name = name
+#         obj.location = location
+#         obj.osm_id = osm_id
+#         return obj
 
 
 # -------------------------
