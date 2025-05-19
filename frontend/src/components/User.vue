@@ -4,7 +4,7 @@
       <div>{{ login_info.username }}</div>
       <div><a href="/logout">Login out</a></div>
     </div>
-    <div v-else><a href="/login/">Login in</a></div>
+    <div v-else><a href="/login/">Log in</a></div>
   </div>
 
 </template>

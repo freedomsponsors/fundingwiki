@@ -5,6 +5,7 @@ from apps.issues.views.vue_views_api import *
 
 urlpatterns = [
     path('ideas', Ideas.as_view()),
+    path('ideas_import', IdeasImport.as_view()),
     path('ideas_interested', IdeasInterested.as_view()),
     path('ideas_my', IdeasMine.as_view()),
     path('ideas_similar', IdeasSimilar.as_view()),
