@@ -6,7 +6,7 @@
     <div style="display: flex;flex-direction: column; align-items: center;width: 650px;gap: 20px;">
         <div style="display:flex;align-items:center;">
             <img src="https://alfinal.eu.pythonanywhere.com/static/img/fundingwiki-logo-fit_80x107px-v1.0.png" style="width: 70px;"/>
-            <h1 style="padding-left:10px">I have an idea!</h1>
+            <h1 style="padding-left:10px">Brainstorm or find inspiration!</h1>
         </div>
         <v-form 
             v-if="!form_success"
@@ -16,56 +16,61 @@
             validate-on="submit"
             style="width: 100%;">
             <div style="width: 100%;display: flex;flex-direction: column;align-items: center;margin-top: 50px;">
-                <div style="width: 100%;">
-                <v-textarea
-                    v-model="idea_content"
-                    color="deep-purple"
-                    label="Write your idea here"
-                    rows="3"
-                    variant="filled"
-                    auto-grow
-                    autofocus
-                    :rules="content_not_empty"
-                ></v-textarea>
-                </div>
-                <div style="width: 200px;">
+                <div style="width: 100%;position: relative;">
+                    <v-textarea
+                        v-model="idea_content"
+                        color="deep-purple"
+                        label="What's on your mind?"
+                        rows="3"
+                        variant="filled"
+                        auto-grow
+                        autofocus
+                        :rules="content_not_empty"
+                        style="padding-right: 50px;"
+                    ></v-textarea>
                     <v-btn
-                        style="width: 100%;"
+                        style="position: absolute; right: 8px; bottom: 8px;"
                         :disabled="loading"
                         :loading="loading"
-                        class="text-none mb-4"
-                        color="indigo-darken-3"
-                        size="x-large"
-                        variant="flat"
+                        color="grey-lighten-2"
+                        size="36"
+                        variant="text"
                         @click="submitForm"
+                        icon
+                        class="no-box-shadow"
                     >
-                        Submit
+                        <v-icon size="24" color="grey-darken-1">las la-arrow-circle-up</v-icon>
                     </v-btn>
                 </div>
             </div>
         </v-form>
 
-        <v-alert
-            v-if="form_success"
-            title="Idea successfully submitted!"
-            >
-        </v-alert>
+        <div v-if="form_success" style="width: 100%;">
+            <v-textarea
+                v-model="idea_content"
+                color="deep-purple"
+                label="What's on your mind?"
+                rows="3"
+                variant="filled"
+                auto-grow
+                readonly
+                style="background-color: rgba(76, 175, 80, 0.3); transition: background-color 2s;"
+            ></v-textarea>
+        </div>
         <div style="width: 100%;">
             <div style="width: 100%;">
                 <MyIdeas :key="myIdeasKey"></MyIdeas>
             </div>
             <div v-if="ideas_list.length > 0" style="width: 100%;">
-                <div style="width: 100%;margin-top: 60px;border-bottom: 1px solid #efefef;"><h3>Ideas you may interested</h3></div>
+                <div style="width: 100%;margin-top: 60px;border-bottom: 1px solid #efefef;"><h3>Related ideas</h3></div>
                 <div style="width: 100%;">
                     <div v-for="(idea, index) in ideas_list" :key="index" class="idea_item">
-                        <!-- <div>{{ idea.content }}</div> -->
                         <IdeaItem :item="idea" @delete-idea="loadIdeas"></IdeaItem>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
 </div>
 </template>
 
@@ -100,20 +105,10 @@ const submitForm = async () => {
     loading.value = true
     const { valid } = await form.value.validate()
     if (valid) {
-        //var response = await axios.post('http://127.0.0.1:8000/vueapi/ideas', {
-        //    idea_content: idea_content.value
-        //},{
-        //    headers: {
-        //        'X-CSRFToken': getCookie('csrftoken'),
-        //        'Content-Type': 'application/json'
-        //   }
-        //})
-
         let response = await saveIdea(idea_content.value)
-
         console.log(response.data)
         form_success.value = true
-        
+
         myIdeasKey.value += 1
         ideas_list.value = await getIdeasInterested()
 
@@ -122,7 +117,7 @@ const submitForm = async () => {
         setTimeout(() => {
             form_success.value = false
             idea_content.value = ''
-        }, 3000)
+        }, 2000)
     }else{
         loading.value = false
     }

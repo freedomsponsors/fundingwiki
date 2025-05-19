@@ -66,6 +66,12 @@ class Ideas(APIView):
         }
         return JsonResponse(result)
 
+class IdeasImport(APIView):
+    def post(self, request):
+
+        return Response({})
+
+
 class IdeasMine(APIView):
     def get(self, request):
         ideas = []
