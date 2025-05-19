@@ -5,12 +5,13 @@ from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from apps.issues.models import Ideas as IdeasModel
 from apps.issues.serializers import IdeasSerializer
 from rest_framework.response import Response
 
-from apps.issues.services import faiss_services, idea_services, redis_services, openai_services
+from apps.issues.services import faiss_services, idea_services, redis_services, openai_services, user_services
 
 
 class Ideas(APIView):
@@ -27,6 +28,7 @@ class Ideas(APIView):
             idea.createdByUser = request.user
             idea.idea_from = 'user'
         else:
+            idea.createdByUser = user_services.getAnonymousUser()
             idea.idea_from = 'anonymous'
 
         idea.faiss_id = faiss_services.add_to_faiss(idea.content)
@@ -68,7 +70,6 @@ class Ideas(APIView):
 
 class IdeasMine(APIView):
     def get(self, request):
-        ideas = []
         if request.user.is_authenticated:
             ideas = IdeasModel.objects.filter(createdByUser=request.user).order_by('-date_created').all()
         else:
@@ -79,6 +80,19 @@ class IdeasMine(APIView):
                 ideas = IdeasModel.objects.filter(id__in=idea_ids).order_by('-date_created').all()
 
         serializer = IdeasSerializer(ideas, many=True)
+
+        # add voted info
+        # check if voted
+        # if request.user.is_authenticated:
+        #     check_vote_user = request.user
+        # else:
+        #     check_vote_user = user_services.getAnonymousUser()
+        # voted_idea_up_ids = idea_services.get_idea_ids_voted_up_by_user(check_vote_user, idea_list=ideas)
+        # voted_idea_down_ids = idea_services.get_idea_ids_voted_down_by_user(check_vote_user, idea_list=ideas)
+        for item in serializer.data:
+            _add_vote_info_to_idea(request, item, ideas)
+            # item['is_voted_up'] = item['id'] in voted_idea_up_ids
+            # item['is_voted_down'] = item['id'] in voted_idea_down_ids
 
         return Response(serializer.data)
 
@@ -93,6 +107,19 @@ class IdeasInterested(APIView):
             idea_list = idea_services.get_user_cookie_suggest_ideas(user_identify, number=5)
 
         serializer = IdeasSerializer(idea_list, many=True)
+
+        # add voted info
+        # check if voted
+        # if request.user.is_authenticated:
+        #     check_vote_user = request.user
+        # else:
+        #     check_vote_user = user_services.getAnonymousUser()
+        # voted_idea_up_ids = idea_services.get_idea_ids_voted_up_by_user(check_vote_user, idea_list=idea_list)
+        # voted_idea_down_ids = idea_services.get_idea_ids_voted_down_by_user(check_vote_user, idea_list=idea_list)
+        for item in serializer.data:
+            _add_vote_info_to_idea(request, item, idea_list)
+            # item['is_voted_up'] = item['id'] in voted_idea_up_ids
+            # item['is_voted_down'] = item['id'] in voted_idea_down_ids
 
         return Response(serializer.data)
 
@@ -121,10 +148,67 @@ class User(APIView):
         return Response(result)
 
 
+@api_view(['POST'])
+def idea_vote(request):
+    idea_id = request.data.get('id')
+    vote_type = request.data.get('vote_type')
+
+    idea = IdeasModel.objects.get(pk=idea_id)
+
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        user = user_services.getAnonymousUser()
+
+    if vote_type == 'up':
+        idea_services.vote_idea_up(idea, user)
+    elif vote_type == 'up_cancel':
+        idea_services.vote_idea_up_cancel(idea, user)
+    elif vote_type == 'up_from_down':
+        idea_services.vote_idea_down_cancel(idea, user)
+        idea_services.vote_idea_up(idea, user)
+    elif vote_type == 'down':
+        idea_services.vote_idea_down(idea, user)
+    elif vote_type == 'down_cancel':
+        idea_services.vote_idea_down_cancel(idea, user)
+    elif vote_type == 'down_from_up':
+        idea_services.vote_idea_up_cancel(idea, user)
+        idea_services.vote_idea_down(idea, user)
+
+    result = {
+        'result': 'success'
+    }
+
+    return Response(result)
 
 
+@api_view(['GET'])
+def get_idea_by_id(request):
+    id = request.query_params.get('id')
+    idea = IdeasModel.objects.get(id=id)
+    serializer = IdeasSerializer(idea)
+    serializer_data = serializer.data.copy()
+
+    _add_vote_info_to_idea(request, serializer_data, [idea])
+
+    return Response(serializer_data)
 
 
+def _add_vote_info_to_idea(request, data, idea_list):
+    if request.user.is_authenticated:
+        check_vote_user = request.user
+    else:
+        check_vote_user = user_services.getAnonymousUser()
+
+    voted_idea_up_ids = idea_services.get_idea_ids_voted_up_by_user(check_vote_user, idea_list=idea_list)
+    voted_idea_down_ids = idea_services.get_idea_ids_voted_down_by_user(check_vote_user, idea_list=idea_list)
+
+    data['is_voted_up'] = data['id'] in voted_idea_up_ids
+    data['is_voted_down'] = data['id'] in voted_idea_down_ids
+
+    vote_ope = idea_services.get_ope_by_up_down_status(data['is_voted_up'], data['is_voted_down'])
+    data['vote_up_ope'] = vote_ope['vote_up_ope']
+    data['vote_down_ope'] = vote_ope['vote_down_ope']
 
 
 

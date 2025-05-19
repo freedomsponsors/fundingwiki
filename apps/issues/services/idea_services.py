@@ -8,8 +8,8 @@ import redis
 import hashlib, time, random
 import json
 
-from apps.issues.models import Ideas
-from apps.issues.services import faiss_services, redis_services, openai_services
+from apps.issues.models import Ideas, UserIdeaVote
+from apps.issues.services import faiss_services, redis_services, openai_services, user_services
 
 
 # get suggest ideas for user
@@ -66,7 +66,7 @@ def get_ideas_by_faiss_ids(faiss_ids, number=10, id_not_in=None, ideas_not_from_
 
     # make the results in order of faiss_ids
     preserved = Case(*[When(faiss_id=pk, then=pos) for pos, pk in enumerate(faiss_ids)])
-    ideas_list = ideas_list.order_by(preserved)[:number]
+    ideas_list = ideas_list.order_by('-point', preserved)[:number]
 
     return ideas_list
 
@@ -79,9 +79,69 @@ def generate_one_related_ideas(idea_original):
     idea = Ideas.newIdea(content=content)
     idea.idea_from = 'openai:' + str(idea_original.id)
     idea.faiss_id = faiss_services.add_to_faiss(idea.content)
+    idea.createdByUser = user_services.getOpenaiUser()
     idea.save()
 
 
+# idea vote
+def vote_idea_up(idea, user):
+    idea.add_point(1)
+    if idea.createdByUser:
+        idea.createdByUser.addReputation(10)
+    UserIdeaVote.newVoteUp(user, idea).saveVote()
 
 
+def vote_idea_up_cancel(idea, user):
+    idea.add_point(-1)
+    if idea.createdByUser:
+        idea.createdByUser.addReputation(-10)
+    UserIdeaVote.newVoteUp(user, idea).cancelVote()
 
+
+def vote_idea_down(idea, user):
+    idea.add_point(-1)
+    if idea.createdByUser:
+        idea.createdByUser.addReputation(-2)
+    UserIdeaVote.newVoteDown(user, idea).saveVote()
+
+
+def vote_idea_down_cancel(idea, user):
+    idea.add_point(1)
+    if idea.createdByUser:
+        idea.createdByUser.addReputation(2)
+    UserIdeaVote.newVoteDown(user, idea).cancelVote()
+
+
+def get_idea_ids_voted_up_by_user(user, idea_list=None):
+    ideas = UserIdeaVote.objects.filter(user=user).filter(voteType='UP')
+
+    if idea_list:
+        idea_ids = [idea.id for idea in idea_list]
+        ideas.filter(idea__in=idea_ids)
+
+    return ideas.values_list('idea', flat=True)
+
+
+def get_idea_ids_voted_down_by_user(user, idea_list=None):
+    ideas = UserIdeaVote.objects.filter(user=user).filter(voteType='DOWN')
+
+    if idea_list:
+        idea_ids = [idea.id for idea in idea_list]
+        ideas.filter(idea__in=idea_ids)
+
+    return ideas.values_list('idea', flat=True)
+
+
+def get_ope_by_up_down_status(if_voted_up, if_voted_down):
+    vote_ope = {}
+    if if_voted_up:
+        vote_ope['vote_up_ope'] = 'up_cancel'
+        vote_ope['vote_down_ope'] = 'down_from_up'
+    else:
+        if if_voted_down:
+            vote_ope['vote_up_ope'] = 'up_from_down'
+            vote_ope['vote_down_ope'] = 'down_cancel'
+        else:
+            vote_ope['vote_up_ope'] = 'up'
+            vote_ope['vote_down_ope'] = 'down'
+    return vote_ope

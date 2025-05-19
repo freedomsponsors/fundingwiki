@@ -32,3 +32,13 @@ export async function getSimilarIdeas(id) {
     var response = await get('vueapi/ideas_similar', {id:id})
     return response
 }
+
+export async function ideasVote(id, vote_type) {
+    var response = await post('vueapi/idea_vote', {id:id, vote_type:vote_type})
+    return response
+}
+
+export async function getIdeaById(id) {
+    var response = await get('vueapi/get_idea_by_id', {id:id})
+    return response
+}
