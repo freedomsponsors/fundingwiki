@@ -44,6 +44,7 @@ def query_faiss(embedding):
 # Function to add a piece of text to the FAISS index
 def add_to_faiss(text):
     embedding = get_embedding(text)  # Get the embedding for the idea
+    print('embedding from text:', embedding)
     embedding = np.array([embedding]).astype('float32')
     print('embedding:', embedding)
     # Add embeddings to the FAISS index
@@ -117,6 +118,7 @@ def get_embedding(text):
             input=text
         ).data[0].embedding
         redis_client.set(key, json.dumps(embedding))
+        print('get embedding from openai, result: ', embedding)
         return embedding
     except Exception as e:
         print(e)
