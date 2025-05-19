@@ -29,16 +29,16 @@ else:
 
 # Function to query the FAISS index by a specific embedding
 def query_faiss(embedding):
-    if not embedding:
-        return []
-
     number = 100
     embedding = np.array([embedding]).astype('float32')
 
     # Search for similar ideas
-    distances, indexes = index.search(embedding, number)
-
-    return indexes[0]
+    try:
+        distances, indexes = index.search(embedding, number)
+        return indexes[0]
+    except Exception as e:
+        print(e)
+        return []
 
 
 # Function to add a piece of text to the FAISS index
