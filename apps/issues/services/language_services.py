@@ -4,10 +4,11 @@ from django.utils.translation import gettext as _
 from apps.issues.models import *
 import xxhash
 import redis
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
+redis_client = redis.StrictRedis(host=settings.REDIS['host'], port=settings.REDIS['port'], db=settings.REDIS['db'], password=settings.REDIS['pass'], decode_responses=True)
 
 def get_language_name_from_code(code):
     if not code:

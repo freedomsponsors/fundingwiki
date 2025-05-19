@@ -6,11 +6,12 @@ from openai import OpenAI
 import redis
 import hashlib, time, random
 import json
+from django.conf import settings
 
 from apps.issues.models import Ideas
 
 # redis client
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
+redis_client = redis.StrictRedis(host=settings.REDIS['host'], port=settings.REDIS['port'], db=settings.REDIS['db'], password=settings.REDIS['pass'], decode_responses=True)
 
 # get user embedding
 def set(key, value):
