@@ -1,8 +1,7 @@
 import axios from 'axios'
 import { getCookie } from './cookies'
 
-// const BASE_URL = 'http://127.0.0.1:8000/'
-const BASE_URL = 'https://alfinal.eu.pythonanywhere.com/'
+const BASE_URL = import.meta.env.VITE_API_URL
 
 async function post(url, data) {
     var response = await axios.post(BASE_URL + url, data,{

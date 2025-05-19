@@ -97,6 +97,7 @@ const content_not_empty = [
 ]
 
 const submitForm = async () => {
+    loading.value = true
     const { valid } = await form.value.validate()
     if (valid) {
         //var response = await axios.post('http://127.0.0.1:8000/vueapi/ideas', {
@@ -116,10 +117,14 @@ const submitForm = async () => {
         myIdeasKey.value += 1
         ideas_list.value = await getIdeasInterested()
 
+        loading.value = false
+
         setTimeout(() => {
             form_success.value = false
             idea_content.value = ''
         }, 3000)
+    }else{
+        loading.value = false
     }
 }
 
