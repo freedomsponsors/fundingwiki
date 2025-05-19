@@ -45,9 +45,13 @@ def query_faiss(embedding):
 def add_to_faiss(text):
     embedding = get_embedding(text)  # Get the embedding for the idea
     embedding = np.array([embedding]).astype('float32')
-
+    print('embedding:', embedding)
     # Add embeddings to the FAISS index
-    index.add(embedding)
+    try:
+        index.add(embedding)
+    except Exception as e:
+        print(e)
+        return -1
 
     print("Number of vectors in the index:", index.ntotal)
 
