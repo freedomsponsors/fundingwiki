@@ -5,9 +5,9 @@
 <div style="display: flex;align-items: center;margin-top: 50px;margin-bottom: 100px;flex-direction: column;">
     <div style="display: flex;flex-direction: column; align-items: center;width: 650px;gap: 20px;">
         <div style="display:flex;align-items:center;">
-            <!-- <img src="https://alfinal.eu.pythonanywhere.com/static/img/fundingwiki-logo-fit_80x107px-v1.0.png" style="width: 70px;"/> -->
+            <!-- <img src="https://alfinal.eu.pythonanywhere.com" style="width: 70px;"/> -->
             <!-- <img :src="logo" style="width: 70px;"/> -->
-             <img src="/assets/images/logo.png" style="width: 70px;"/>
+             <img :src="imageUrl('/static/img/fundingwiki-logo-fit_80x107px-v1.0.png')" style="width: 70px;"/>
             <h1 style="padding-left:10px">I have an idea!</h1>
         </div>
         <v-form 
@@ -82,7 +82,7 @@ import User from './User.vue'
 import IdeaItem from './IdeaItem.vue'
 import MyIdeas from './MyIdeas.vue'
 
-import logo from '@/assets/images/logo.png'
+import {imageUrl} from '@/utils/util.js'
 
 const idea_content = ref('')
 const loading = ref(false)
