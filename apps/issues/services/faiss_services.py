@@ -29,6 +29,9 @@ else:
 
 # Function to query the FAISS index by a specific embedding
 def query_faiss(embedding):
+    if not embedding:
+        return []
+
     number = 100
     embedding = np.array([embedding]).astype('float32')
 
