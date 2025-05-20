@@ -12,7 +12,7 @@
             </div>
         </div>
         <div style="flex-grow: 1;">
-            <div>{{ idea.content }}</div>
+            <div><a @click="gotoIdeaDetail(idea.id)">{{ idea.content }}</a></div>
             <div style="display: flex;flex-direction: row-reverse;">
                 <a @click="getSimilar(idea.id)">Samilar ideas</a>
                 <div v-if="canDelete" style="margin-right: 10px;">
@@ -47,6 +47,9 @@ watch(() => props.item, (newVal, oldVal) => {
 const similar_ideas_list = ref([])
 const show_similar = ref(false)
 const emit = defineEmits(['delete-idea'])
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const getSimilar = async (id) => {
     show_similar.value = !show_similar.value
@@ -69,6 +72,13 @@ const ideaVote = async (id, vote_type)=>{
     console.log(response)
 
     idea.value = await getIdeaById(id)
+}
+
+const link_prefix = import.meta.env.VITE_LINK_PREFIX
+
+let gotoIdeaDetail = (id)=>{
+
+    router.push(link_prefix+'/idea/'+id)
 }
 
 </script>
