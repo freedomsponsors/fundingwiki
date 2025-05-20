@@ -31,13 +31,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue'
+import { ref, defineEmits, watch} from 'vue'
 import {deleteIdeaById, getSimilarIdeas, ideasVote, getIdeaById} from '../services/ideas.js'
  
 const confirmDialog = ref()
 
 const props = defineProps<{ item: object, canDelete:false}>()
+
 const idea = ref(props.item)
+
+watch(() => props.item, (newVal, oldVal) => {
+  idea.value = props.item
+})
 
 const similar_ideas_list = ref([])
 const show_similar = ref(false)

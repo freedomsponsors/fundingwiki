@@ -1,9 +1,6 @@
 <template>
-<div>
-    <User></User>
-</div>
-<div style="display: flex;align-items: center;margin-top: 50px;margin-bottom: 100px;flex-direction: column;">
-    <div style="display: flex;flex-direction: column; align-items: center;width: 650px;gap: 20px;">
+<div style="display: flex;align-items: center;flex-direction: column;">
+    <div style="display: flex;flex-direction: column;width: 650px;gap: 20px;">
         <div style="display:flex;align-items:center;">
             <img :src="imageUrl('/static/img/fundingwiki-logo-fit_80x107px-v1.0.png')" style="width: 70px;"/>
             <h1 style="padding-left:10px">Brainstorm or find inspiration!</h1>
@@ -15,13 +12,13 @@
             lazy-validation 
             validate-on="submit"
             style="width: 100%;">
-            <div style="width: 100%;display: flex;flex-direction: column;align-items: center;margin-top: 50px;">
+            <div style="width: 100%;display: flex;flex-direction: column;align-items: center;">
                 <div style="width: 100%;position: relative;">
                     <v-textarea
                         v-model="idea_content"
                         color="deep-purple"
                         label="What's on your mind?"
-                        rows="3"
+                        rows="1"
                         variant="filled"
                         auto-grow
                         autofocus
@@ -29,7 +26,7 @@
                         style="padding-right: 50px;"
                     ></v-textarea>
                     <v-btn
-                        style="position: absolute; right: 8px; bottom: 8px;"
+                        style="position: absolute; right: 55px; bottom: 25px;"
                         :disabled="loading"
                         :loading="loading"
                         color="grey-lighten-2"
@@ -56,22 +53,6 @@
                 readonly
                 style="background-color: rgba(76, 175, 80, 0.3); transition: background-color 2s;"
             ></v-textarea>
-        </div>
-
-
-        
-        <div style="width: 100%;">
-            <div style="width: 100%;">
-                <MyIdeas :key="myIdeasKey"></MyIdeas>
-            </div>
-            <div v-if="ideas_list.length > 0" style="width: 100%;">
-                <div style="width: 100%;margin-top: 60px;border-bottom: 1px solid #efefef;"><h3>Related ideas</h3></div>
-                <div style="width: 100%;">
-                    <div v-for="(idea, index) in ideas_list" :key="index" class="idea_item">
-                        <IdeaItem :item="idea" @delete-idea="loadIdeas"></IdeaItem>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>

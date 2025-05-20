@@ -55,8 +55,11 @@ urlpatterns = [
     path('user/', include(core_urls.user_urls)),
 
     #vue url
-    path('vuedev', TemplateView.as_view(template_name='vue/dev.html')),
+    path('vuedev/', TemplateView.as_view(template_name='vue/dev.html')),
+    path('vuedev/<path:subpath>', TemplateView.as_view(template_name='vue/dev.html')),
     path('', TemplateView.as_view(template_name='vue/index.html')),
+    path('idea/<path:subpath>', TemplateView.as_view(template_name='vue/index.html')),
+
     path('vueapi/', include(core_urls.vue_api)),
 
     #old
