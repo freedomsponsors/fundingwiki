@@ -171,3 +171,20 @@ def _send_activation(emailActivation):
     emailmgr_utils.send_activation(emailActivation, False)
     emailActivation.is_activation_sent = True
     emailActivation.save()
+
+
+# get openai user
+def getOpenaiUser():
+    user = User.objects.filter(username='Mai').first()
+    if user is None:
+        raise Exception('Openai user not found, please create it with username=Mai and id=2')
+    return user
+
+
+# get anonymous user
+def getAnonymousUser():
+    user = User.objects.filter(username='Ana').first()
+    if user is None:
+        raise Exception('Anonymous user not found, please create it with username=Ana and id=3')
+    return user
+

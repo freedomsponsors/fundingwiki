@@ -5,7 +5,7 @@
 <div style="display: flex;align-items: center;margin-top: 50px;margin-bottom: 100px;flex-direction: column;">
     <div style="display: flex;flex-direction: column; align-items: center;width: 650px;gap: 20px;">
         <div style="display:flex;align-items:center;">
-            <img src="https://alfinal.eu.pythonanywhere.com/static/img/fundingwiki-logo-fit_80x107px-v1.0.png" style="width: 70px;"/>
+            <img :src="imageUrl('/static/img/fundingwiki-logo-fit_80x107px-v1.0.png')" style="width: 70px;"/>
             <h1 style="padding-left:10px">Brainstorm or find inspiration!</h1>
         </div>
         <v-form 
@@ -77,13 +77,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
-import {getCookie, setUserCookie} from '../utils/cookies.js'
+import {getCookie, setUserCookie} from '@/utils/cookies.js'
 import {getIdeas, getIdeasInterested, saveIdea} from '../services/ideas.js'
 import {isUserLogin} from '../services/user.js'
 
 import User from './User.vue'
 import IdeaItem from './IdeaItem.vue'
 import MyIdeas from './MyIdeas.vue'
+
+import {imageUrl} from '@/utils/util.js'
 
 const idea_content = ref('')
 const loading = ref(false)

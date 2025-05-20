@@ -25,7 +25,7 @@ class TechSolutionAdmin(admin.ModelAdmin):
 
 
 class IdeasAdmin(admin.ModelAdmin):
-    list_display = ('id', 'content', 'reputation', 'date_created')
+    list_display = ('id', 'content', 'point', 'date_created')
 
 admin.site.register(UserInfo)
 admin.site.register(Project, ProjectAdmin)

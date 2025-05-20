@@ -1,29 +1,43 @@
 <template>
-    <div>
-        <div>{{ item.content }}</div>
-        <div style="display: flex;flex-direction: row-reverse;">
-            <a @click="getSimilar(item.id)">Samilar ideas</a>
-            <div v-if="canDelete" style="margin-right: 10px;">
-                <a @click="deleteIdea(item.id)">delete</a>
-            </div>
-            <div v-if="item.createdByUser" style="margin-right: 10px;">{{ item.createdByUser.username }}</div>
-        </div>
-        <div v-if="show_similar">
-            <div v-for="idea_similar in similar_ideas_list" style="border-top: 1px solid #efefef;background-color: #efefef;">
-                <div style="padding: 10px;border-bottom: 1px solid #ccc;">{{ idea_similar.content }}</div>
+    <div style="display: flex;">
+        <div>
+            <div style="display:flex;flex-direction: column;align-items: center;padding-right:10px;">
+                <a :class="'vote_a ' + (idea.is_voted_up?'voted_link':'')" data-type="up" @click="ideaVote(idea.id, idea.vote_up_ope)" href="javascript:;">
+                    <span class="las la-sort-up" style="font-size:26px;"></span>
+                </a>
+                <div class="vote_points">{{ idea.point }}</div>
+                <a :class="'vote_a ' + (idea.is_voted_down?'voted_link':'')" data-type="down" @click="ideaVote(idea.id, idea.vote_down_ope)" href="javascript:;">
+                    <span class="las la-sort-down" style="font-size:26px"></span>
+                </a>
             </div>
         </div>
+        <div style="flex-grow: 1;">
+            <div>{{ idea.content }}</div>
+            <div style="display: flex;flex-direction: row-reverse;">
+                <a @click="getSimilar(idea.id)">Samilar ideas</a>
+                <div v-if="canDelete" style="margin-right: 10px;">
+                    <a @click="deleteIdea(idea.id)">delete</a>
+                </div>
+                <div v-if="idea.createdByUser" style="margin-right: 10px;">{{ idea.createdByUser.username }}</div>
+            </div>
+            <div v-if="show_similar">
+                <div v-for="idea_similar in similar_ideas_list" style="border-top: 1px solid #efefef;background-color: #efefef;">
+                    <div style="padding: 10px;border-bottom: 1px solid #ccc;">{{ idea_similar.content }}</div>
+                </div>
+            </div>
+        </div>
+        <ConfirmDialog ref="confirmDialog" />
     </div>
-    <ConfirmDialog ref="confirmDialog" />
 </template>
 
 <script setup lang="ts">
 import { ref, defineEmits } from 'vue'
-import {deleteIdeaById, getSimilarIdeas} from '../services/ideas.js'
+import {deleteIdeaById, getSimilarIdeas, ideasVote, getIdeaById} from '../services/ideas.js'
  
 const confirmDialog = ref()
 
-defineProps<{ item: object, canDelete:false}>()
+const props = defineProps<{ item: object, canDelete:false}>()
+const idea = ref(props.item)
 
 const similar_ideas_list = ref([])
 const show_similar = ref(false)
@@ -44,6 +58,14 @@ const deleteIdea = async (id)=>{
     }
 }
 
+const ideaVote = async (id, vote_type)=>{
+
+    let response = await ideasVote(id, vote_type)
+    console.log(response)
+
+    idea.value = await getIdeaById(id)
+}
+
 </script>
 
 <style scoped>
@@ -53,5 +75,13 @@ color: #888;
 .idea_item{
     width: 100%;margin-top: 20px;border-bottom: 1px solid #efefef;
 }
+.vote_points {
+    padding: 0 10px;
+    font-size: 28px;
+    line-height: 20px;
+}
+.voted_link span{
+        color:#8DC63F
+    }
 </style>
   
