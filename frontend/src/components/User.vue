@@ -2,7 +2,7 @@
   <div style="display: flex;flex-direction: row-reverse;">
     <div v-if="login_info.logged_in == 1" style="display: flex;gap: 10px;">
       <div>{{ login_info.username }}</div>
-      <div><a href="/logout">Login out</a></div>
+      <div><a href="/logout">Log out</a></div>
     </div>
     <div v-else><a href="/login/">Log in</a></div>
   </div>
