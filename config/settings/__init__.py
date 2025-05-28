@@ -1,11 +1,10 @@
+import os
 from .base import *
-from decouple import config
 
-current_env = config('DJANGO_ENV', 'local')
-
-if current_env == 'production':
+if os.path.isfile(os.path.join(os.path.dirname(__file__), 'production.py')):
     from .production import *
-elif current_env == 'development':
+elif os.path.isfile(os.path.join(os.path.dirname(__file__), 'development.py')):
     from .development import *
 else:
     from .local import *
+
