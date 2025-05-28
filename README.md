@@ -16,7 +16,7 @@ Clone the project
 
 ## 1. Install dependencies 
 
-### 1.1 Debian
+### Debian
 ```bash
 sudo apt install postgresql postgresql-contrib \
 python-dev python-lxml libxslt-dev libpq-dev python-pip \
@@ -24,7 +24,7 @@ libtiff5-dev libjpeg62-turbo-dev zlib1g-dev libfreetype6-dev \
 liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk \
 libxmlsec1-dev redis-server python3-venv
 ```
-### 1.2 Ubuntu
+### Ubuntu
 ```bash
 sudo apt install postgresql-server-dev-9.6 postgresql-9.6 \
 python-dev python-lxml libxslt-dev libpq-dev pgadmin3 \
@@ -47,12 +47,12 @@ exit # go back to your normal user
 ```
 
 ## 3. Create virtual environment:
-### 3.1 Most GNU/Linux and MacOS
+### Most GNU/Linux and MacOS
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
-### 3.2 Windows
+### Windows
 ```bash
 py -m venv venv
 .\venv\Scripts\activate
@@ -158,7 +158,7 @@ Look at https://gitlab.com/wikifunding/djangology-cfms/wikis/home#installing-on-
 
 # About name
 
-Djangology is a jazz standard compositions made by [Django Reinhardt](http://en.wikipedia.org/wiki/Django_Reinhardt) who is the original guitarrist from the Django framework get [the name](http://www.djangobook.com/en/2.0/chapter01.html#django-s-history).
+Djangology is a classic jazz composition co-written by guitarist [Django Reinhardt](http://en.wikipedia.org/wiki/Django_Reinhardt) —the original guitarist after whom the [Django framework](https://www.djangoproject.com/) is named— and “Vue-linist” [Stéphane Grappelli](https://en.wikipedia.org/wiki/St%C3%A9phane_Grappelli), in a nod to the elegant harmony between Django and [Vue.js](https://vuejs.org/) JavaScript framework. Just as Grappelli’s violin added depth and interplay to Django’s music, Vue brings reactivity and grace to this very application. Together, they swing.
 
 # Thanks
 
