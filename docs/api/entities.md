@@ -1,4 +1,4 @@
-# Djangology CfMS — Entity Details
+# FundingWiki — Entity Details
 
 ## User
 

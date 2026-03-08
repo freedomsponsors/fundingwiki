@@ -1,4 +1,4 @@
-# Djangology CfMS — Conceptual API
+# FundingWiki — Conceptual API
 
 > Crowdfunding management system where sponsors fund issues and programmers get paid for solving them.
 
@@ -49,8 +49,8 @@
 
 | Operation                  | Input                                              | Output      | Description                                    |
 |----------------------------|----------------------------------------------------|-------------|------------------------------------------------|
-| offers.sponsorNew          | title, description, terms: OfferTerms              | Offer+Issue | Create a new issue with an initial offer       |
-| offers.kickstart           | title, description, terms: OfferTerms              | Offer+Issue | Kickstart a new campaign with an offer         |
+| offers.sponsorNew          | title, description, terms: OfferTerms              | Offer+Issue | Create a new issue and immediately sponsor it with an offer |
+| offers.kickstart           | title, description                                 | Issue       | Propose a new issue without funding, hoping others will sponsor it |
 | offers.sponsorExisting     | issueId, terms: OfferTerms                         | Offer       | Add a sponsorship offer to an existing issue   |
 | offers.edit                | offerId, terms: OfferTerms                         | Offer       | Modify offer terms                             |
 | offers.revoke              | offerId                                            | Offer       | Cancel an offer (sponsor only)                 |
