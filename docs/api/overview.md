@@ -50,7 +50,6 @@
 | Operation                  | Input                                              | Output      | Description                                    |
 |----------------------------|----------------------------------------------------|-------------|------------------------------------------------|
 | offers.sponsorNew          | title, description, terms: OfferTerms              | Offer+Issue | Create a new issue and immediately sponsor it with an offer |
-| offers.kickstart           | title, description                                 | Issue       | Propose a new issue without funding, hoping others will sponsor it |
 | offers.sponsorExisting     | issueId, terms: OfferTerms                         | Offer       | Add a sponsorship offer to an existing issue   |
 | offers.edit                | offerId, terms: OfferTerms                         | Offer       | Modify offer terms                             |
 | offers.revoke              | offerId                                            | Offer       | Cancel an offer (sponsor only)                 |
