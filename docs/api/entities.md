@@ -199,6 +199,17 @@ A subscription to notifications about an issue or project.
 
 **Relationships:** belongs to User
 
+## Tag
+
+A simple text tag on a project.
+
+| Attribute | Type    | Description                              |
+|-----------|---------|------------------------------------------|
+| name      | string  | Tag text                                 |
+| project   | Project | The tagged project                       |
+
+**Relationships:** belongs to Project
+
 ## MultilingualTag
 
 A Wikidata-backed semantic tag with translations.

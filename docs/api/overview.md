@@ -19,7 +19,8 @@
 | TechSolution    | A knowledge-base article proposing a technical approach      |
 | Idea            | A brainstorm submission for future issues or features        |
 | Watch           | A subscription to notifications about an issue or project    |
-| MultilingualTag | A Wikidata-backed semantic tag with translations             |
+| Tag             | A simple text tag on a project                               |
+| MultilingualTag | A Wikidata-backed semantic tag with translations on an issue |
 | Rates           | Current currency exchange rates (USD, BRL, BTC)              |
 
 ## Value Objects
@@ -124,11 +125,13 @@
 
 ### Tags
 
-| Operation                  | Input                                              | Output          | Description                                |
+| Operation                  | Input                                              | Output          | Description                                 |
 |----------------------------|----------------------------------------------------|-----------------|---------------------------------------------|
-| tags.add                   | entityType, entityId, name                         | Tag             | Add a simple tag                            |
-| tags.addMultilingual       | issueId, qid: string                               | MultilingualTag | Add a Wikidata-backed tag to an issue       |
-| tags.remove                | entityType, entityId, name                         | void            | Remove a tag                                |
+| tags.search                | query, language?                                   | MultilingualTag[] | Search Wikidata for tag suggestions (autocomplete) |
+| tags.addToProject          | projectId, name                                    | Tag             | Add a simple tag to a project               |
+| tags.removeFromProject     | projectId, name                                    | void            | Remove a tag from a project                 |
+| tags.addToIssue            | issueId, qid: string                               | MultilingualTag | Add a Wikidata-backed tag to an issue       |
+| tags.removeFromIssue       | issueId, qid: string                               | void            | Remove a Wikidata-backed tag from an issue  |
 
 ### Currency
 
