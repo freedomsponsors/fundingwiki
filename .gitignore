@@ -9,3 +9,4 @@ media/
 faiss_index.index
 config/settings/development.py
 config/settings/production.py
+.claude/settings.local.json

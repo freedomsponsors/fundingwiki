@@ -12,17 +12,14 @@ from apps.issues.models import Ideas
 from apps.issues.services import redis_services
 
 # client for openai
-client = OpenAI(api_key='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')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 # generate related ideas, for one idea about cost total_tokens=127
 def generate_related_ideas(user_idea, number=1):
+    if not client:
+        return None
     print('call openai to generate related ideas', user_idea)
-
-    # prompt = (
-    #     f"Generate {number} creative and unique ideas based on the following concept:\n\n"
-    #     f"'{user_idea}'\n\n"
-    #     f"Each idea should be a separate paragraph and around 20 to 30 words long."
-    # )
 
     language = detect(user_idea)
     print('original language:', language)
@@ -57,6 +54,9 @@ def get_embedding(text):
         print('get embedding from redis')
         embedding = json.loads(cached_embedding)
         return embedding
+
+    if not client:
+        return None
 
     try:
         print('=============get embedding from openai=====================')

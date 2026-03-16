@@ -14,7 +14,8 @@ from apps.issues.models import Ideas
 redis_client = redis.StrictRedis(host=settings.REDIS['host'], port=settings.REDIS['port'], db=settings.REDIS['db'], password=settings.REDIS['pass'], decode_responses=True)
 
 # client for openai
-client = OpenAI(api_key='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')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 # Initialize Faiss index
 dimension = 1536  # For the model we are using (e.g., text-embedding-ada-002)
@@ -43,7 +44,11 @@ def query_faiss(embedding):
 
 # Function to add a piece of text to the FAISS index
 def add_to_faiss(text):
+    if not client:
+        return -1
     embedding = get_embedding(text)  # Get the embedding for the idea
+    if embedding is None:
+        return -1
     print('embedding from text:', embedding)
     embedding = np.array([embedding]).astype('float32')
     print('embedding:', embedding)
@@ -110,6 +115,9 @@ def get_embedding(text):
         print('get embedding from redis')
         embedding = json.loads(cached_embedding)
         return embedding
+
+    if not client:
+        return None
 
     try:
         print('=============get embedding from openai=====================')
