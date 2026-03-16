@@ -24,10 +24,7 @@ RUN pip install uv
 
 # Install Python dependencies
 COPY requirements.txt /tmp/requirements.txt
-RUN uv pip install --system -r /tmp/requirements.txt \
-    && pip uninstall -y decouple python-openid 2>/dev/null; \
-    rm -rf /usr/local/lib/python3.12/site-packages/openid/ \
-    && pip install --force-reinstall python3-openid
+RUN uv pip install --system -r /tmp/requirements.txt
 
 # Install frontend dependencies
 COPY frontend/package.json frontend/package-lock.json /tmp/frontend/

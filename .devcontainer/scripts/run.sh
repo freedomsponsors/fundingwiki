@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+trap 'kill 0' EXIT
+
 # Django dev server
 python manage.py runserver 0.0.0.0:8000 &
 

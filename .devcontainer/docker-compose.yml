@@ -17,6 +17,7 @@ services:
       DATABASE_USER: djangology
       DATABASE_PASS: djangology
       DATABASE_PORT: "5432"
+      REDIS_HOST: redis
       REDIS_URL: redis://redis:6379/0
     working_dir: /workspace
     command: sleep infinity

@@ -28,7 +28,28 @@ else:
     print('Superuser already exists.')
 "
 
-echo "Installing frontend dependencies..."
-cd frontend && npm install
+echo "Creating system users..."
+python manage.py shell -c "
+from django.contrib.auth import get_user_model
+User = get_user_model()
+if not User.objects.filter(username='Mai').exists():
+    User.objects.create_user(username='Mai', email='mai@localhost', password='mai')
+    print('OpenAI user (Mai) created.')
+if not User.objects.filter(username='Ana').exists():
+    User.objects.create_user(username='Ana', email='ana@localhost', password='ana')
+    print('Anonymous user (Ana) created.')
+"
+
+echo "Setting up frontend..."
+cd frontend
+if [ ! -f .env ]; then
+  cat > .env <<'ENVEOF'
+VITE_LINK_PREFIX=
+VITE_API_URL=http://localhost:8000/
+VITE_STATIC_URL=http://localhost:8000/
+ENVEOF
+  echo "Created frontend/.env"
+fi
+npm install
 
 echo "Setup completo!"
