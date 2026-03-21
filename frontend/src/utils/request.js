@@ -19,8 +19,4 @@ async function delete_by_id(url, id) {
     return (await api.delete(url, { params: { id } })).data
 }
 
-/**
- * TODO: align the methods exported here with the shape of operations in the API DNA
- * This practice alone will naturally allow the whole software to evolve in a consistent and predictable way.
- */
 export { post, get, delete_by_id }
