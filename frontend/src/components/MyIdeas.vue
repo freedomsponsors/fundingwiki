@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import {getIdeasMine} from '../services/ideas.js'
+import {getIdeasMine} from '@/services/ideas.js'
 
 import IdeaItem from './IdeaItem.vue'
 

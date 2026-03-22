@@ -32,11 +32,11 @@
 
 <script setup lang="ts">
 import { ref, defineEmits, watch} from 'vue'
-import {deleteIdeaById, getSimilarIdeas, ideasVote, getIdeaById} from '../services/ideas.js'
+import {deleteIdeaById, getSimilarIdeas, ideasVote, getIdeaById} from '@/services/ideas.js'
  
 const confirmDialog = ref()
 
-const props = defineProps<{ item: object, canDelete:false}>()
+const props = defineProps<{ item: object, canDelete?: boolean }>()
 
 const idea = ref(props.item)
 

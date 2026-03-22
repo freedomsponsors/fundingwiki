@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import {getCurrentUserInfo} from '../services/user.js'
+import {getCurrentUserInfo} from '@/services/user.js'
 
 const login_info = ref({
   logged_in:0,
