@@ -132,17 +132,17 @@ A historical snapshot of a Wiki page, enabling full edit history.
 
 A financial sponsorship pledge on an Issue, made by a Sponsor.
 
-| Attribute          | Type      | Description                                      |
-|--------------------|-----------|--------------------------------------------------|
-| issue              | Issue     | The sponsored Issue                              |
-| sponsor            | User      | The Sponsor making the offer                      |
-| price              | decimal   | Pledge amount                                    |
-| currency           | enum      | USD, BRL, BTC                                    |
-| status             | enum      | open, revoked, paid                              |
-| acceptanceCriteria | string?   | What the Sponsor requires for payment             |
-| expirationDate     | datetime? | When the offer expires                           |
-| noForking          | boolean   | Sponsor prefers no forking                        |
-| requireRelease     | boolean   | Sponsor requires inclusion in a release           |
+| Attribute          | Type      | Description                             |
+|--------------------|-----------|-----------------------------------------|
+| issue              | Issue     | The sponsored Issue                     |
+| sponsor            | User      | The User making the offer               |
+| price              | decimal   | Pledge amount                           |
+| currency           | enum      | USD, BRL, BTC                           |
+| status             | enum      | open, revoked, paid                     |
+| acceptanceCriteria | string?   | What the Sponsor requires for payment   |
+| expirationDate     | datetime? | When the offer expires                  |
+| noForking          | boolean   | Sponsor prefers no forking              |
+| requireRelease     | boolean   | Sponsor requires inclusion in a release |
 
 > **Payments vs Donations:** Offers tied to a specific resolution are *task payments* (refundable if unresolved). Offers without resolution requirements are *donations* (different refund rules). Refund logic is **not yet implemented** — handled manually in case of conflict.
 
@@ -290,6 +290,7 @@ A simple text tag on a Project.
 | objid     | ID      | ID of the tagged object                  |
 
 **Relationships:** belongs to Project (or other taggable entity)
+> ⚠️ Tag will be removed in order to use just MultilingualTag instead
 
 ---
 
