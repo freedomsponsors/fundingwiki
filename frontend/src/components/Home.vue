@@ -80,8 +80,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import {getCookie, setUserCookie} from '@/utils/cookies.js'
-import {getIdeas, getIdeasInterested, saveIdea} from '../services/ideas.js'
-import {isUserLogin} from '../services/user.js'
+import {getIdeas, getIdeasInterested, saveIdea} from '@/services/ideas.js'
+import {isUserLogin} from '@/services/user.js'
 
 import User from './User.vue'
 import IdeaItem from './IdeaItem.vue'
