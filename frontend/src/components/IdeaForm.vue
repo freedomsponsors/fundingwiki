@@ -60,7 +60,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import axios from 'axios'
 import {getCookie, setUserCookie} from '@/utils/cookies.js'
 import {getIdeas, getIdeasInterested, saveIdea} from '../services/ideas.js'
 import {isUserLogin} from '../services/user.js'

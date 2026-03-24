@@ -30,6 +30,8 @@ else:
 
 # Function to query the FAISS index by a specific embedding
 def query_faiss(embedding):
+    if embedding is None:
+        return []
     number = 100
     embedding = np.array([embedding]).astype('float32')
 
@@ -83,9 +85,12 @@ def get_user_embedding(user, force_update=False):
     ideas = Ideas.objects.filter(createdByUser=user).all()
 
     # create a list of embeddings
-    embedding_user = []
-    for idea in ideas:
-        embedding_user.append(get_embedding(idea.content))
+    embedding_user = [get_embedding(idea.content) for idea in ideas]
+    embedding_user = [e for e in embedding_user if e is not None]
+
+    if not embedding_user:
+        return None
+
     embedding_user = np.mean(embedding_user, axis=0)
 
     redis_client.set(key, json.dumps(embedding_user.tolist()))
