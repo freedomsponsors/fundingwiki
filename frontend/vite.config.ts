@@ -18,7 +18,10 @@ export default defineConfig({
       '/accounts': 'http://localhost:8000',
       '/admin': 'http://localhost:8000',
       '/static': 'http://localhost:8000',
-      '/vueapi': 'http://localhost:8000',
+      '/vueapi': {
+        target: 'http://localhost:8000',
+        changeOrigin: true
+      }
     },
   },
 })

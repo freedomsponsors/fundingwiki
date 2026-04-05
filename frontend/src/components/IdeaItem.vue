@@ -12,7 +12,7 @@
             </div>
         </div>
         <div style="flex-grow: 1;">
-            <div><a @click="gotoIdeaDetail(idea.id)">{{ idea.content }}</a></div>
+            <div><a @click="gotoIdeaDetail(idea.id)">{{ idea.description }}</a></div>
             <div style="display: flex;flex-direction: row-reverse;">
                 <a @click="getSimilar(idea.id)">Samilar ideas</a>
                 <div v-if="canDelete" style="margin-right: 10px;">

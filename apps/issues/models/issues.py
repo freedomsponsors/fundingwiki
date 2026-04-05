@@ -443,7 +443,25 @@ class Issue(models.Model):
     count_solutions_in_progress = models.IntegerField(default=0)
     points = models.IntegerField(default=0)
     language = models.CharField(max_length=5, default='')
+    faiss_id = models.IntegerField(default=-1, db_index=True)
+    VISIBILITY_CHOICES = [
+        ('public', 'Public'),
+        ('private', 'Private'),
+    ]
+    visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='public')
+    issue_from = models.CharField(max_length=256, null=True, blank=True)
     # tags = TaggableManager()
+
+    @classmethod
+    def newIssueSimple(cls, content):
+        issue = cls()
+        issue.description = content
+        issue.creationDate = timezone.now()
+        issue.is_feedback = False
+        issue.is_sponsored = False
+        issue.status = 'open'
+        issue.language = ''
+        return issue
 
     @classmethod
     def newIssue(cls, project, key, title, description, createdByUser, trackerURL, language='', tags=None):

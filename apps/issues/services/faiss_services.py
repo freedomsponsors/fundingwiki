@@ -105,7 +105,12 @@ def update_user_embedding(user):
 def get_embedding_from_text_list(text_list):
     embedding_list = []
     for text in text_list:
-        embedding_list.append(get_embedding(text))
+        embedding = get_embedding(text)
+        if embedding is not None:
+            embedding_list.append(embedding)
+
+    if not embedding_list:
+        return None
 
     return np.mean(embedding_list, axis=0)
 
