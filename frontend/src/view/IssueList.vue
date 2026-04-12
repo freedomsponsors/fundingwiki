@@ -47,7 +47,7 @@
                         >
                             Private project
                         </v-btn>
-                        <a>Advanced edition</a>
+                        <a href="http://funding.wiki:8000/issue/add/?operation=KICKSTART&show_advance=1">Advanced edition</a>
                     </div>
                 </div>
             </div>
