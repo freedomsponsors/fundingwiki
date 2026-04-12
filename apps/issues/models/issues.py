@@ -455,6 +455,16 @@ class Issue(models.Model):
     @classmethod
     def newIssueSimple(cls, content):
         issue = cls()
+        # 提取标题：句号或点号前面的部分
+        title_end = min(
+            (content.find('。') if content.find('。') != -1 else float('inf')),
+            (content.find('.') if content.find('.') != -1 else float('inf')),
+            (content.find('\n') if content.find('\n') != -1 else float('inf'))
+        )
+        if title_end != float('inf'):
+            issue.title = content[:title_end].strip()
+        else:
+            issue.title = content.strip()
         issue.description = content
         issue.creationDate = timezone.now()
         issue.is_feedback = False
@@ -1526,6 +1536,10 @@ class Languages(models.Model):
     @classmethod
     def available_languages(self):
         return Languages.objects.order_by('name').all()
+
+    @classmethod
+    def available_languages_values(self):
+        return Languages.objects.order_by('name').values('name', 'code')
 
 
 class ContentTranslated(models.Model):

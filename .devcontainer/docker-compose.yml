@@ -19,6 +19,7 @@ services:
       DATABASE_PORT: "5432"
       REDIS_HOST: redis
       REDIS_URL: redis://redis:6379/0
+      OPENAI_API_KEY: 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
     working_dir: /workspace
     command: sleep infinity
 
@@ -30,9 +31,13 @@ services:
       POSTGRES_DB: djangology
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   redis:
     image: redis:7-alpine
+    ports:
+      - "6379:6379"
 
 volumes:
   postgres-data:
