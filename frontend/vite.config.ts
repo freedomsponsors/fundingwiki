@@ -5,6 +5,10 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // base: '/static/',
+  build: {
+    outDir: '../statfiles/dist', 
+  },
   plugins: [vue()],
   resolve: {
     alias: {

@@ -12,4 +12,5 @@ urlpatterns = [
     path('user', User.as_view()),
     path('idea_vote', vue_views_api.idea_vote),
     path('get_idea_by_id', vue_views_api.get_idea_by_id),
+    path('get_languages', vue_views_api.get_languages),
 ]

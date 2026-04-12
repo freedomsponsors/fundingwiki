@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from apps.issues.models import Issue as IssueModel
 from apps.issues.serializers import IssuesSerializer
 from rest_framework.response import Response
+from apps.issues.models import *
 
 from apps.issues.services import faiss_services, idea_services, redis_services, openai_services, user_services
 
@@ -218,7 +219,10 @@ def _add_vote_info_to_idea(request, data, idea_list):
     data['vote_down_ope'] = vote_ope['vote_down_ope']
 
 
-
+@api_view(['GET'])
+def get_languages(request):
+    available_languages = Languages.available_languages();
+    return Response(list(available_languages))
 
 
 
