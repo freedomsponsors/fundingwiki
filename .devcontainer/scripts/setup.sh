@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Host UID often differs from the container user's UID on macOS, which makes git
+# flag /workspace as "dubious ownership". Whitelist it for this user's gitconfig.
+git config --global --add safe.directory /workspace
+
 echo "Waiting for PostgreSQL..."
 until python -c "import psycopg; psycopg.connect('host=db dbname=djangology user=djangology password=djangology')" 2>/dev/null; do
   sleep 1
