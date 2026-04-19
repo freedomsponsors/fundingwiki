@@ -1,9 +1,7 @@
 name: CI
 
 on:
-  push:
-  # TODO: once this workflow is running reliably on push, replace the trigger
-  # above with `pull_request:` so it only runs on PRs.
+  pull_request:
 
 jobs:
   test:
