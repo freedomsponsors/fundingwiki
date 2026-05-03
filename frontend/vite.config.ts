@@ -7,10 +7,12 @@ import path from 'path'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const isMock = (env.VITE_MOCK ?? process.env.VITE_MOCK) === 'true'
+  const base = env.VITE_BASE_PATH ?? process.env.VITE_BASE_PATH ?? '/'
 
   console.log('isMock', isMock)
 
   return {
+    base,
     plugins: [vue()],
     resolve: {
       alias: [
