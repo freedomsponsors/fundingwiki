@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - feature/decouple-frontend-backend
   workflow_dispatch:
 
 permissions:
