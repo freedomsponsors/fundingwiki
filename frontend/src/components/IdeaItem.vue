@@ -74,11 +74,8 @@ const ideaVote = async (id, vote_type)=>{
     idea.value = await getIdeaById(id)
 }
 
-const link_prefix = import.meta.env.VITE_LINK_PREFIX
-
 let gotoIdeaDetail = (id)=>{
-
-    router.push(link_prefix+'/idea/'+id)
+    router.push({ name: 'Idea', params: { id } })
 }
 
 </script>
