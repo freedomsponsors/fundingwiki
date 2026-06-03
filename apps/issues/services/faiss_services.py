@@ -14,7 +14,8 @@ from apps.issues.models import Ideas
 redis_client = redis.StrictRedis(host=settings.REDIS['host'], port=settings.REDIS['port'], db=settings.REDIS['db'], password=settings.REDIS['pass'], decode_responses=True)
 
 # client for openai
-client = OpenAI(api_key='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')
+#client = OpenAI(api_key='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')
+client = OpenAI(api_key='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')
 
 # Initialize Faiss index
 dimension = 1536  # For the model we are using (e.g., text-embedding-ada-002)

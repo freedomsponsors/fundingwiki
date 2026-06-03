@@ -12,7 +12,8 @@ from apps.issues.models import Ideas
 from apps.issues.services import redis_services
 
 # client for openai
-client = OpenAI(api_key='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')
+#client = OpenAI(api_key='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')
+client = OpenAI(api_key='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')
 
 # generate related ideas, for one idea about cost total_tokens=127
 def generate_related_ideas(user_idea, number=1):

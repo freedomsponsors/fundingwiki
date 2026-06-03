@@ -29,7 +29,8 @@ ALLOWED_HOSTS = [
     '.funding.wiki',
     '.freedomsponsors.org',
     '192.168.8.101',
-    'alfinal.eu.pythonanywhere.com'
+    'vue.funding.wiki',
+    'vue.funding.wiki'
 #    os.getenv('DJANGO_ALLOWED_HOST', 'x.y.z'),
 ]
 
