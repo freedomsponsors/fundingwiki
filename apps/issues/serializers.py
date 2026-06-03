@@ -59,8 +59,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email']
 
 
-class IdeasSerializer(serializers.ModelSerializer):
+class IssuesSerializer(serializers.ModelSerializer):
     createdByUser = UserSerializer()
     class Meta:
-        model = Ideas
+        model = Issue
         fields = '__all__'
