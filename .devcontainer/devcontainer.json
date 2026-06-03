@@ -1,0 +1,17 @@
+{
+  "name": "Djangology CfMS 2",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [8000, 5173],
+  "postCreateCommand": "bash .devcontainer/scripts/setup.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "Vue.volar",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  }
+}

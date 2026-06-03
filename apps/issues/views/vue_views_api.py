@@ -79,6 +79,7 @@ class IdeasMine(APIView):
         if request.user.is_authenticated:
             ideas = IdeasModel.objects.filter(createdByUser=request.user).order_by('-date_created').all()
         else:
+            ideas = IdeasModel.objects.none()
             user_identify = request.COOKIES.get('user_identify')
             if user_identify:
                 redis_key = 'site_ideas_' + user_identify

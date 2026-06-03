@@ -19,8 +19,13 @@ DATABASES = {
 }
 
 REDIS = {
-    'host': 'localhost',
-    'port': 6379,
+    'host': config('REDIS_HOST', 'localhost'),
+    'port': int(config('REDIS_PORT', '6379')),
     'db': 0,
     'pass': '',
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:8000",
+]

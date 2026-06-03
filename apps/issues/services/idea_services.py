@@ -74,6 +74,8 @@ def get_ideas_by_faiss_ids(faiss_ids, number=10, id_not_in=None, ideas_not_from_
 # generate one related ideas from one idea
 def generate_one_related_ideas(idea_original):
     content = openai_services.generate_related_ideas(idea_original.content)
+    if not content:
+        return
 
     # save idea
     idea = Ideas.newIdea(content=content)

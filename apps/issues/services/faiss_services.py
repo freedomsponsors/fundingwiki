@@ -14,8 +14,8 @@ from apps.issues.models import Ideas
 redis_client = redis.StrictRedis(host=settings.REDIS['host'], port=settings.REDIS['port'], db=settings.REDIS['db'], password=settings.REDIS['pass'], decode_responses=True)
 
 # client for openai
-#client = OpenAI(api_key='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')
-client = OpenAI(api_key='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')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 # Initialize Faiss index
 dimension = 1536  # For the model we are using (e.g., text-embedding-ada-002)
@@ -30,6 +30,8 @@ else:
 
 # Function to query the FAISS index by a specific embedding
 def query_faiss(embedding):
+    if embedding is None:
+        return []
     number = 100
     embedding = np.array([embedding]).astype('float32')
 
@@ -44,7 +46,11 @@ def query_faiss(embedding):
 
 # Function to add a piece of text to the FAISS index
 def add_to_faiss(text):
+    if not client:
+        return -1
     embedding = get_embedding(text)  # Get the embedding for the idea
+    if embedding is None:
+        return -1
     print('embedding from text:', embedding)
     embedding = np.array([embedding]).astype('float32')
     print('embedding:', embedding)
@@ -79,9 +85,12 @@ def get_user_embedding(user, force_update=False):
     ideas = Ideas.objects.filter(createdByUser=user).all()
 
     # create a list of embeddings
-    embedding_user = []
-    for idea in ideas:
-        embedding_user.append(get_embedding(idea.content))
+    embedding_user = [get_embedding(idea.content) for idea in ideas]
+    embedding_user = [e for e in embedding_user if e is not None]
+
+    if not embedding_user:
+        return None
+
     embedding_user = np.mean(embedding_user, axis=0)
 
     redis_client.set(key, json.dumps(embedding_user.tolist()))
@@ -111,6 +120,9 @@ def get_embedding(text):
         print('get embedding from redis')
         embedding = json.loads(cached_embedding)
         return embedding
+
+    if not client:
+        return None
 
     try:
         print('=============get embedding from openai=====================')

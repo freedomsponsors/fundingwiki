@@ -1,169 +1,182 @@
-Djangology CfMS version 2
-=========================
+# Djangology CfMS 2
+ 
+**Djangology Crowdfunding Management System** — a self-hosted platform for building crowdfunding sites, built with Django 5 / Vue.js 3.
+ 
+[![License](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/django-5-green.svg)](https://www.djangoproject.com/)
+[![Vue.js](https://img.shields.io/badge/vue.js-3.x-brightgreen.svg)](https://vuejs.org/)
+[![Docker](https://img.shields.io/badge/docker-ready-2496ED.svg)](https://www.docker.com/)
 
-**Djangology Crowdfunding Management System** (Djangology CfMS) is a Content Management System wrote in [Django Framework](https://www.djangoproject.com/) (based on [Python](https://en.wikipedia.org/wiki/Python_%28programming_language%29)) designed for allow organizations to build themselves microcrowdfundings sites.
+[[_TOC_]]
 
-Djangology CfMS is a fork of [FreedomSponsors](https://github.com/freedomsponsors/www.freedomsponsors.org). Djangology CfMS is written specially for support [Funding.Wiki](https://funding.wiki) adding features related to non-software projects.
+## What is this?
 
-*This version is based on Django 5 / Python 3, upgrading the previous version Django 1 / Python 2.*
+**Djangology CfMS** lets organizations build and run their own crowdfunding platform — fully self-hosted, no third-party lock-in.
+ 
+It is a fork of [FreedomSponsors](https://github.com/freedomsponsors/www.freedomsponsors.org), generalized from software bounties into a full project lifecycle platform — supporting any type of project, with structured roles for ideation, knowledge, communication, execution, and funding. It currently powers [Funding.Wiki](https://funding.wiki).
+ 
+*This version is a full-stack upgrade from the legacy Django 1 (Python 2) / AngularJS codebase.*
 
-# Installation instructions
-Clone the project
+## Tech Stack
+ 
+| Layer     | Technology              |
+|-----------|-------------------------|
+| Backend   | Python 3.12, Django 5   |
+| Frontend  | Vue.js 3                |
+| Database  | PostgreSQL + PostGIS    |
+| Container | Docker, Docker Compose  |
+ 
+## Installation instructions
+### Quick Start
+ 
+The only prerequisite is [Docker](https://docs.docker.com/get-docker/). The full environment — Python, Node.js, PostgreSQL/PostGIS, Redis, and all GeoDjango spatial dependencies — runs inside containers defined in `.devcontainer/`.
+ 
+> _**Disk space required:** ~3.6 GB for all images (`devcontainer-app` ~2.9 GB, `postgreSQL/postgis` ~610 MB, `redis` ~41 MB)._
 
-*Extra instructions in* `doc/setup.md`
+#### Option A — Command line (any OS, no editor required)
 
-`git clone https://gitlab.com/wikifunding/djangology-cfms-2 && cd djangology-cfms-2`
-
-## 1. Install dependencies 
-
-### Debian
-```bash
-sudo apt install postgresql postgresql-contrib \
-python-dev python-lxml libxslt-dev libpq-dev python-pip \
-libtiff5-dev libjpeg62-turbo-dev zlib1g-dev libfreetype6-dev \
-liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk \
-libxmlsec1-dev redis-server python3-venv
 ```
-### Ubuntu
-```bash
-sudo apt install postgresql-server-dev-9.6 postgresql-9.6 \
-python-dev python-lxml libxslt-dev libpq-dev pgadmin3 \
-libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev \
-liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk \
-python-pip redis-server python3-venv
-```
-(@Acromantula: possibly `libxmlsec1-dev` needed, too - I was propted while trying to install `dm.xmlsec.binding==1.3.2` in requirements.txt)
-    
-## 2. Create database:
-```bash
-sudo su postgres #run the next command as postgres
-createuser -d -SRP djangology # this will prompt you to create a password (just use djangology for now)
-createdb -O djangology djangology
-psql
-\c djangology
-CREATE EXTENSION postgis; # you will need this extension to use Locations
-\q
-exit # go back to your normal user
+git clone https://gitlab.com/wikifunding/djangology-cfms-2 && cd djangology-cfms-2/.devcontainer
+docker compose up -d
+docker compose exec app bash
+.devcontainer/scripts/setup.sh
+.devcontainer/scripts/run.sh
 ```
 
-## 3. Create virtual environment:
-### Most GNU/Linux and MacOS
+[▶️ Video for command line installation](https://www.loom.com/share/2420e42b96b941ea8155dcf4e7593b67?t=5m19s)
+
+> ✔️ Now you can access directly to the frontend dev server at **http://localhost:5173**.
+
+#### Option B — Dev Containers (Visual Studio Codium/Code, Cursor, Codespaces and others)
+
+1. Clone the repository and open the project folder in your editor
+2. When prompted, click **"Reopen in Container"**
+3. Wait for the container to build — setup runs automatically
+
+> ✔️ Now you can access directly to the frontend dev server at **http://localhost:5173**.
+
+Any editor that supports the [Dev Containers specification](https://containers.dev/) — including [VS Codium](https://vscodium.com/), [VS Code](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/), [GitHub Codespaces](https://github.com/features/codespaces), and [Gitpod](https://www.gitpod.io/) — will detect `.devcontainer/` automatically. _[IntelliJ IDEA / PyCharm Professional or Community](https://www.jetbrains.com/help/idea/connect-to-devcontainer.html) has partial support._
+
+### No Docker?
+
+Manual setup is possible but not officially supported. See the [Dockerfile](.devcontainer/Dockerfile) for the full list of system dependencies — the GeoDjango spatial dependencies (GDAL, GEOS, PROJ) and PostGIS make it non-trivial across operating systems — you are on your own. See the [setup.sh](.devcontainer/scripts/setup.sh) for setup steps manually and [run.sh](.devcontainer/scripts/run.sh) for running frontend and backend.
+
+## Development Workflow
+ 
+### Applying migrations
+ 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+docker compose exec web python manage.py migrate
 ```
-### Windows
+ 
+### Frontend development
+ 
 ```bash
-py -m venv venv
-.\venv\Scripts\activate
+docker compose exec frontend npm run dev
+```
+ 
+### Rebuilding after dependency changes
+If you change `requirements.txt`, `package.json`, or the `Dockerfile`:
+```bash
+docker compose up --build
 ```
 
-## 4. Install `requirements.txt` inside virtual env:
-```bash
-pip3 install -r requirements.txt 
-```
+## Contributing
+ 
+We welcome contributions from developers and users. Here's how to get involved:
+ 
+### Developing
 
-_See possible installation dependencies errors at the end of this document._
-
-## 5. Create the database structure
+As just saw: [fork the repository, install and set up](#quick-start) your environment:
+ 
 ```bash
-python3 manage.py migrate
+git checkout -b feature/your-feature-name
 ```
-## 6. Create the first user
+ 
+#### Making your changes
+ 
+- Backend code lives in `apps/`
+- Frontend code lives in `frontend/`
+- Write tests for new functionality
+- Follow [PEP 8](https://peps.python.org/pep-0008/) for Python and the [Vue Style Guide](https://vuejs.org/style-guide/) for the frontend
+ 
+#### Opening a Merge Request
+ 
+- Describe what the change does and why
+- Reference any related issue
+- Keep Merge Requests focused — one feature or fix per Merge Request
+ 
+### Reporting issues
+ 
+Open an issue on GitLab with:
+- A clear description of the problem
+- Steps to reproduce
+- Expected vs. actual behavior
+- Your environment (OS, Docker version)
+ 
+---
+ 
+## Advanced
+ 
+### SSL for localhost
+ 
+If you need to test SSL features locally (e.g. OAuth callbacks, payment providers), you can enable HTTPS on your development environment using [mkcert](https://github.com/FiloSottile/mkcert) and [django-sslserver](https://github.com/teddziuba/django-sslserver).
+ 
+Without this, you may see `urlopen error [SSL: CERTIFICATE_VERIFY_FAILED]` when integrating with external services. The alternative — disabling SSL verification globally in Python — works for basic testing but prevents you from testing SSL-dependent features.
+ 
+**1. Install mkcert inside the container**
+ 
 ```bash
-python3 manage.py createsuperuser
-```
-_Fill with some e-mail and password_
-## 7. Fill the table "core_languages" with language list
-This command will fetch language list from the server and then insert into the database.
-```bash
-python3 manage.py fillLanguageData
-```
-
-## (optional) Enable SSL for localhost
-If you're running Djangology-CfMS in your localhost machine for development reasons you want to enable a SSL certificate in the Django Project and in your browser to avoid `urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed` (other way to do it is [disabling security certificate checks for requests in Python](https://www.geeksforgeeks.org/how-to-disable-security-certificate-checks-for-requests-in-python/), but in that case you could not test SSL features).
-
-Source: https://medium.com/@millienakiganda/creating-an-ssl-certificate-for-localhost-in-django-framework-45290d905b88
-1. Mkcert (cert and key filenames & domains configurable)
-```bash
-# install mkcert
-sudo apt install libnss3-tools # install certutil dependency
+docker compose exec app bash
+ 
+# Install certutil dependency
+apt-get install -y libnss3-tools
+ 
+# Download and install mkcert
 curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 chmod +x mkcert-v*-linux-amd64
-sudo cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+ 
+# Generate certificates
 mkcert -install
 cd config/
 mkcert -cert-file cert.pem -key-file key.pem 0.0.0.0 localhost 127.0.0.1 ::1
-# RESTART BROWSER
 ```
-2. Django-sslserver
+ 
+Restart your browser after running `mkcert -install` so it picks up the new root certificate.
+ 
+**2. Install django-sslserver**
+ 
 ```bash
-pip install django-sslserver # with correct virtual environment already active
+uv pip install --system django-sslserver
 ```
-Add `sslserver` to `INSTALLED_APPS` in `djangoproject/frespo/settings.py`
-
-## 6. Run backend server
+ 
+Add `sslserver` to `INSTALLED_APPS` in your settings file, then run the dev server with:
+ 
 ```bash
-./manage.py runserver
+python manage.py runsslserver
 ```
-or with SSL
-```bash
-./manage.py runsslserver --certificate cert.pem --key key.pem  # correct file names if changes
+ 
+### OAuth credentials
+ 
+To enable GitHub login, add these variables to your environment (or to the `environment:` block in `.devcontainer/docker-compose.yml`):
+ 
 ```
-	
-## 7. Install and run frontend server
-On `config` directory:
-```bash
-sudo apt install nodejs npm
-sudo npm install grunt-cli -g
-npm install
-grunt build
+GITHUB_APP_ID=your_app_id
+GITHUB_API_SECRET=your_api_secret
 ```
+ 
+You can create a GitHub OAuth app at [github.com/settings/developers](https://github.com/settings/developers).
 
-# Optional extra set up
-## Use another settings file
-*  Copy `cp frespo/settings.py frespo/settings_dev.py` and
-*  add the url to ALLOWED_HOSTS. There are two ways you can do that:
-   * set the environment variable `DJANGO_SETTINGS_MODULE=frespo.settings_dev`; or
-   * when running `manage.py` add `--settings=frespo.settings_dev` 
-
-## Set up **PyCharm** to work with django applications.
-Extracted from https://automationpanda.com/2017/09/14/django-projects-in-pycharm-community-edition/ :
-
-From the Run menu, select Edit Configurations…. Click the plus button in the upper-left corner to add a Python configuration. Give the config a good name (like “Django: <command>”). Then, set Script to `manage.py` and Script parameters to the name and options for the desired Django admin command (like “runserver”). Set Working directory to the absolute path of the project root directory. Make sure the appropriate Python SDK is selected and the PYTHONPATH settings are checked. Click the OK button to save the config. The command can then be run from Run menu options or from the run buttons in the upper-right corner of the IDE window. You can add `--settings=frespo.settings_dev` there also
-    
-## Configure environment variables to make the application working.
-You can configure it into PyCharm on `Run/Debug configurations > Environment > Environment variables > Click on the icon and add there the variables`. Now a list of some usefull variables:
-```
-GITHUB_APP_ID # The id to login with your github account
-GITHUB_API_SECRET # The secret to login with your github account
-```
-	
-#### Dependencies installations errors:
-
-Look at https://gitlab.com/wikifunding/djangology-cfms/wikis/home#installing-on-new-environments for further information
-
-* `ImportError: No module named _markerlib, Failed building wheel for distribute`:
-	```
-	easy_install distribute
-	```
-
-* `Failed building wheel for uWSGI`
-	Update `requirements.txt` to use uWSGI version  2.0.15.
-	 
-* `ImportError: No module named unipath`
-    ```
-    pip install unipath 
-    ```
-
-# About name
+## About name
 
 Djangology is a classic jazz composition co-written by guitarist [Django Reinhardt](http://en.wikipedia.org/wiki/Django_Reinhardt) —the original guitarist after whom the [Django framework](https://www.djangoproject.com/) is named— and “Vue-linist” [Stéphane Grappelli](https://en.wikipedia.org/wiki/St%C3%A9phane_Grappelli), in a nod to the elegant harmony between Django and [Vue.js](https://vuejs.org/) JavaScript framework. Just as Grappelli’s violin added depth and interplay to Django’s music, Vue brings reactivity and grace to this very application. Together, they swing.
 
-# Thanks
+## Thanks
 
 To FreedomSponsors developers and Free Software community involved in big projects like Python, Django and PostgreSQL that make possible this project. A special thanks goes out to Tony Lampada for [FreedomSponsors development](https://github.com/freedomsponsors/www.freedomsponsors.org).
 
-# Licensing
+## Licensing
 
-This software is licensed under the [Affero General Public License](http://www.gnu.org/licenses/agpl-3.0.html). Take care of your users' freedom when running this software.
+This software is licensed under the [Affero General Public License](http://www.gnu.org/licenses/agpl-3.0.html). Take care of your users' freedom when running this software ❤️.
