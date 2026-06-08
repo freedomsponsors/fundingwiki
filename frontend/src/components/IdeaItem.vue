@@ -12,7 +12,11 @@
             </div>
         </div>
         <div style="flex-grow: 1;">
-            <div><a @click="gotoIdeaDetail(idea.id)">{{ idea.description }}</a></div>
+            <div v-if="idea.title">
+                <a @click="gotoIdeaDetail(idea.id)">{{ idea.title }}</a>
+                <div style="margin-top: 5px;font-size: 14px;white-space: pre-wrap">{{ idea.description }}</div>
+            </div>
+            <div v-else><a @click="gotoIdeaDetail(idea.id)">{{ idea.description }}</a></div>
             <div style="display: flex;flex-direction: row-reverse;">
                 <a @click="getSimilar(idea.id)">Similar ideas</a>
                 <div v-if="canDelete" style="margin-right: 10px;">

@@ -464,7 +464,8 @@ class Issue(models.Model):
         if title_end != float('inf'):
             issue.title = content[:title_end].strip()
         else:
-            issue.title = content.strip()
+            # issue.title = content.strip()
+            issue.title = ''
         issue.description = content
         issue.creationDate = timezone.now()
         issue.is_feedback = False
