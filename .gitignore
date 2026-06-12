@@ -2,6 +2,7 @@ venv/
 __pycache__/
 *.py[cod]
 .env
+!frontend/.env.production
 *.log
 staticfiles/
 media/
@@ -10,3 +11,6 @@ faiss_index.index
 config/settings/development.py
 config/settings/production.py
 .claude/settings.local.json
+statfiles/static/vue/
+templates/vue/index.html
+staticroot/
