@@ -62,6 +62,10 @@ Any editor that supports the [Dev Containers specification](https://containers.d
 
 Manual setup is possible but not officially supported. See the [Dockerfile](.devcontainer/Dockerfile) for the full list of system dependencies — the GeoDjango spatial dependencies (GDAL, GEOS, PROJ) and PostGIS make it non-trivial across operating systems — you are on your own. See the [setup.sh](.devcontainer/scripts/setup.sh) for setup steps manually and [run.sh](.devcontainer/scripts/run.sh) for running frontend and backend.
 
+## Deployment
+
+For production deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ## Development Workflow
  
 ### Applying migrations
