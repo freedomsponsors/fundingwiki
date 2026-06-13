@@ -47,7 +47,11 @@
                         >
                             Private project
                         </v-btn>
+<<<<<<< HEAD
                         <a>Advanced edition</a>
+=======
+                        <a href="http://funding.wiki:8000/issue/add/?operation=KICKSTART&show_advance=1">Advanced edition</a>
+>>>>>>> master
                     </div>
                 </div>
             </div>
@@ -142,9 +146,15 @@ const submitForm = async () => {
 }
 
 const ideas_list = ref([])
+<<<<<<< HEAD
 var loadIdeas = async ()=>{
     // ideas_list.value = await getIdeasInterested()
     ideas_list.value = await getIdeas()
+=======
+var loadIdeas = async (param)=>{
+    // ideas_list.value = await getIdeasInterested()
+    ideas_list.value = await getIdeas(param)
+>>>>>>> master
 }
 
 const is_user_login = ref(false)
@@ -156,7 +166,13 @@ onMounted(async ()=>{
     if (route.query.search) {
         idea_content.value = route.query.search
     }
+<<<<<<< HEAD
     loadIdeas()
+=======
+    loadIdeas({
+        search: route.query.search
+    })
+>>>>>>> master
     is_user_login.value = await isUserLogin()
     setUserCookie()
 })

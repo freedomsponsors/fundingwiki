@@ -136,10 +136,9 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {getCookie, setUserCookie} from '@/utils/cookies.js'
-
-import {getIdeas, getIdeasInterested, saveIdea} from '../services/ideas.js'
-import {isUserLogin} from '../services/user.js'
-import {getLanguages} from '../services/language.js'
+import {getIdeas, getIdeasInterested, saveIdea} from '@/services/ideas.js'
+import {isUserLogin} from '@/services/user.js'
+import {getLanguages} from '@/services/language.js'
 
 import { CdxIcon } from '@wikimedia/codex';
 import { cdxIconBell } from '@wikimedia/codex-icons';
@@ -202,11 +201,11 @@ const submitForm = async () => {
     const { valid } = await form.value.validate()
     if (valid) {
         let response = await saveIdea(idea_content.value)
-        console.log(response.data)
+        console.log(response)
         form_success.value = true
 
         myIdeasKey.value += 1
-        ideas_list.value = await getIdeasInterested()
+        // ideas_list.value = await getIdeasInterested()
 
         loading.value = false
 

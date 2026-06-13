@@ -3,6 +3,9 @@ import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
+const WEB_ROOT = 'http://localhost:8000'
+// const WEB_ROOT = 'https://vue.funding.wiki'
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -25,13 +28,16 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       proxy: {
-        '/login': 'http://localhost:8000',
-        '/logout': 'http://localhost:8000',
-        '/accounts': 'http://localhost:8000',
-        '/admin': 'http://localhost:8000',
-        '/static': 'http://localhost:8000',
-        '/vueapi': 'http://localhost:8000',
+        '/login': WEB_ROOT,
+        '/logout': WEB_ROOT,
+        '/accounts': WEB_ROOT,
+        '/admin': WEB_ROOT,
+        '/static': WEB_ROOT,
+        '/vueapi': {
+          target: WEB_ROOT,
+          changeOrigin: true
+        }
       },
-    },
+    }
   }
 })
