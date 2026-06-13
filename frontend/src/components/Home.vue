@@ -201,11 +201,11 @@ const submitForm = async () => {
     const { valid } = await form.value.validate()
     if (valid) {
         let response = await saveIdea(idea_content.value)
-        console.log(response.data)
+        console.log(response)
         form_success.value = true
 
         myIdeasKey.value += 1
-        ideas_list.value = await getIdeasInterested()
+        // ideas_list.value = await getIdeasInterested()
 
         loading.value = false
 

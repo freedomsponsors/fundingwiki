@@ -19,6 +19,7 @@ services:
       DATABASE_PORT: "5432"
       REDIS_HOST: redis
       REDIS_URL: redis://redis:6379/0
+      OPENAI_API_KEY: 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
     working_dir: /workspace
     command: sleep infinity
 

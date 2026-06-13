@@ -126,8 +126,12 @@ const submitForm = async () => {
         form_success.value = true
 
         myIdeasKey.value += 1
+        // to doooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
         // ideas_list.value = await getIdeasInterested()
-        ideas_list.value = await getIdeas()
+        // ideas_list.value = await getIdeas()
+        // loadIdeas({
+        //     search: route.query.search
+        // })
 
         loading.value = false
 
@@ -142,9 +146,9 @@ const submitForm = async () => {
 }
 
 const ideas_list = ref([])
-var loadIdeas = async ()=>{
+var loadIdeas = async (param)=>{
     // ideas_list.value = await getIdeasInterested()
-    ideas_list.value = await getIdeas()
+    ideas_list.value = await getIdeas(param)
 }
 
 const is_user_login = ref(false)
@@ -156,7 +160,9 @@ onMounted(async ()=>{
     if (route.query.search) {
         idea_content.value = route.query.search
     }
-    loadIdeas()
+    loadIdeas({
+        search: route.query.search
+    })
     is_user_login.value = await isUserLogin()
     setUserCookie()
 })

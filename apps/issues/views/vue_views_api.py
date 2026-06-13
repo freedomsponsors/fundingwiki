@@ -11,13 +11,24 @@ from apps.issues.models import Issue as IssueModel
 from apps.issues.serializers import IssuesSerializer
 from rest_framework.response import Response
 from apps.issues.models import *
+from django.db.models import Q
+
 
 from apps.issues.services import faiss_services, idea_services, redis_services, openai_services, user_services
 
 
 class Ideas(APIView):
     def get(self, request):
-        ideas = IssueModel.objects.order_by('-creationDate').all()
+        ideas = IssueModel.objects.order_by('-creationDate')
+
+        # search by keyword
+        search = request.GET.get('search', '')
+        if search:
+            ideas = ideas.filter(
+                Q(title__icontains=search) | Q(description__icontains=search)
+            )
+        ideas = ideas.all()
+
         serializer = IssuesSerializer(ideas, many=True)
 
         return Response(serializer.data)
@@ -32,12 +43,12 @@ class Ideas(APIView):
             idea.createdByUser = user_services.getAnonymousUser()
             idea.issue_from = 'anonymous'
 
-        idea.faiss_id = faiss_services.add_to_faiss(idea.description)
+        # idea.faiss_id = faiss_services.add_to_faiss(idea.description)
         idea.save()
 
         # update user embedding
-        if request.user.is_authenticated:
-            faiss_services.update_user_embedding(request.user)
+        # if request.user.is_authenticated:
+            # faiss_services.update_user_embedding(request.user)
 
         # if not authenticated, map to cookie id
         if not request.user.is_authenticated:
@@ -48,7 +59,7 @@ class Ideas(APIView):
                 print(redis_services.get_list(redis_key))
 
         #create a related idea
-        idea_services.generate_one_related_ideas(idea)
+        # idea_services.generate_one_related_ideas(idea)
 
         result = {
             'result': 'ok'
