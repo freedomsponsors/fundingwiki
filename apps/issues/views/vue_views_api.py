@@ -43,12 +43,12 @@ class Ideas(APIView):
             idea.createdByUser = user_services.getAnonymousUser()
             idea.issue_from = 'anonymous'
 
-        # idea.faiss_id = faiss_services.add_to_faiss(idea.description)
+        idea.faiss_id = faiss_services.add_to_faiss(idea.description)
         idea.save()
 
         # update user embedding
-        # if request.user.is_authenticated:
-            # faiss_services.update_user_embedding(request.user)
+        if request.user.is_authenticated:
+            faiss_services.update_user_embedding(request.user)
 
         # if not authenticated, map to cookie id
         if not request.user.is_authenticated:
@@ -172,7 +172,7 @@ def idea_vote(request):
     idea_id = request.data.get('id')
     vote_type = request.data.get('vote_type')
 
-    idea = IdeasModel.objects.get(pk=idea_id)
+    idea = IssueModel.objects.get(pk=idea_id)
 
     if request.user.is_authenticated:
         user = request.user
@@ -204,8 +204,8 @@ def idea_vote(request):
 @api_view(['GET'])
 def get_idea_by_id(request):
     id = request.query_params.get('id')
-    idea = IdeasModel.objects.get(id=id)
-    serializer = IdeasSerializer(idea)
+    idea = IssueModel.objects.get(id=id)
+    serializer = IssuesSerializer(idea)
     serializer_data = serializer.data.copy()
 
     _add_vote_info_to_idea(request, serializer_data, [idea])

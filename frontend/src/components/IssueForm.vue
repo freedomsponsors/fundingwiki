@@ -1,73 +1,52 @@
 <template>
-<div>
-    <User></User>
-</div>
-<div style="display: flex;align-items: center;margin-top: 50px;margin-bottom: 100px;flex-direction: column;">
-    <div style="display: flex;flex-direction: column; align-items: center;width: 650px;gap: 20px;">
-        <v-form 
-            ref="form" 
-            v-model="isValid" 
-            lazy-validation 
-            validate-on="submit"
-            style="width: 100%;">
-            <div style="width: 100%;display: flex;;margin-top: 50px;">
-                <div style="flex-grow: 1;padding-right: 10px;">
-                    <v-textarea
-                        v-model="idea_content"
-                        color="deep-purple"
-                        label="What's on your mind?"
-                        rows="5"
+    <v-form 
+        ref="form" 
+        v-model="isValid" 
+        lazy-validation 
+        validate-on="submit"
+        style="width: 100%;">
+        <div style="width: 100%;display: flex;;margin-top: 50px;">
+            <div style="flex-grow: 1;padding-right: 10px;">
+                <v-textarea
+                    v-model="idea_content"
+                    color="deep-purple"
+                    label="What's on your mind?"
+                    rows="5"
+                    variant="filled"
+                    auto-grow
+                    autofocus
+                    :rules="content_not_empty"
+                    style=""
+                ></v-textarea>
+            </div>
+            <div style="width: 140px;">
+                <div class="form_btn" style="width: 320px;margin-top: 10px;display: flex; flex-direction: column;justify-content: space-between;gap:6px">
+                    <v-btn
+                        class="text-none"
+                        color="white"
                         variant="filled"
-                        auto-grow
-                        autofocus
-                        :rules="content_not_empty"
-                        style=""
-                    ></v-textarea>
-                </div>
-                <div style="width: 140px;">
-                    <div class="form_btn" style="width: 320px;margin-top: 10px;display: flex; flex-direction: column;justify-content: space-between;gap:6px">
-                        <v-btn
-                            class="text-none"
-                            color="white"
-                            variant="filled"
-                            :loading="loading"
-                            @click="submitForm"
-                            border="none"
-                            style="margin-right: 10px;background:#F58224;width:130px"
-                        >
-                            Public search
-                        </v-btn>
-                        <a>Advanced search</a>
-                        <v-btn
-                            class="text-none"
-                            color="blue"
-                            variant="outlined"
-                            border="none"
-                            style="background-color: #E1ECF4;width:130px"
-                        >
-                            Private project
-                        </v-btn>
-                        <a href="http://funding.wiki:8000/issue/add/?operation=KICKSTART&show_advance=1">Advanced edition</a>
-                    </div>
-                </div>
-            </div>
-        </v-form>
-
-        <div style="width: 100%;">
-            <div v-if="show_my_new_issue" style="width: 100%;">
-                <MyNewIssue :key="myIdeasKey"></MyNewIssue>
-            </div>
-            <div v-if="ideas_list.length > 0" style="width: 100%;">
-                <div style="width: 100%;margin-top: 60px;border-bottom: 1px solid #efefef;"><h3>Interesting issues for you</h3></div>
-                <div style="width: 100%;">
-                    <div v-for="(idea, index) in ideas_list" :key="index" class="idea_item">
-                        <IdeaItem :item="idea" @delete-idea="loadIdeas"></IdeaItem>
-                    </div>
+                        :loading="loading"
+                        @click="submitForm"
+                        border="none"
+                        style="margin-right: 10px;background:#F58224;width:130px"
+                    >
+                        Public search
+                    </v-btn>
+                    <a>Advanced search</a>
+                    <v-btn
+                        class="text-none"
+                        color="blue"
+                        variant="outlined"
+                        border="none"
+                        style="background-color: #E1ECF4;width:130px"
+                    >
+                        Private project
+                    </v-btn>
+                    <a href="http://funding.wiki:8000/issue/add/?operation=KICKSTART&show_advance=1">Advanced edition</a>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </v-form>
 </template>
 
 <script setup lang="ts">

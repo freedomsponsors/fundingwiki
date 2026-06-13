@@ -1,12 +1,13 @@
 <template>
-<div style="display: flex; justify-content: space-between;">
-    <div>
-        <IdeaForm></IdeaForm>
-    </div>
-    <div>
-        <User></User>
+<div>
+    <User></User>
+</div>
+<div style="display: flex;align-items: center;margin-top: 50px;margin-bottom: 100px;flex-direction: column;">
+    <div style="display: flex;flex-direction: column; align-items: center;width: 650px;gap: 20px;">
+        <IssueForm :key="myIdeasKey" @submit-success="onSubmitSuccess"></IssueForm>
     </div>
 </div>
+
 <div style="display: flex;justify-content: space-around;margin-top: 40px;">
     <div style="width: 650px;">
         <div style="border-bottom: 1px solid #efefef;margin-bottom: 10px;"><h2>Idea detail:</h2></div>
@@ -17,7 +18,7 @@
 
 <script setup lang="ts">
 import User from '@/components/User.vue'
-import IdeaForm from '@/components/IdeaForm.vue'
+import IssueForm from '@/components/IssueForm.vue'
 import IdeaItem from '@/components/IdeaItem.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
