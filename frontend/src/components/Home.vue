@@ -136,9 +136,9 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {getCookie, setUserCookie} from '@/utils/cookies.js'
-import {getIdeas, getIdeasInterested, saveIdea} from '../services/ideas.js'
-import {isUserLogin} from '../services/user.js'
-import {getLanguages} from '../services/language.js'
+import {getIdeas, getIdeasInterested, saveIdea} from '@/services/ideas.js'
+import {isUserLogin} from '@/services/user.js'
+import {getLanguages} from '@/services/language.js'
 
 import { CdxIcon } from '@wikimedia/codex';
 import { cdxIconBell } from '@wikimedia/codex-icons';

@@ -36,11 +36,11 @@
 
 <script setup lang="ts">
 import { ref, defineEmits, watch} from 'vue'
-import {deleteIdeaById, getSimilarIdeas, ideasVote, getIdeaById} from '../services/ideas.js'
+import {deleteIdeaById, getSimilarIdeas, ideasVote, getIdeaById} from '@/services/ideas.js'
  
 const confirmDialog = ref()
 
-const props = defineProps<{ item: object, canDelete:false}>()
+const props = defineProps<{ item: object, canDelete?: boolean }>()
 
 const idea = ref(props.item)
 
@@ -78,11 +78,8 @@ const ideaVote = async (id, vote_type)=>{
     idea.value = await getIdeaById(id)
 }
 
-const link_prefix = import.meta.env.VITE_LINK_PREFIX
-
 let gotoIdeaDetail = (id)=>{
-
-    router.push(link_prefix+'/idea/'+id)
+    router.push({ name: 'Idea', params: { id } })
 }
 
 </script>
