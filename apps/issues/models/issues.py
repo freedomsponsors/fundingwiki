@@ -1372,7 +1372,7 @@ class MediaHistEvent(models.Model):
 
 
 class TechSolution(models.Model):
-    title = models.CharField(max_length=30, unique=True)
+    title = models.CharField(max_length=30)
     content = models.TextField(null=True, blank=True)
     createdByUser = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING)
     karma = models.IntegerField(default=0)
