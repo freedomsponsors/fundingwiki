@@ -8,3 +8,12 @@ export async function saveSolution(issue_id, content) {
     var response = await post('vueapi/tech_solution', data)
     return response
 }
+
+export async function getSolution(issue_id) {
+    let data = {
+        issue_id: issue_id
+    }
+    console.log('getSolution', data)
+    var response = await get('vueapi/tech_solution', data)
+    return response
+}

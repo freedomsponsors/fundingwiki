@@ -210,6 +210,8 @@ def get_idea_by_id(request):
 
     _add_vote_info_to_idea(request, serializer_data, [idea])
 
+    serializer_data['count_solution'] = idea.techsolution_set.count()
+
     return Response(serializer_data)
 
 

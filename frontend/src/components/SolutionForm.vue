@@ -17,6 +17,7 @@
                     style=""
                 ></v-textarea>
                 <v-btn
+                    v-if="props.issue.count_solution >= 0"
                     class="text-none"
                     color="blue"
                     variant="outlined"
@@ -24,14 +25,14 @@
                     :loading="loading"
                     @click="submitForm"
                     style="background-color: #E1ECF4;"
-                >Propose a solution</v-btn>
+                >{{ props.issue.count_solution === 0 ? 'Propose a solution' : 'Propose another solution' }}</v-btn>
             </div>
         </div>
     </v-form>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, emit } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
 import {getCookie, setUserCookie} from '@/utils/cookies.js'
@@ -58,6 +59,8 @@ const form = ref(null)
 const form_success = ref(false)
 const myIdeasKey = ref(0)
 
+const emit = defineEmits(['submit-success'])
+
 const content_not_empty = [
     value => {
         if (value) return true
@@ -79,6 +82,9 @@ const submitForm = async () => {
 
         form_success.value = false
         form_content.value = ''
+
+        // Emit an event to notify the parent component to refresh the solution list
+        emit('submit-success')
     }else{
         loading.value = false
     }

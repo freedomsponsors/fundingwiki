@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from apps.issues.models import Issue as IssueModel
-from apps.issues.serializers import IssuesSerializer
+from apps.issues.serializers import TechSolutionsSerializer
 from rest_framework.response import Response
 from apps.issues.models import TechSolution as TechSolutionModel
 from django.db.models import Q
@@ -17,17 +17,12 @@ from apps.issues.services import user_services
 
 class TechSolution(APIView):
     def get(self, request):
-        ideas = IssueModel.objects.order_by('-creationDate')
+        issue_id = request.GET.get('issue_id')
+        solutions = TechSolutionModel.objects.filter(issue_id=issue_id).order_by('id')
 
-        # search by keyword
-        search = request.GET.get('search', '')
-        if search:
-            ideas = ideas.filter(
-                Q(title__icontains=search) | Q(description__icontains=search)
-            )
-        ideas = ideas.all()
+        solutions = solutions.all()
 
-        serializer = IssuesSerializer(ideas, many=True)
+        serializer = TechSolutionsSerializer(solutions, many=True)
 
         return Response(serializer.data)
 

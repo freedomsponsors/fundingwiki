@@ -14,9 +14,10 @@
             <div class="page_section_title"><h2>Idea detail:</h2></div>
             <IdeaItem :item="idea" @delete-idea="onDeleteIdeas"></IdeaItem>
         </div>
+        <SolutionList :issue="idea"></SolutionList>
         <div style="width: 650px;">
             <div class="page_section_title"><h2>Your Solution</h2></div>
-            <SolutionForm :issue="idea"></SolutionForm>
+            <SolutionForm :issue="idea" @submit-success="onSolutionSubmitSuccess"></SolutionForm>
         </div>
     </div>
 </div>
@@ -27,6 +28,7 @@ import User from '@/components/User.vue'
 import IssueForm from '@/components/IssueForm.vue'
 import IdeaItem from '@/components/IdeaItem.vue'
 import SolutionForm from '@/components/SolutionForm.vue'
+import SolutionList from '@/components/SolutionList.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getIdeaById } from '@/services/ideas.js'
@@ -41,6 +43,10 @@ onMounted(async ()=>{
 
 let onDeleteIdeas = async ()=>{
     
+}
+let onSolutionSubmitSuccess = async ()=>{
+    // Refresh the idea details after a new solution is submitted
+    idea.value = await getIdeaById(ideaId)
 }
 </script>
 
