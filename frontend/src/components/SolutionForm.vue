@@ -17,7 +17,6 @@
                     style=""
                 ></v-textarea>
                 <v-btn
-                    v-if="props.issue.count_solution >= 0"
                     class="text-none"
                     color="blue"
                     variant="outlined"
@@ -25,7 +24,7 @@
                     :loading="loading"
                     @click="submitForm"
                     style="background-color: #E1ECF4;"
-                >{{ props.issue.count_solution === 0 ? 'Propose a solution' : 'Propose another solution' }}</v-btn>
+                >Submit solution</v-btn>
             </div>
         </div>
     </v-form>

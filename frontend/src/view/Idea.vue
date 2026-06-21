@@ -16,7 +16,9 @@
         </div>
         <SolutionList :issue="idea"></SolutionList>
         <div style="width: 650px;">
-            <div class="page_section_title"><h2>Your Solution</h2></div>
+            <div class="page_section_title">
+                <h2 v-if="idea.count_solution >= 0">{{ idea.count_solution === 0 ? 'Propose a solution' : 'Propose another solution' }}</h2>
+            </div>
             <SolutionForm :issue="idea" @submit-success="onSolutionSubmitSuccess"></SolutionForm>
         </div>
     </div>
