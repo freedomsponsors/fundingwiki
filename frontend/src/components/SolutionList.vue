@@ -4,7 +4,10 @@
         <div v-else class="page_section_title"><h2>{{ data_list.length }} Proposed solutions</h2></div>
         <div>
             <div class="solution-item" v-for="(item, index) in data_list" :key="index">
-                {{ item.content }}
+                <div>{{ item.content }}</div>
+                <div class="solution-meta">
+                    {{ item.createdByUser.username }}
+                </div>
             </div>
         </div>
     </div>
@@ -48,5 +51,9 @@ watch(() => props.issue.id, (newVal, oldVal) => {
     border-bottom: 1px solid #efefef;
     margin-bottom: 10px;
     margin-top: 20px;
+}
+.solution-meta{
+    text-align: right;
+    color: #888;
 }
 </style>
