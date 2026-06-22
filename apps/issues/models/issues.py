@@ -1476,7 +1476,7 @@ class TechSolutionHistEvent(models.Model):
 class TechSolutionComment(models.Model):
     techSolution = models.ForeignKey(TechSolution, on_delete=models.DO_NOTHING)
     author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    creationDate = models.DateTimeField()
+    creationDate = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
     language = models.CharField(max_length=5, default='')
 

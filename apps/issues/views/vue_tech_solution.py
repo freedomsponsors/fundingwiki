@@ -8,9 +8,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from apps.issues.models import Issue as IssueModel
-from apps.issues.serializers import TechSolutionsSerializer
+from apps.issues.serializers import TechSolutionsSerializer, TechSolutionCommentSerializer
 from rest_framework.response import Response
-from apps.issues.models import TechSolution as TechSolutionModel
+from apps.issues.models import TechSolution as TechSolutionModel, TechSolutionComment as TechSolutionCommentModel
 from django.db.models import Q
 
 from apps.issues.services import user_services
@@ -41,6 +41,44 @@ class TechSolution(APIView):
             solution.createdByUser = user_services.getAnonymousUser()
 
         solution.save()
+
+        result = {
+            'result': 'ok'
+        }
+        return JsonResponse(result)
+
+    def delete(self, request):
+        result = {
+            'result': 'ok'
+        }
+        return JsonResponse(result)
+
+
+class TechSolutionComment(APIView):
+    def get(self, request):
+        solution_id = request.GET.get('solution_id')
+        solutions = TechSolutionCommentModel.objects.filter(techSolution=solution_id).order_by('id')
+
+        solutions = solutions.all()
+
+        serializer = TechSolutionCommentSerializer(solutions, many=True)
+
+        return Response(serializer.data)
+
+    def post(self, request):
+        solution_id = request.data.get('solution_id')
+        content = request.data.get('content')
+
+        solutionComment = TechSolutionCommentModel()
+        solutionComment.content = content
+        solutionComment.techSolution_id = solution_id
+
+        if request.user.is_authenticated:
+            solutionComment.author = request.user
+        else:
+            solutionComment.author = user_services.getAnonymousUser()
+
+        solutionComment.save()
 
         result = {
             'result': 'ok'

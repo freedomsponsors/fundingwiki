@@ -4,9 +4,14 @@
         <div v-else class="page_section_title"><h2>{{ data_list.length }} Proposed solutions</h2></div>
         <div>
             <div class="solution-item" v-for="(item, index) in data_list" :key="index">
-                <div>{{ item.content }}</div>
-                <div class="solution-meta">
-                    {{ item.createdByUser.username }}
+                <div>
+                    <div>{{ item.content }}</div>
+                    <div class="solution-meta">
+                        {{ item.createdByUser.username }}
+                    </div>
+                </div>
+                <div>
+                    <SolutionCommentForm :solution="item" @submit-success="onSolutionCommentSubmitSuccess"></SolutionCommentForm>
                 </div>
             </div>
         </div>
@@ -16,6 +21,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import {getSolution} from '@/services/solution.js'
+import SolutionCommentForm from '@/components/SolutionCommentForm.vue'
 
 const data_list = ref([])
 
