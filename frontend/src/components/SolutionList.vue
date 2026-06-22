@@ -11,7 +11,10 @@
                     </div>
                 </div>
                 <div>
-                    <SolutionCommentForm :solution="item" @submit-success="onSolutionCommentSubmitSuccess"></SolutionCommentForm>
+                    <SolutionCommentForm :solution="item" @submit-success="onSolutionCommentSubmitSuccess(item)"></SolutionCommentForm>
+                </div>
+                <div style="">
+                    <SolutionCommentList :comment_list="item.techsolutioncomment_set" :refresh-flag="item.commentRefreshFlag"></SolutionCommentList>
                 </div>
             </div>
         </div>
@@ -22,6 +25,7 @@
 import { ref, onMounted, watch } from 'vue'
 import {getSolution} from '@/services/solution.js'
 import SolutionCommentForm from '@/components/SolutionCommentForm.vue'
+import SolutionCommentList from '@/components/SolutionCommentList.vue'
 
 const data_list = ref([])
 
@@ -45,6 +49,12 @@ watch(() => props.issue.id, (newVal, oldVal) => {
     }
 }, { deep: true })
 
+let onSolutionCommentSubmitSuccess = async (targetItem)=>{
+    getSolution(props.issue.id).then((response) => {
+        data_list.value = response
+    })
+}
+
 </script>
 
 <style scoped>
@@ -54,9 +64,9 @@ watch(() => props.issue.id, (newVal, oldVal) => {
     padding: 10px 0;
 }
 .page_section_title{
-    border-bottom: 1px solid #efefef;
+    border-bottom: 1px solid #ccc;
     margin-bottom: 10px;
-    margin-top: 20px;
+    margin-top: 40px;
 }
 .solution-meta{
     text-align: right;

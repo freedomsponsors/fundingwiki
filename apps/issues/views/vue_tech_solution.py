@@ -20,7 +20,7 @@ class TechSolution(APIView):
         issue_id = request.GET.get('issue_id')
         solutions = TechSolutionModel.objects.filter(issue_id=issue_id).order_by('id')
 
-        solutions = solutions.all()
+        solutions = solutions.prefetch_related("techsolutioncomment_set").all()
 
         serializer = TechSolutionsSerializer(solutions, many=True)
 
@@ -56,14 +56,7 @@ class TechSolution(APIView):
 
 class TechSolutionComment(APIView):
     def get(self, request):
-        solution_id = request.GET.get('solution_id')
-        solutions = TechSolutionCommentModel.objects.filter(techSolution=solution_id).order_by('id')
-
-        solutions = solutions.all()
-
-        serializer = TechSolutionCommentSerializer(solutions, many=True)
-
-        return Response(serializer.data)
+        return Response({})
 
     def post(self, request):
         solution_id = request.data.get('solution_id')
@@ -86,7 +79,4 @@ class TechSolutionComment(APIView):
         return JsonResponse(result)
 
     def delete(self, request):
-        result = {
-            'result': 'ok'
-        }
-        return JsonResponse(result)
+        return JsonResponse({})

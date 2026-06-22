@@ -21,12 +21,21 @@ class MediaSerializer(serializers.ModelSerializer):
         return Media.objects.create(**validated_data)
 
 
+class TechSolutionCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TechSolutionComment
+        fields = ('id', 'author', 'creationDate', 'content')
+        read_only_fields = ('id', 'author', 'creationDate')
+
+
 class TechSolutionsSerializer(serializers.ModelSerializer):
     createdByUser = UserSerializer(read_only=True)
 
+    techsolutioncomment_set = TechSolutionCommentSerializer(many=True, read_only=True)
+
     class Meta:
         model = TechSolution
-        fields = ('id', 'title', 'content', 'createdByUser', 'karma', 'issue', 'creationDate', 'updatedDate', 'deleted')
+        fields = ('id', 'title', 'content', 'createdByUser', 'karma', 'issue', 'creationDate', 'updatedDate', 'deleted', 'techsolutioncomment_set')
         read_only_fields = ('id', 'createdByUser', 'karma', 'creationDate', 'issue', 'deleted')
 
     def validate_title(self, value):
@@ -38,11 +47,6 @@ class TechSolutionsSerializer(serializers.ModelSerializer):
     def generate(self):
         return TechSolution(**self.validated_data)
 
-class TechSolutionCommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TechSolutionComment
-        fields = ('id', 'author', 'creationDate', 'content')
-        read_only_fields = ('id', 'author', 'creationDate')
 
 class TechSolutionsHistEventSerializer(serializers.ModelSerializer):
     class Meta:
