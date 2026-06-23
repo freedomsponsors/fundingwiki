@@ -16,7 +16,7 @@ Including another URLconf
 """
 import django.contrib.auth.views
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from apps.issues.views import issue_views
 from django.urls import include
 from apps.issues import urls as core_urls
@@ -105,8 +105,11 @@ urlpatterns = [
     path('sitemap.xml', main_views.sitemap),
     path('email/', user_views.redirect_to_user_page, {'email_verified': 'true'}, name='emailmgr_email_list'),
 
-    path('vuetest/', TemplateView.as_view(template_name='vuetest.html'))
+    path('vuetest/', TemplateView.as_view(template_name='vuetest.html')),
     # path('email/activate/(?P<identifier>\w+)/', emailmgr.views.email_activate, name='emailmgr_email_activate'
+    
+    #vue pages
+    re_path(r'^.*$', TemplateView.as_view(template_name="index.html")),
 ]
 
 # Add this only in development

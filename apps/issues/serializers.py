@@ -4,6 +4,11 @@ from django.conf import settings
 from apps.issues.utils.djangology_utils import djangology_url_special_chars
 
 # This file contains serializers used by Djangology project
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email']
+
 
 class MediaSerializer(serializers.ModelSerializer):
 
@@ -17,6 +22,8 @@ class MediaSerializer(serializers.ModelSerializer):
 
 
 class TechSolutionsSerializer(serializers.ModelSerializer):
+    createdByUser = UserSerializer(read_only=True)
+
     class Meta:
         model = TechSolution
         fields = ('id', 'title', 'content', 'createdByUser', 'karma', 'issue', 'creationDate', 'updatedDate', 'deleted')
@@ -53,14 +60,8 @@ class IssueSerializer(serializers.ModelSerializer):
         return Issue(**self.validated_data)
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email']
-
-
-class IdeasSerializer(serializers.ModelSerializer):
+class IssuesSerializer(serializers.ModelSerializer):
     createdByUser = UserSerializer()
     class Meta:
-        model = Ideas
+        model = Issue
         fields = '__all__'

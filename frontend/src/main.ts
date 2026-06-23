@@ -18,4 +18,6 @@ const app = createApp(App)
 import ConfirmDialog from './components/common/ConfirmDialog.vue'
 app.component('ConfirmDialog', ConfirmDialog)
 
+import '@wikimedia/codex/dist/codex.style.css';
+
 app.use(vuetify).use(router).mount('#app')

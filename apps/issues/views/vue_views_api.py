@@ -7,31 +7,43 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from apps.issues.models import Ideas as IdeasModel
-from apps.issues.serializers import IdeasSerializer
+from apps.issues.models import Issue as IssueModel
+from apps.issues.serializers import IssuesSerializer
 from rest_framework.response import Response
+from apps.issues.models import *
+from django.db.models import Q
+
 
 from apps.issues.services import faiss_services, idea_services, redis_services, openai_services, user_services
 
 
 class Ideas(APIView):
     def get(self, request):
-        ideas = IdeasModel.objects.order_by('-date_created').all()
-        serializer = IdeasSerializer(ideas, many=True)
+        ideas = IssueModel.objects.order_by('-creationDate')
+
+        # search by keyword
+        search = request.GET.get('search', '')
+        if search:
+            ideas = ideas.filter(
+                Q(title__icontains=search) | Q(description__icontains=search)
+            )
+        ideas = ideas.all()
+
+        serializer = IssuesSerializer(ideas, many=True)
 
         return Response(serializer.data)
 
     def post(self, request):
         content = request.data.get('idea_content')
-        idea = IdeasModel.newIdea(content=content)
+        idea = IssueModel.newIssueSimple(content=content)
         if request.user.is_authenticated:
             idea.createdByUser = request.user
-            idea.idea_from = 'user'
+            idea.issue_from = 'user'
         else:
             idea.createdByUser = user_services.getAnonymousUser()
-            idea.idea_from = 'anonymous'
+            idea.issue_from = 'anonymous'
 
-        idea.faiss_id = faiss_services.add_to_faiss(idea.content)
+        idea.faiss_id = faiss_services.add_to_faiss(idea.description)
         idea.save()
 
         # update user embedding
@@ -47,7 +59,7 @@ class Ideas(APIView):
                 print(redis_services.get_list(redis_key))
 
         #create a related idea
-        idea_services.generate_one_related_ideas(idea)
+        # idea_services.generate_one_related_ideas(idea)
 
         result = {
             'result': 'ok'
@@ -56,7 +68,7 @@ class Ideas(APIView):
 
     def delete(self, request):
         id = request.GET.get('id')
-        item = get_object_or_404(IdeasModel, pk=id)
+        item = get_object_or_404(IssueModel, pk=id)
         item.delete()
 
         # update user embedding
@@ -77,16 +89,16 @@ class IdeasImport(APIView):
 class IdeasMine(APIView):
     def get(self, request):
         if request.user.is_authenticated:
-            ideas = IdeasModel.objects.filter(createdByUser=request.user).order_by('-date_created').all()
+            ideas = IssueModel.objects.filter(createdByUser=request.user).order_by('-creationDate').all()
         else:
-            ideas = IdeasModel.objects.none()
+            ideas = IssueModel.objects.none()
             user_identify = request.COOKIES.get('user_identify')
             if user_identify:
                 redis_key = 'site_ideas_' + user_identify
                 idea_ids = redis_services.get_list(redis_key)
-                ideas = IdeasModel.objects.filter(id__in=idea_ids).order_by('-date_created').all()
+                ideas = IssueModel.objects.filter(id__in=idea_ids).order_by('-creationDate').all()
 
-        serializer = IdeasSerializer(ideas, many=True)
+        serializer = IssuesSerializer(ideas, many=True)
 
         # add voted info
         # check if voted
@@ -113,7 +125,7 @@ class IdeasInterested(APIView):
             user_identify = request.COOKIES.get('user_identify')
             idea_list = idea_services.get_user_cookie_suggest_ideas(user_identify, number=5)
 
-        serializer = IdeasSerializer(idea_list, many=True)
+        serializer = IssuesSerializer(idea_list, many=True)
 
         # add voted info
         # check if voted
@@ -135,9 +147,9 @@ class IdeasSimilar(APIView):
     def get(self, request):
         id = request.GET.get('id')
         print(id)
-        idea = IdeasModel.objects.get(id=id)
+        idea = IssueModel.objects.get(id=id)
         ideas_list = idea_services.get_suggest_by_idea(idea, 3)
-        serializer = IdeasSerializer(ideas_list, many=True)
+        serializer = IssuesSerializer(ideas_list, many=True)
 
         return Response(serializer.data)
 
@@ -160,7 +172,7 @@ def idea_vote(request):
     idea_id = request.data.get('id')
     vote_type = request.data.get('vote_type')
 
-    idea = IdeasModel.objects.get(pk=idea_id)
+    idea = IssueModel.objects.get(pk=idea_id)
 
     if request.user.is_authenticated:
         user = request.user
@@ -192,11 +204,13 @@ def idea_vote(request):
 @api_view(['GET'])
 def get_idea_by_id(request):
     id = request.query_params.get('id')
-    idea = IdeasModel.objects.get(id=id)
-    serializer = IdeasSerializer(idea)
+    idea = IssueModel.objects.get(id=id)
+    serializer = IssuesSerializer(idea)
     serializer_data = serializer.data.copy()
 
     _add_vote_info_to_idea(request, serializer_data, [idea])
+
+    serializer_data['count_solution'] = idea.techsolution_set.count()
 
     return Response(serializer_data)
 
@@ -218,7 +232,10 @@ def _add_vote_info_to_idea(request, data, idea_list):
     data['vote_down_ope'] = vote_ope['vote_down_ope']
 
 
-
+@api_view(['GET'])
+def get_languages(request):
+    available_languages = Languages.available_languages();
+    return Response(list(available_languages))
 
 
 

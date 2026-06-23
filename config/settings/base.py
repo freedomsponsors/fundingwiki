@@ -30,7 +30,8 @@ ALLOWED_HOSTS = [
     '.freedomsponsors.org',
     '192.168.8.101',
     'alfinal.eu.pythonanywhere.com',
-    '192.243.108.188'
+    '192.243.108.188',
+    'vue.funding.wiki',
 #    os.getenv('DJANGO_ALLOWED_HOST', 'x.y.z'),
 ]
 
@@ -76,7 +77,9 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
