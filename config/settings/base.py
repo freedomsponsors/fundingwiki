@@ -152,7 +152,20 @@ STATICFILES_DIRS = [
     BASE_DIR / "statfiles/" / "static",
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Django 5.1 removed STATICFILES_STORAGE in favor of STORAGES. WhiteNoise serves
+# the collected files. We use CompressedStaticFilesStorage (gzip/brotli) rather
+# than the *Manifest* variant: the manifest storage strictly post-processes every
+# JS/CSS reference and the legacy static tree has dangling sourcemap/url() targets
+# (e.g. showdown.js.map) that make collectstatic fail. Cache-busting for the part
+# that matters (the Vue SPA) is already handled by Vite's content-hashed filenames.
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 STATIC_ROOT = BASE_DIR / 'staticroot'
 
 
