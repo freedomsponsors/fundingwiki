@@ -50,7 +50,12 @@ if _extra_hosts:
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:8000",
+    "https://funding.wiki",
+    "https://vue.funding.wiki",
 ]
+# Optional: append more origins from the env (comma-separated). Not required in
+# prod — the known production origins above are baked in (they aren't secret,
+# same as ALLOWED_HOSTS).
 _extra_csrf = config('CSRF_TRUSTED_ORIGINS', default='')
 if _extra_csrf:
     CSRF_TRUSTED_ORIGINS += [o.strip() for o in _extra_csrf.split(',') if o.strip()]
