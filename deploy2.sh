@@ -13,8 +13,8 @@
 # registry, no image transfer.
 #
 # One-time setup on the operator machine:
-#   ssh-copy-id -p 2222 tonylampada@funding.wiki
-#   docker context create fundingwiki-prod --docker "host=ssh://tonylampada@funding.wiki:2222"
+#   ssh-copy-id -p 2222 al@funding.wiki
+#   docker context create fundingwiki-prod --docker "host=ssh://al@funding.wiki:2222"
 #
 # Usage:
 #   ./deploy2.sh
@@ -27,7 +27,7 @@ IMAGE_NAME="${IMAGE_NAME:-fundingwiki-app}"
 IMAGE_TAG="${IMAGE_TAG:-latest}"
 
 # Used by the migrate/restart step below (SSH onto the server).
-REMOTE_SSH="${REMOTE_SSH:-tonylampada@funding.wiki}"
+REMOTE_SSH="${REMOTE_SSH:-al@funding.wiki}"
 SSH_PORT="${SSH_PORT:-2222}"
 REMOTE_DIR="${REMOTE_DIR:-/home/al/espacio_de_trabajo/fundingwiki}"
 COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.prod.yml}"
