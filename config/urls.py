@@ -109,7 +109,7 @@ urlpatterns = [
     # path('email/activate/(?P<identifier>\w+)/', emailmgr.views.email_activate, name='emailmgr_email_activate'
     
     #vue pages
-    re_path(r'^.*$', TemplateView.as_view(template_name="index.html")),
+    re_path(r'^.*$', TemplateView.as_view(template_name="vue/index.html")),
 ]
 
 # Add this only in development
