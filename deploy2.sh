@@ -45,7 +45,10 @@ fi
 
 # 1. Build the image on the server's daemon ---------------------------------
 echo "=== Building $IMAGE_NAME:$IMAGE_TAG on context '$CONTEXT' (server-side, native arch) ==="
-docker --context "$CONTEXT" build --progress=plain -t "$IMAGE_NAME:$IMAGE_TAG" -f Dockerfile .
+# BuildKit's gRPC session breaks over an SSH docker context ("failed to list
+# workers / file already closed"), so use the legacy builder, which builds
+# straight through the daemon API. It streams full plain output by default.
+DOCKER_BUILDKIT=0 docker --context "$CONTEXT" build -t "$IMAGE_NAME:$IMAGE_TAG" -f Dockerfile .
 
 echo "=== Build complete. Image is on the server's daemon: ==="
 docker --context "$CONTEXT" image ls "$IMAGE_NAME"

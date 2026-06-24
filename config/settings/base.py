@@ -18,6 +18,12 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # PROJECT_DIR = BASE_DIR.child('apps')
 
+# Same code in dev and prod — the only difference is the environment. Defaults
+# here are dev-friendly; production sets SECRET_KEY and DEBUG=False via the env
+# (.env.production). Never run prod with the insecure default key.
+SECRET_KEY = config('SECRET_KEY', default='django-insecure')
+DEBUG = config('DEBUG', default=True, cast=bool)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -34,6 +40,32 @@ ALLOWED_HOSTS = [
     'vue.funding.wiki',
 #    os.getenv('DJANGO_ALLOWED_HOST', 'x.y.z'),
 ]
+
+# Extra hosts / CSRF origins can be appended from the environment (comma-separated)
+# so prod differs from dev only by env vars.
+_extra_hosts = config('ALLOWED_HOSTS', default='')
+if _extra_hosts:
+    ALLOWED_HOSTS += [h.strip() for h in _extra_hosts.split(',') if h.strip()]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:8000",
+]
+_extra_csrf = config('CSRF_TRUSTED_ORIGINS', default='')
+if _extra_csrf:
+    CSRF_TRUSTED_ORIGINS += [o.strip() for o in _extra_csrf.split(',') if o.strip()]
+
+REDIS = {
+    'host': config('REDIS_HOST', 'localhost'),
+    'port': int(config('REDIS_PORT', '6379')),
+    'db': 0,
+    'pass': '',
+}
+
+# Behind the nginx HTTPS proxy: trust the forwarded scheme so that, with
+# DEBUG=False, CSRF origin checks and secure-cookie logic see requests as HTTPS.
+# No-op when the header is absent (e.g. local dev).
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
