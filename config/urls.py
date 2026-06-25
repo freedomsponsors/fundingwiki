@@ -57,8 +57,7 @@ urlpatterns = [
     #vue url
     path('vuedev/', TemplateView.as_view(template_name='vue/dev.html')),
     path('vuedev/<path:subpath>', TemplateView.as_view(template_name='vue/dev.html')),
-    # path('', TemplateView.as_view(template_name='vue/index.html')),
-    path('', TemplateView.as_view(template_name='index.html')),
+    path('', TemplateView.as_view(template_name='vue/index.html')),
     path('idea/<path:subpath>', TemplateView.as_view(template_name='vue/index.html')),
 
     path('vueapi/', include(core_urls.vue_api)),
@@ -110,7 +109,7 @@ urlpatterns = [
     # path('email/activate/(?P<identifier>\w+)/', emailmgr.views.email_activate, name='emailmgr_email_activate'
     
     #vue pages
-    re_path(r'^.*$', TemplateView.as_view(template_name="index.html")),
+    re_path(r'^.*$', TemplateView.as_view(template_name="vue/index.html")),
 ]
 
 # Add this only in development
