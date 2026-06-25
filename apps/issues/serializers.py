@@ -22,6 +22,8 @@ class MediaSerializer(serializers.ModelSerializer):
 
 
 class TechSolutionCommentSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
+
     class Meta:
         model = TechSolutionComment
         fields = ('id', 'author', 'creationDate', 'content')

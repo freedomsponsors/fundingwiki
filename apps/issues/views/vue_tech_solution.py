@@ -20,7 +20,8 @@ class TechSolution(APIView):
         issue_id = request.GET.get('issue_id')
         solutions = TechSolutionModel.objects.filter(issue_id=issue_id).order_by('id')
 
-        solutions = solutions.prefetch_related("techsolutioncomment_set").all()
+        solutions = solutions.prefetch_related("techsolutioncomment_set")
+        solutions = solutions.prefetch_related("techsolutioncomment_set__author").all()
 
         serializer = TechSolutionsSerializer(solutions, many=True)
 
