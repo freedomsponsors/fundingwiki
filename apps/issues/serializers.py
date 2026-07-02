@@ -67,6 +67,8 @@ class IssueSerializer(serializers.ModelSerializer):
 
 
 class IssuesSerializer(serializers.ModelSerializer):
+    solution_count = serializers.IntegerField(read_only=True)
+    
     createdByUser = UserSerializer()
     class Meta:
         model = Issue

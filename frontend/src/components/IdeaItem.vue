@@ -10,8 +10,12 @@
                     <span class="las la-sort-down" style="font-size:26px"></span>
                 </a>
             </div>
+            <div class="proposal_box" style="">
+                <div style="font-size:16px;font-weight: bold;;">{{ idea.solution_count }}</div>
+                <div style="color:#ccc">proposals</div>
+            </div>
         </div>
-        <div style="flex-grow: 1;">
+        <div style="flex-grow: 1;padding-left: 10px;">
             
             <div v-if="idea.title != idea.description">
                 <a @click="gotoIdeaDetail(idea.id)">{{ idea.title }}</a>
@@ -99,7 +103,15 @@ color: #888;
     line-height: 20px;
 }
 .voted_link span{
-        color:#8DC63F
-    }
+    color:#8DC63F
+}
+.proposal_box{
+    border: 1px solid rgb(245, 130, 36);
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 14px;
+    color: rgb(245, 130, 36);
+    display:flex;flex-direction: column;align-items: center;
+}
 </style>
   

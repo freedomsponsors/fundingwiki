@@ -11,7 +11,7 @@ from apps.issues.models import Issue as IssueModel
 from apps.issues.serializers import IssuesSerializer
 from rest_framework.response import Response
 from apps.issues.models import *
-from django.db.models import Q
+from django.db.models import Q, Count
 
 
 from apps.issues.services import faiss_services, idea_services, redis_services, openai_services, user_services
@@ -27,7 +27,8 @@ class Ideas(APIView):
             ideas = ideas.filter(
                 Q(title__icontains=search) | Q(description__icontains=search)
             )
-        ideas = ideas.all()
+        
+        ideas = ideas.annotate(solution_count=Count('techsolution'))
 
         serializer = IssuesSerializer(ideas, many=True)
 
@@ -97,6 +98,8 @@ class IdeasMine(APIView):
                 redis_key = 'site_ideas_' + user_identify
                 idea_ids = redis_services.get_list(redis_key)
                 ideas = IssueModel.objects.filter(id__in=idea_ids).order_by('-creationDate').all()
+
+        ideas = ideas.annotate(solution_count=Count('techsolution'))
 
         serializer = IssuesSerializer(ideas, many=True)
 
@@ -204,7 +207,8 @@ def idea_vote(request):
 @api_view(['GET'])
 def get_idea_by_id(request):
     id = request.query_params.get('id')
-    idea = IssueModel.objects.get(id=id)
+    idea = IssueModel.objects.filter(id=id).annotate(solution_count=Count('techsolution')).first()
+    
     serializer = IssuesSerializer(idea)
     serializer_data = serializer.data.copy()
 
