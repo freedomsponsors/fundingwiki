@@ -17,8 +17,15 @@ def searchConcept(search, language='en', max_count=3):
         "language": language,
         "format": "json"
     }
-    response = requests.get(base_url, params=params, headers=headers, timeout=10)
-    response = response.json()
+    try:
+        response = requests.get(base_url, params=params, headers=headers, timeout=10)
+        response = response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Network request failed: {e}")
+        return []
+    except ValueError: # JSONDecodeError
+        print(f"Failed to decode JSON. Raw response was: {response.text}")
+        return []
 
     result = []
     for item in response['search']:
