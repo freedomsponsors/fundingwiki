@@ -8,6 +8,7 @@ logger = logging.getLogger('issue')
 
 def searchConcept(search, language='en', max_count=3):
     logger.info('start to search tags from server...')
+    print('start to search tags from server:'+search+','+language)
     
     base_url = "https://www.wikidata.org/w/api.php"
     headers = {
@@ -25,9 +26,11 @@ def searchConcept(search, language='en', max_count=3):
         response = response.json()
     except requests.exceptions.RequestException as e:
         logger.error(f"Network request failed: {e}")
+        print(f"Network request failed: {e}")
         return []
     except ValueError: # JSONDecodeError
         logger.error(f"Failed to decode JSON. Raw response was: {response.text}")
+        print(f"Failed to decode JSON. Raw response was: {response.text}")
         return []
 
     result = []
