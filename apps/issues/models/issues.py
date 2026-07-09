@@ -1578,7 +1578,7 @@ class MultilingualTag(models.Model):
 
     @classmethod
     def saveTags(self, tagInfo, issue):
-        tagInfo = json.loads(tagInfo)
+        # tagInfo = json.loads(tagInfo)
         # save tags and tag issue relations
         for item in tagInfo:
             tag_found = self.objects.filter(qid=int(item['qid'][1:])).first()
@@ -1589,7 +1589,7 @@ class MultilingualTag(models.Model):
                 tag_for_issue = tag
             else:
                 tag_for_issue = tag_found
-            MultilingualTagIssue.create(item['qid'], tag_for_issue, issue, item['title'], item['description']).save()
+            MultilingualTagIssue.create(item['qid'], tag_for_issue, issue, item['label'], item['description']).save()
 
     def addOneTag(self, tag):
         found_tags = MultilingualTag.objects.filter(slug=tag['qid'])

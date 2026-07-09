@@ -7,6 +7,9 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
 import App from './App.vue'
 import router from './router'
 
@@ -20,4 +23,4 @@ app.component('ConfirmDialog', ConfirmDialog)
 
 import '@wikimedia/codex/dist/codex.style.css';
 
-app.use(vuetify).use(router).mount('#app')
+app.use(vuetify).use(ElementPlus).use(router).mount('#app')

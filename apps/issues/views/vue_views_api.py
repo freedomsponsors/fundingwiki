@@ -14,7 +14,7 @@ from apps.issues.models import *
 from django.db.models import Q, Count
 
 
-from apps.issues.services import faiss_services, idea_services, redis_services, openai_services, user_services
+from apps.issues.services import faiss_services, idea_services, redis_services, openai_services, user_services, wikidata_services
 
 
 class Ideas(APIView):
@@ -46,6 +46,11 @@ class Ideas(APIView):
 
         idea.faiss_id = faiss_services.add_to_faiss(idea.description)
         idea.save()
+
+        # save tags
+        tags = request.data.get('tags', [])
+        if tags:    
+            MultilingualTag.saveTags(tags, idea)
 
         # update user embedding
         if request.user.is_authenticated:
@@ -242,7 +247,16 @@ def get_languages(request):
     return Response(list(available_languages))
 
 
+@api_view(['POST'])
+def suggest_tags(request):
+    search = request.data.get('search')
+    language = request.data.get('language')
+    if not language:
+        language = request.user.getUserLanguage()
 
+    result = wikidata_services.searchConcept(search, language, 3)
+    print('suggest_tags result:', result)
+    return Response(result)
 
 
 

@@ -1,8 +1,9 @@
 import {post, get, delete_by_id} from '../utils/request.js'
 
-export async function saveIdea(idea_content) {
+export async function saveIdea(idea_content, tag_selected_list) {
     let data = {
-        idea_content:idea_content
+        idea_content:idea_content,
+        tags: tag_selected_list
     }
     var response = await post('vueapi/ideas', data)
     return response
@@ -40,5 +41,14 @@ export async function ideasVote(id, vote_type) {
 
 export async function getIdeaById(id) {
     var response = await get('vueapi/get_idea_by_id', {id:id})
+    return response
+}
+
+export async function getTagByKeyword(keyword) {
+    var param = {
+        search:keyword,
+        language: 'en'
+    }
+    var response = await post('vueapi/suggest_tags', param)
     return response
 }

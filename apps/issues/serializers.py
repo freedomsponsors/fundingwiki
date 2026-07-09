@@ -68,8 +68,20 @@ class IssueSerializer(serializers.ModelSerializer):
 
 class IssuesSerializer(serializers.ModelSerializer):
     solution_count = serializers.IntegerField(read_only=True)
-    
     createdByUser = UserSerializer()
+    tags = serializers.SerializerMethodField()
+
     class Meta:
         model = Issue
         fields = '__all__'
+
+    def get_tags(self, obj):
+        tag_issue_list = MultilingualTagIssue.objects.filter(issue=obj).order_by('id')
+        return [
+            {
+                'qid': 'q' + str(item.qid),
+                'title': item.title,
+                'description': item.description,
+            }
+            for item in tag_issue_list
+        ]

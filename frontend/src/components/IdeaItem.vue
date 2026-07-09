@@ -22,8 +22,13 @@
                 <div style="margin-top: 5px;font-size: 14px;white-space: pre-wrap">{{ idea.description }}</div>
             </div>
             <div v-else><a @click="gotoIdeaDetail(idea.id)">{{ idea.title }}</a></div>
-
-            <div style="display: flex;flex-direction: row-reverse;">
+            <div class="idea_tags">
+                <div class="tag_item" v-for="tag in idea.tags" :key="tag.id">
+                    <div>{{ tag.title }}</div>
+                    <div style="color:#999">{{ tag.description }}</div>
+                </div>
+            </div>
+            <div style="display: flex;flex-direction: row-reverse;padding:8px 0">
                 <a @click="getSimilar(idea.id)">Similar ideas</a>
                 <div v-if="canDelete" style="margin-right: 10px;">
                     <a @click="deleteIdea(idea.id)">delete</a>
@@ -112,6 +117,15 @@ color: #888;
     font-size: 14px;
     color: rgb(245, 130, 36);
     display:flex;flex-direction: column;align-items: center;
+}
+.idea_tags{
+    display: flex;flex-wrap: wrap;margin-top: 10px;
+    gap: 5px;
+}
+.tag_item{
+    background-color: #efefef;
+    padding: 5px 10px;
+    border-radius: 5px;
 }
 </style>
   

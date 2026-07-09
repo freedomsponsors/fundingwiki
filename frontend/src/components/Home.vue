@@ -51,14 +51,27 @@
                         <v-icon size="24" color="grey-darken-1">las la-arrow-circle-up</v-icon>
                     </v-btn> -->
                 </div>
-                <div v-if="is_advanced" class="form_tag">
-                    <v-text-field
-                        v-model="tag"
-                        color="deep-purple"
-                        label="Tag"
-                        variant="filled"
-                        style="width: 100%;"
-                    ></v-text-field>
+                <div v-if="!is_advanced" class="form_tag">
+                    <el-select
+                        v-model="tag_value"
+                        multiple
+                        filterable
+                        remote
+                        reserve-keyword
+                        placeholder="Input tag keywords"
+                        :remote-method="tagSearchByKeyword"
+                        :loading="loading"
+                        @change="handleTagChange"
+                        @clear="handleTagClear"
+                        style="width: 100%"
+                    >
+                        <el-option
+                            v-for="item in tag_option_list"
+                            :key="item.qid"
+                            :label="item.label + ' - ' + item.description"
+                            :value="item.qid"
+                        />
+                    </el-select>
                 </div>
                 <div v-if="is_advanced" class="form_language" style="width: 100%;">
                     <v-select
@@ -136,7 +149,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {getCookie, setUserCookie} from '@/utils/cookies.js'
-import {getIdeas, getIdeasInterested, saveIdea} from '@/services/ideas.js'
+import {getIdeas, getIdeasInterested, saveIdea, getTagByKeyword} from '@/services/ideas.js'
 import {isUserLogin} from '@/services/user.js'
 import {getLanguages} from '@/services/language.js'
 
@@ -150,6 +163,9 @@ import MyIdeas from './MyIdeas.vue'
 import {imageUrl} from '@/utils/util.js'
 
 const router = useRouter()
+
+const tag_value = ref([])
+const tag_selected_list = ref([])
 
 const form_language_options = ref([
     {
@@ -172,6 +188,7 @@ const idea_content = ref('')
 
 const title = ref('')
 const tags = ref('')
+const tag_option_list = ref([])
 const language = ref('en')
 
 const loading = ref(false)
@@ -200,7 +217,8 @@ const submitForm = async () => {
     loading.value = true
     const { valid } = await form.value.validate()
     if (valid) {
-        let response = await saveIdea(idea_content.value)
+        let response = await saveIdea(idea_content.value, tag_selected_list.value)
+
         console.log(response)
         form_success.value = true
 
@@ -217,6 +235,19 @@ const submitForm = async () => {
     }else{
         loading.value = false
     }
+}
+
+const handleTagChange = (values: any) => {
+    if (!values || values.length === 0) {
+        tag_selected_list.value = []
+        return
+    }
+    // values contains the selected qid(s) — map them to the full option objects
+    tag_selected_list.value = tag_option_list.value.filter((item) => values.includes(item.qid))
+}
+
+const handleTagClear = () => {
+    tag_selected_list.value = []
 }
 
 const ideas_list = ref([])
@@ -240,6 +271,14 @@ onMounted(async ()=>{
     setUserCookie()
     loadLanguages()
 })
+
+const tagSearchByKeyword = async (query) => {
+  if (query) {
+    let response = await getTagByKeyword(query)
+    // console.log(response)
+    tag_option_list.value = response
+  }
+}
 </script>
 
 <style scoped>

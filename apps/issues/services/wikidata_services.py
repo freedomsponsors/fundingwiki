@@ -5,10 +5,22 @@ __author__ = 'qingwei'
 
 def searchConcept(search, language='en', max_count=3):
     print('start to search tags from server...')
-    url = "https://www.wikidata.org/w/api.php?action=wbsearchentities&search="+search+"&language="+language+"&format=json"
-    response = requests.get(url).json()
-    result = []
+    
+    base_url = "https://www.wikidata.org/w/api.php"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        "Accept": "application/json"
+    }
+    params = {
+        "action": "wbsearchentities",
+        "search": search,
+        "language": language,
+        "format": "json"
+    }
+    response = requests.get(base_url, params=params, headers=headers, timeout=10)
+    response = response.json()
 
+    result = []
     for item in response['search']:
         if len(result) == max_count:
             break
@@ -27,7 +39,7 @@ def searchConcept(search, language='en', max_count=3):
             'label': item['label'],
             'description': description,
         })
-    # print result
+
     return result
 
 
