@@ -182,3 +182,34 @@ SOCIAL_AUTH_BITBUCKET_KEY               = os.getenv('BITBUCKET_CONSUMER_KEY')
 SOCIAL_AUTH_BITBUCKET_SECRET            = os.getenv('BITBUCKET_CONSUMER_SECRET')
 SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_KEY    = os.getenv('SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_KEY')
 SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_SECRET')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '%(asctime)s [%(levelname)s] %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'django_app.log',
+            'formatter': 'simple',
+            'encoding': 'utf-8',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+        'issue': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

@@ -1,10 +1,13 @@
 import requests
 from apps.issues.models import MultilingualTagTranslated
+import logging
+
 __author__ = 'qingwei'
 
+logger = logging.getLogger('issue')
 
 def searchConcept(search, language='en', max_count=3):
-    print('start to search tags from server...')
+    logger.info('start to search tags from server...')
     
     base_url = "https://www.wikidata.org/w/api.php"
     headers = {
@@ -21,10 +24,10 @@ def searchConcept(search, language='en', max_count=3):
         response = requests.get(base_url, params=params, headers=headers, timeout=10)
         response = response.json()
     except requests.exceptions.RequestException as e:
-        print(f"Network request failed: {e}")
+        logger.error(f"Network request failed: {e}")
         return []
     except ValueError: # JSONDecodeError
-        print(f"Failed to decode JSON. Raw response was: {response.text}")
+        logger.error(f"Failed to decode JSON. Raw response was: {response.text}")
         return []
 
     result = []
