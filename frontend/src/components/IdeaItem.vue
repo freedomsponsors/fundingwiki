@@ -31,6 +31,7 @@
             <div style="display: flex;flex-direction: row-reverse;padding:8px 0">
                 <a @click="getSimilar(idea.id)">Similar ideas</a>
                 <div v-if="canDelete" style="margin-right: 10px;">
+                    <a @click="editIdea(idea.id)" style="margin-right:10px">edit</a>
                     <a @click="deleteIdea(idea.id)">delete</a>
                 </div>
                 <div v-if="idea.createdByUser" style="margin-right: 10px;">{{ idea.createdByUser.username }}</div>
@@ -79,6 +80,10 @@ const deleteIdea = async (id)=>{
         window.location.reload()
         // emit('delete-idea', id)
     }
+}
+
+const editIdea = (id) => {
+    router.push({ path: '/issueadd', query: { editid: id } })
 }
 
 const ideaVote = async (id, vote_type)=>{

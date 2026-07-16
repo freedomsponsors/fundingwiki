@@ -1,9 +1,12 @@
 import {post, get, delete_by_id} from '../utils/request.js'
 
-export async function saveIdea(idea_content, tag_selected_list) {
+export async function saveIdea(idea_content, tag_selected_list, id=null) {
     let data = {
         idea_content:idea_content,
         tags: tag_selected_list
+    }
+    if (id) {
+        data.id = id
     }
     var response = await post('vueapi/ideas', data)
     return response

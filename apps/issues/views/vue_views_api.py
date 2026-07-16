@@ -12,6 +12,7 @@ from apps.issues.serializers import IssuesSerializer
 from rest_framework.response import Response
 from apps.issues.models import *
 from django.db.models import Q, Count
+from django.core.exceptions import ObjectDoesNotExist
 
 
 from apps.issues.services import faiss_services, idea_services, redis_services, openai_services, user_services, wikidata_services
@@ -36,7 +37,30 @@ class Ideas(APIView):
 
     def post(self, request):
         content = request.data.get('idea_content')
-        idea = IssueModel.newIssueSimple(content=content)
+        id = request.data.get('id')
+
+        try:
+            if id :
+                idea = IssueModel.objects.get(id=id)
+
+                content = content.strip()
+                title_end = min(
+                    (content.find('。') if content.find('。') != -1 else float('inf')),
+                    (content.find('.') if content.find('.') != -1 else float('inf')),
+                    (content.find('\n') if content.find('\n') != -1 else float('inf'))
+                )
+                if title_end != float('inf'):
+                    idea.title = content[:title_end].strip()
+                    content = content[title_end:].strip()
+                else:
+                    idea.title = content.strip()
+
+                idea.description = content
+            else:
+                idea = IssueModel.newIssueSimple(content=content)
+        except ObjectDoesNotExist:
+            return Response({"code": 400, "msg": "record not exist:"+id}, status=400)
+
         if request.user.is_authenticated:
             idea.createdByUser = request.user
             idea.issue_from = 'user'
@@ -50,7 +74,7 @@ class Ideas(APIView):
         # save tags
         tags = request.data.get('tags', [])
         if tags:    
-            MultilingualTag.saveTags(tags, idea)
+            MultilingualTag.saveTags(tags, idea, bool(id))
 
         # update user embedding
         if request.user.is_authenticated:

@@ -456,7 +456,7 @@ class Issue(models.Model):
     def newIssueSimple(cls, content):
         issue = cls()
         content = content.strip()
-        # 提取标题：句号或点号前面的部分
+
         title_end = min(
             (content.find('。') if content.find('。') != -1 else float('inf')),
             (content.find('.') if content.find('.') != -1 else float('inf')),
@@ -1577,8 +1577,10 @@ class MultilingualTag(models.Model):
         return obj
 
     @classmethod
-    def saveTags(self, tagInfo, issue):
-        # tagInfo = json.loads(tagInfo)
+    def saveTags(self, tagInfo, issue, if_edit = False):
+        if if_edit:
+            MultilingualTagIssue.objects.filter(issue=issue).delete()
+        
         # save tags and tag issue relations
         for item in tagInfo:
             tag_found = self.objects.filter(qid=int(item['qid'][1:])).first()
