@@ -24,39 +24,32 @@
                     :loading="loading"
                     @click="submitForm"
                     style="background-color: #E1ECF4;"
-                >Submit solution</v-btn>
+                >{{editingSolution ? 'Edit' : 'Submit'}} solution</v-btn>
             </div>
         </div>
     </v-form>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, emit } from 'vue'
-import { useRouter } from 'vue-router'
-import { useRoute } from 'vue-router'
-import {getCookie, setUserCookie} from '@/utils/cookies.js'
-import {saveSolution} from '@/services/solution.js'
-import {isUserLogin} from '@/services/user.js'
+import { ref, watch } from 'vue'
+import { saveSolution } from '@/services/solution.js'
 
 const props = defineProps({
     issue: {
         type: Object,
         required: true
+    },
+    editingSolution: {
+        type: Object,
+        default: null
     }
 })
-console.log(props.issue.id)
-
-const router = useRouter()
-
-const show_my_new_issue = ref(false)
 
 const form_content = ref('')
-
 const loading = ref(false)
 const isValid = ref(false)
 const form = ref(null)
 const form_success = ref(false)
-const myIdeasKey = ref(0)
 
 const emit = defineEmits(['submit-success'])
 
@@ -67,14 +60,27 @@ const content_not_empty = [
     },
 ]
 
+watch(() => props.editingSolution, (solution) => {
+    if (solution && solution.content) {
+        form_content.value = solution.content
+    } else {
+        form_content.value = ''
+    }
+}, { immediate: true })
+
 const submitForm = async () => {
     const content = form_content.value.trim()
+
+    if (!content) {
+        return
+    }
 
     loading.value = true
     const { valid } = await form.value.validate()
     if (valid) {
-        let response = await saveSolution(props.issue.id, form_content.value)
-        console.log(response.data)
+        const solutionId = props.editingSolution?.id ?? null
+        let response = await saveSolution(props.issue.id, form_content.value, solutionId)
+        console.log(response)
         form_success.value = true
 
         loading.value = false
@@ -82,9 +88,8 @@ const submitForm = async () => {
         form_success.value = false
         form_content.value = ''
 
-        // Emit an event to notify the parent component to refresh the solution list
         emit('submit-success')
-    }else{
+    } else {
         loading.value = false
     }
 }

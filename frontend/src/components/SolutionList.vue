@@ -8,6 +8,7 @@
                     <div>{{ item.content }}</div>
                     <div class="solution-meta">
                         {{ item.createdByUser.username }}
+                        <a v-if="item.if_mine" @click="handleEdit(item)" style="margin-left:10px">edit</a>
                     </div>
                 </div>
                 <div>
@@ -22,12 +23,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, watch } from 'vue'
 import {getSolution} from '@/services/solution.js'
 import SolutionCommentForm from '@/components/SolutionCommentForm.vue'
 import SolutionCommentList from '@/components/SolutionCommentList.vue'
 
 const data_list = ref([])
+const emit = defineEmits(['edit-proposal'])
 
 const props = defineProps({
     issue: {
@@ -53,6 +55,10 @@ let onSolutionCommentSubmitSuccess = async (targetItem)=>{
     getSolution(props.issue.id).then((response) => {
         data_list.value = response
     })
+}
+
+const handleEdit = (item) => {
+    emit('edit-proposal', item)
 }
 
 </script>

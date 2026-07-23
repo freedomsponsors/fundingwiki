@@ -2,6 +2,8 @@ from rest_framework import serializers
 from apps.issues.models import *
 from django.conf import settings
 from apps.issues.utils.djangology_utils import djangology_url_special_chars
+from apps.issues.services import user_services
+
 
 # This file contains serializers used by Djangology project
 class UserSerializer(serializers.ModelSerializer):
@@ -32,12 +34,12 @@ class TechSolutionCommentSerializer(serializers.ModelSerializer):
 
 class TechSolutionsSerializer(serializers.ModelSerializer):
     createdByUser = UserSerializer(read_only=True)
-
     techsolutioncomment_set = TechSolutionCommentSerializer(many=True, read_only=True)
+    if_mine = serializers.SerializerMethodField()
 
     class Meta:
         model = TechSolution
-        fields = ('id', 'title', 'content', 'createdByUser', 'karma', 'issue', 'creationDate', 'updatedDate', 'deleted', 'techsolutioncomment_set')
+        fields = ('id', 'title', 'content', 'createdByUser', 'karma', 'issue', 'creationDate', 'updatedDate', 'deleted', 'techsolutioncomment_set', 'if_mine')
         read_only_fields = ('id', 'createdByUser', 'karma', 'creationDate', 'issue', 'deleted')
 
     def validate_title(self, value):
@@ -48,6 +50,23 @@ class TechSolutionsSerializer(serializers.ModelSerializer):
     # Create an object without save it on db
     def generate(self):
         return TechSolution(**self.validated_data)
+
+    def get_if_mine(self, obj):
+        request = self.context.get("request")
+        if request is None:
+            return False
+
+        if not hasattr(self, "_anon_user_cache"):
+            if request.user.is_authenticated:
+                self._anon_user_cache = None
+            else:
+                self._anon_user_cache = user_services.getAnonymousUser()
+
+        if request.user.is_authenticated:
+            return obj.createdByUser_id == request.user.id
+        else:
+            anon_user = self._anon_user_cache
+            return obj.createdByUser_id == anon_user.id
 
 
 class TechSolutionsHistEventSerializer(serializers.ModelSerializer):

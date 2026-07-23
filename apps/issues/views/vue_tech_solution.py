@@ -23,23 +23,32 @@ class TechSolution(APIView):
         solutions = solutions.prefetch_related("techsolutioncomment_set")
         solutions = solutions.prefetch_related("techsolutioncomment_set__author").all()
 
-        serializer = TechSolutionsSerializer(solutions, many=True)
+        serializer = TechSolutionsSerializer(solutions, many=True, context={"request": request})
 
         return Response(serializer.data)
 
     def post(self, request):
         issue_id = request.data.get('issue_id')
         content = request.data.get('content')
+        solution_id = request.data.get('id')
 
-        solution = TechSolutionModel()
-        solution.title = ''
+        if solution_id:
+            try:
+                solution = TechSolutionModel.objects.get(id=solution_id)
+            except TechSolutionModel.DoesNotExist:
+                return JsonResponse({"result": "error", "msg": "solution not exist"}, status=404)
+        else:
+            solution = TechSolutionModel()
+            solution.title = ''
+
         solution.content = content
         solution.issue_id = issue_id
 
-        if request.user.is_authenticated:
-            solution.createdByUser = request.user
-        else:
-            solution.createdByUser = user_services.getAnonymousUser()
+        if not solution_id:
+            if request.user.is_authenticated:
+                solution.createdByUser = request.user
+            else:
+                solution.createdByUser = user_services.getAnonymousUser()
 
         solution.save()
 

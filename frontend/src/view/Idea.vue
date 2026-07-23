@@ -14,12 +14,14 @@
             <div class="page_section_title"><h2>Idea detail:</h2></div>
             <IdeaItem :item="idea" @delete-idea="onDeleteIdeas"></IdeaItem>
         </div>
-        <SolutionList :issue="idea"></SolutionList>
+        <SolutionList :issue="idea" @edit-proposal="editProposal"></SolutionList>
         <div style="width: 650px;">
             <div class="page_section_title">
                 <h2 v-if="idea.count_solution >= 0">{{ idea.count_solution === 0 ? 'Propose a solution' : 'Propose another solution' }}</h2>
             </div>
-            <SolutionForm :issue="idea" @submit-success="onSolutionSubmitSuccess"></SolutionForm>
+            <div ref="solutionFormAnchor">
+                <SolutionForm ref="solutionFormRef" :issue="idea" :editing-solution="editingSolution" @submit-success="onSolutionSubmitSuccess"></SolutionForm>
+            </div>
         </div>
     </div>
 </div>
@@ -31,7 +33,7 @@ import IssueForm from '@/components/IssueForm.vue'
 import IdeaItem from '@/components/IdeaItem.vue'
 import SolutionForm from '@/components/SolutionForm.vue'
 import SolutionList from '@/components/SolutionList.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { getIdeaById } from '@/services/ideas.js'
 
@@ -39,6 +41,9 @@ const route = useRoute()
 const ideaId = route.params.id
 
 const idea = ref({})
+const editingSolution = ref(null)
+const solutionFormAnchor = ref(null)
+
 onMounted(async ()=>{
     idea.value = await getIdeaById(ideaId)
 })
@@ -46,8 +51,16 @@ onMounted(async ()=>{
 let onDeleteIdeas = async ()=>{
     
 }
+
+let editProposal = async (solution) => {
+    editingSolution.value = solution
+    await nextTick()
+    solutionFormAnchor.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 let onSolutionSubmitSuccess = async ()=>{
     // Refresh the idea details after a new solution is submitted
+    editingSolution.value = null
     idea.value = await getIdeaById(ideaId)
 }
 </script>
