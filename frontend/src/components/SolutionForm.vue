@@ -24,7 +24,8 @@
                     :loading="loading"
                     @click="submitForm"
                     style="background-color: #E1ECF4;"
-                >{{editingSolution ? 'Edit' : 'Submit'}} solution</v-btn>
+                >{{currentEditSolution ? 'Edit' : 'Submit'}} solution</v-btn>
+                <a v-if="currentEditSolution || form_content" @click="form_content='';currentEditSolution=null" style="margin-left: 10px;">Cancel</a>
             </div>
         </div>
     </v-form>
@@ -50,6 +51,7 @@ const loading = ref(false)
 const isValid = ref(false)
 const form = ref(null)
 const form_success = ref(false)
+const currentEditSolution = ref(null)
 
 const emit = defineEmits(['submit-success'])
 
@@ -62,6 +64,7 @@ const content_not_empty = [
 
 watch(() => props.editingSolution, (solution) => {
     if (solution && solution.content) {
+        currentEditSolution.value = solution
         form_content.value = solution.content
     } else {
         form_content.value = ''
@@ -78,7 +81,7 @@ const submitForm = async () => {
     loading.value = true
     const { valid } = await form.value.validate()
     if (valid) {
-        const solutionId = props.editingSolution?.id ?? null
+        const solutionId = currentEditSolution?.value.id ?? null
         let response = await saveSolution(props.issue.id, form_content.value, solutionId)
         console.log(response)
         form_success.value = true
@@ -87,6 +90,7 @@ const submitForm = async () => {
 
         form_success.value = false
         form_content.value = ''
+        currentEditSolution.value = null
 
         emit('submit-success')
     } else {
