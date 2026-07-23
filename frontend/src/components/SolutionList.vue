@@ -5,7 +5,7 @@
         <div>
             <div class="solution-item" v-for="(item, index) in data_list" :key="index">
                 <div>
-                    <div>{{ item.content }}</div>
+                    <div class="solution-content">{{ item.content }}</div>
                     <div class="solution-meta">
                         {{ item.createdByUser.username }}
                         <a v-if="item.if_mine" @click="handleEdit(item)" style="margin-left:10px">edit</a>
@@ -77,5 +77,9 @@ const handleEdit = (item) => {
 .solution-meta{
     text-align: right;
     color: #888;
+}
+.solution-content {
+    white-space: pre-wrap;
+    line-height: 1.6;
 }
 </style>
