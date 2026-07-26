@@ -29,3 +29,6 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:8000",
 ]
+
+# MediaWiki settings
+MEDIAWIKI_URL = config('MEDIAWIKI_URL', default='https://funding.wiki')

@@ -426,7 +426,8 @@ class Issue(models.Model):
     key = models.CharField(max_length=30, null=True, blank=True)
     title = models.CharField(max_length=400)
     description = models.TextField(null=True, blank=True)
-    createdByUser = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    createdByUser = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING)
+    mw_author = models.ForeignKey('mediawiki_auth.MWUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='issues')
     creationDate = models.DateTimeField()
     updatedDate = models.DateTimeField(null=True, blank=True)
     trackerURL = models.URLField(null=True, blank=True)
@@ -542,6 +543,11 @@ class Issue(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def author(self):
+        """Devuelve siempre quién creó el issue, sea User o MWUser."""
+        return self.createdByUser or self.mw_author
 
     # def issueMultiligualTagsForLanguage(self, qid, language):
     #     return MultilingualTagIssue.objects.filter(issue=self)
@@ -713,7 +719,8 @@ class Issue(models.Model):
 
 class UserIssueVote(models.Model):
     issue = models.ForeignKey(Issue, on_delete=models.DO_NOTHING)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING)
+    mw_user = models.ForeignKey('mediawiki_auth.MWUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='votes')
     voteCreated = models.DateTimeField()
     voteType = models.CharField(max_length=20)
 
@@ -773,7 +780,8 @@ class Watch(models.Model):
 # A comment on an issue made by any user
 class IssueComment(models.Model):
     issue = models.ForeignKey(Issue, on_delete=models.DO_NOTHING)
-    author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    author = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING)
+    mw_author = models.ForeignKey('mediawiki_auth.MWUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='comments')
     creationDate = models.DateTimeField()
     content = models.TextField()
     language = models.CharField(max_length=5, default='')

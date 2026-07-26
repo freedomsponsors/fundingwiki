@@ -5,16 +5,24 @@ from django.template import RequestContext
 from apps.issues.decorators import only_post
 from apps.issues.models import *
 from apps.issues.services import comment_services, watch_services
+from apps.mediawiki_auth.decorators import requires_identity
 
 __author__ = 'tony'
 
-@login_required
+@requires_identity(level='guest', api_only=False)
 @only_post
 def addIssueComment(request):
     issue_id = int(request.POST['issue_id'])
     comment_content = request.POST['content']
-    watch_services.watch_issue(request.user, issue_id, Watch.COMMENTED)
-    issue = comment_services.add_comment_to_issue(issue_id, comment_content, request.user)
+
+    mw_user = getattr(request, 'mw_user', None)
+    if mw_user:
+        author = mw_user
+        # watch_services.watch_issue(mw_user, issue_id, Watch.COMMENTED)
+    else:
+        author = user_services.getAnonymousUser()
+
+    issue = comment_services.add_comment_to_issue(issue_id, comment_content, author)
     return redirect(issue.get_view_link())
 
 

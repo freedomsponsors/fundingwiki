@@ -63,23 +63,48 @@ Any editor that supports the [Dev Containers specification](https://containers.d
 Manual setup is possible but not officially supported. See the [Dockerfile](.devcontainer/Dockerfile) for the full list of system dependencies — the GeoDjango spatial dependencies (GDAL, GEOS, PROJ) and PostGIS make it non-trivial across operating systems — you are on your own. See the [setup.sh](.devcontainer/scripts/setup.sh) for setup steps manually and [run.sh](.devcontainer/scripts/run.sh) for running frontend and backend.
 
 ## Development Workflow
- 
+
 ### Applying migrations
- 
+
 ```bash
-docker compose exec web python manage.py migrate
+docker compose exec app python manage.py migrate
 ```
- 
+
 ### Frontend development
- 
+
 ```bash
-docker compose exec frontend npm run dev
+docker compose exec -w /workspace/frontend app npm run dev
 ```
- 
+
 ### Rebuilding after dependency changes
 If you change `requirements.txt`, `package.json`, or the `Dockerfile`:
 ```bash
 docker compose up --build
+```
+
+### After pulling changes
+
+When you pull changes from others (backend and/or frontend updates):
+
+```bash
+docker compose exec app bash
+
+# If there are backend changes (migrations, models):
+python manage.py migrate
+
+# If there are frontend changes (new dependencies):
+cd frontend && npm install
+
+# Restart the servers:
+.devcontainer/scripts/run.sh
+```
+
+Or simply run the full setup again (it's idempotent):
+
+```bash
+docker compose exec app bash
+.devcontainer/scripts/setup.sh
+.devcontainer/scripts/run.sh
 ```
 
 ## Contributing

@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from apps.issues.models import *
 from django.db.models import Q, Count
 from django.core.exceptions import ObjectDoesNotExist
+from apps.mediawiki_auth.decorators import requires_identity
 
 
 from apps.issues.services import faiss_services, idea_services, redis_services, openai_services, user_services, wikidata_services
@@ -35,6 +36,7 @@ class Ideas(APIView):
 
         return Response(serializer.data)
 
+    @requires_identity(level='guest', api_only=True)
     def post(self, request):
         content = request.data.get('idea_content')
         id = request.data.get('id')
@@ -61,9 +63,10 @@ class Ideas(APIView):
         except ObjectDoesNotExist:
             return Response({"code": 400, "msg": "record not exist:"+id}, status=400)
 
-        if request.user.is_authenticated:
-            idea.createdByUser = request.user
-            idea.issue_from = 'user'
+        mw_user = getattr(request, 'mw_user', None)
+        if mw_user:
+            idea.mw_author = mw_user
+            idea.issue_from = 'guest'
         else:
             idea.createdByUser = user_services.getAnonymousUser()
             idea.issue_from = 'anonymous'
@@ -73,15 +76,16 @@ class Ideas(APIView):
 
         # save tags
         tags = request.data.get('tags', [])
-        if tags:    
+        if tags:
             MultilingualTag.saveTags(tags, idea, bool(id))
 
         # update user embedding
-        if request.user.is_authenticated:
-            faiss_services.update_user_embedding(request.user)
+        # TODO: Implement update_user_embedding for MWUser if need it
+        # if mw_user:
+        #     faiss_services.update_user_embedding(mw_user)
 
         # if not authenticated, map to cookie id
-        if not request.user.is_authenticated:
+        if not mw_user:
             user_identify = request.COOKIES.get('user_identify')
             if user_identify:
                 redis_key = 'site_ideas_' + user_identify
@@ -200,14 +204,16 @@ class User(APIView):
 
 
 @api_view(['POST'])
+@requires_identity(level='guest', api_only=True)
 def idea_vote(request):
     idea_id = request.data.get('id')
     vote_type = request.data.get('vote_type')
 
     idea = IssueModel.objects.get(pk=idea_id)
 
-    if request.user.is_authenticated:
-        user = request.user
+    mw_user = getattr(request, 'mw_user', None)
+    if mw_user:
+        user = mw_user
     else:
         user = user_services.getAnonymousUser()
 
