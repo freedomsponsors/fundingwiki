@@ -71,22 +71,37 @@ class TechSolutionComment(APIView):
     def post(self, request):
         solution_id = request.data.get('solution_id')
         content = request.data.get('content')
+        comment_id = request.data.get('comment_id')
 
-        solutionComment = TechSolutionCommentModel()
-        solutionComment.content = content
-        solutionComment.techSolution_id = solution_id
+        if not solution_id or not content:
+            return JsonResponse({"result": "fail", "msg": "solution_id and content required"}, status=400)
 
-        if request.user.is_authenticated:
-            solutionComment.author = request.user
+        if comment_id:
+            solutionComment = TechSolutionCommentModel.objects.get(id=comment_id)
+
+            if request.user.is_authenticated:
+                current_user = request.user
+            else:
+                current_user = user_services.getAnonymousUser()
+
+            if solutionComment.author_id != current_user.id:
+                return JsonResponse({"result": "fail", "msg": "No permission to edit this comment"}, status=403)
+            
+            solutionComment.content = content
+
         else:
-            solutionComment.author = user_services.getAnonymousUser()
+            solutionComment = TechSolutionCommentModel()
+            solutionComment.content = content
+            solutionComment.techSolution_id = solution_id
+
+            if request.user.is_authenticated:
+                solutionComment.author = request.user
+            else:
+                solutionComment.author = user_services.getAnonymousUser()
 
         solutionComment.save()
 
-        result = {
-            'result': 'ok'
-        }
-        return JsonResponse(result)
+        return JsonResponse({"result": "ok", "comment_id": solutionComment.id})
 
     def delete(self, request):
         return JsonResponse({})

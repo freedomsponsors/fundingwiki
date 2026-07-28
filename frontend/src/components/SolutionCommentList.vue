@@ -7,6 +7,7 @@
                 <div>
                     <div>
                         <span style="color: #007bff;">{{ item.author.username }}</span>
+                        <span v-if="item.if_mine"><a @click="handleEdit(item)" style="margin-left:10px">edit</a></span>
                         <span style="color: #ccc;padding-left:10px;font-size:14px">{{ relativeTimeFrom(item.creationDate) }}</span>
                     </div>
                     <div>{{ item.content }}</div>
@@ -20,6 +21,8 @@
 import { ref, onMounted, watch } from 'vue'
 import { relativeTimeFrom } from '@/utils/util.js'
 
+const emit = defineEmits(['edit-comment'])
+
 const data_list = ref([])
 
 const props = defineProps({
@@ -28,6 +31,10 @@ const props = defineProps({
         required: true
     }
 })
+
+const handleEdit = (item) => {
+    emit('edit-comment', item)
+}
 
 onMounted(async () => {
     data_list.value = props.comment_list

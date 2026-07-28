@@ -25,11 +25,29 @@ class MediaSerializer(serializers.ModelSerializer):
 
 class TechSolutionCommentSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
+    if_mine = serializers.SerializerMethodField()
 
     class Meta:
         model = TechSolutionComment
-        fields = ('id', 'author', 'creationDate', 'content')
+        fields = ('id', 'author', 'creationDate', 'content', 'if_mine')
         read_only_fields = ('id', 'author', 'creationDate')
+
+    def get_if_mine(self, obj):
+            request = self.context.get("request")
+            if request is None:
+                return False
+    
+            if not hasattr(self, "_anon_user_cache"):
+                if request.user.is_authenticated:
+                    self._anon_user_cache = None
+                else:
+                    self._anon_user_cache = user_services.getAnonymousUser()
+    
+            if request.user.is_authenticated:
+                return obj.author_id == request.user.id
+            else:
+                anon_user = self._anon_user_cache
+                return obj.author_id == anon_user.id
 
 
 class TechSolutionsSerializer(serializers.ModelSerializer):
