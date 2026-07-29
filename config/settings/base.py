@@ -18,6 +18,12 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # PROJECT_DIR = BASE_DIR.child('apps')
 
+# Same code in dev and prod — the only difference is the environment. Defaults
+# here are dev-friendly; production sets SECRET_KEY and DEBUG=False via the env
+# (.env.production). Never run prod with the insecure default key.
+SECRET_KEY = config('SECRET_KEY', default='django-insecure')
+DEBUG = config('DEBUG', default=True, cast=bool)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -29,10 +35,42 @@ ALLOWED_HOSTS = [
     '.funding.wiki',
     '.freedomsponsors.org',
     '192.168.8.101',
+    'alfinal.eu.pythonanywhere.com',
+    '192.243.108.188',
     'vue.funding.wiki',
-    'vue.funding.wiki'
 #    os.getenv('DJANGO_ALLOWED_HOST', 'x.y.z'),
 ]
+
+# Extra hosts / CSRF origins can be appended from the environment (comma-separated)
+# so prod differs from dev only by env vars.
+_extra_hosts = config('ALLOWED_HOSTS', default='')
+if _extra_hosts:
+    ALLOWED_HOSTS += [h.strip() for h in _extra_hosts.split(',') if h.strip()]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:8000",
+    "https://funding.wiki",
+    "https://vue.funding.wiki",
+]
+# Optional: append more origins from the env (comma-separated). Not required in
+# prod — the known production origins above are baked in (they aren't secret,
+# same as ALLOWED_HOSTS).
+_extra_csrf = config('CSRF_TRUSTED_ORIGINS', default='')
+if _extra_csrf:
+    CSRF_TRUSTED_ORIGINS += [o.strip() for o in _extra_csrf.split(',') if o.strip()]
+
+REDIS = {
+    'host': config('REDIS_HOST', 'localhost'),
+    'port': int(config('REDIS_PORT', '6379')),
+    'db': 0,
+    'pass': '',
+}
+
+# Behind the nginx HTTPS proxy: trust the forwarded scheme so that, with
+# DEBUG=False, CSRF origin checks and secure-cookie logic see requests as HTTPS.
+# No-op when the header is absent (e.g. local dev).
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
@@ -57,6 +95,7 @@ ACCOUNT_ACTIVATION_DAYS = 1
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,7 +116,6 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR / 'templates',
-            BASE_DIR / 'statfiles' / 'dist'
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -149,8 +187,24 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "statfiles/" / "static",
-    BASE_DIR / "statfiles/" / "dist"
 ]
+
+# Django 5.1 removed STATICFILES_STORAGE in favor of STORAGES. WhiteNoise serves
+# the collected files. We use CompressedStaticFilesStorage (gzip/brotli) rather
+# than the *Manifest* variant: the manifest storage strictly post-processes every
+# JS/CSS reference and the legacy static tree has dangling sourcemap/url() targets
+# (e.g. showdown.js.map) that make collectstatic fail. Cache-busting for the part
+# that matters (the Vue SPA) is already handled by Vite's content-hashed filenames.
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
+STATIC_ROOT = BASE_DIR / 'staticroot'
+
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_ROOT_URL = '/media'
