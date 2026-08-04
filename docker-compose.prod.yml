@@ -1,0 +1,58 @@
+services:
+## Development
+#  app:
+#    image: devcontainer-app
+#    restart: unless-stopped
+## Explicit gunicorn in development
+#    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --chdir /workspace
+## Let edit all code
+#    volumes:
+#      - ./:/workspace
+#    ports:
+#      - "192.168.25.203:8000:8000"
+#    depends_on:
+#      - db
+#      - redis
+#    env_file:
+#      - .env.production
+#
+## Production
+  app:
+    image: fundingwiki-app:latest
+    restart: unless-stopped
+    # image already has the code in app, no need to bind /workspace
+    # image also has gunicorn command by default
+    ports:
+      - "192.168.25.203:8000:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_HOST: db
+      DATABASE_NAME: djangology
+      DATABASE_USER: djangology
+      DATABASE_PASS: djangology
+      REDIS_HOST: redis
+    env_file:
+      - .env.production
+    volumes:
+      - media_data:/app/media
+  db:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    ports:
+      - "192.168.25.203:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: djangology
+      POSTGRES_USER: djangology
+      POSTGRES_PASSWORD: djangology
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  media_data:

@@ -31,6 +31,8 @@ ALLOWED_HOSTS = [
     '192.168.8.101',
     'vue.funding.wiki',
     'vue.funding.wiki'
+    'alfinal.eu.pythonanywhere.com',
+    '192.243.108.188'
 #    os.getenv('DJANGO_ALLOWED_HOST', 'x.y.z'),
 ]
 
@@ -58,6 +60,7 @@ ACCOUNT_ACTIVATION_DAYS = 1
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -153,6 +156,10 @@ STATICFILES_DIRS = [
     BASE_DIR / "statfiles/" / "static",
     BASE_DIR / "statfiles/" / "dist"
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = BASE_DIR / 'staticroot'
+
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_ROOT_URL = '/media'

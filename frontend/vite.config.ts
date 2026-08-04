@@ -13,6 +13,10 @@ export default defineConfig(({ mode }) => {
 
   return {
     base,
+    build: {
+      outDir: '../statfiles/static/vue',
+      emptyOutDir: true,
+    },
     plugins: [vue()],
     resolve: {
       alias: [
