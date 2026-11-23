@@ -1,6 +1,6 @@
 # SSO MediaWiki → Django
 
-MediaWiki is the sole login authority. Caddy serves `https://funding.wiki`, sends `/doc`, `/w` and `/images` to MediaWiki, and sends other paths to Django. Django reads only the configured MediaWiki session cookie and calls the internal MediaWiki Action API over the Docker bridge network. It never accepts identity from a client supplied identity header and does not use Django's login session to authenticate requests. Django's CSRF middleware remains enabled.
+MediaWiki is the sole login authority. The existing Nginx TLS proxy serves `https://funding.wiki`, sends `/doc`, `/w` and `/images` to MediaWiki, and sends other paths to Django. The location fragment is in `nginx-sso-locations.conf`; include it in the existing TLS `server` block on the public proxy. Adjust the backend IP there if the app server is reached at a different address. Django reads only the configured MediaWiki session cookie and calls the internal MediaWiki Action API over the Docker bridge network. It never accepts identity from a client supplied identity header and does not use Django's login session to authenticate requests. Django's CSRF middleware remains enabled.
 
 ## Configuration
 
@@ -23,7 +23,7 @@ Set matching values in the MediaWiki and Django container environments:
 
 `MEDIAWIKI_COOKIE_DOMAIN` is intentionally left unset by default: a host-only cookie is shared by paths on this origin without being sent to unrelated subdomains. Set it only if the deployment uses a deliberate shared parent domain.
 
-Compose first creates the shared Docker network from `espacio_de_trabajo/mediawiki`, then the Django Compose stack can attach Caddy and the app to it. Caddy owns public ports 80/443; the app is not published directly. Keep the MediaWiki API endpoint on the internal network.
+Compose first creates the shared Docker network from `espacio_de_trabajo/mediawiki`, then the Django Compose stack attaches the app to it. The existing Nginx continues to terminate TLS. Django and MediaWiki backends are published on the app server's current private address for Nginx; Django's API lookup itself uses the Docker-only service name. Keep the internal API URL on the Docker network.
 
 ## Identity behavior
 
@@ -35,7 +35,7 @@ Temporary accounts do not exist as MediaWiki identities until MediaWiki creates 
 
 ## Try it
 
-1. Start MediaWiki Compose, then Django Compose, preserving the existing database volumes.
+1. Start MediaWiki Compose, then Django Compose, preserving the existing database volumes. Add `nginx-sso-locations.conf` to the active Nginx TLS server block and reload that proxy.
 2. Browse to `https://funding.wiki/doc/Special:UserLogin`, sign in, and visit a Django page. The current user should be the matching Django user; a sysop should be able to use `/admin/`.
 3. Sign out through `https://funding.wiki/doc/Special:UserLogout`, then reload Django; the next identity lookup should be anonymous (up to the configured cache TTL).
 4. In a private browser session, edit a page anonymously to trigger MediaWiki temporary-account creation, then visit Django. It should identify the temporary profile. Before the edit, it should identify the visitor as anonymous.

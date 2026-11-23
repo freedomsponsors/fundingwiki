@@ -22,8 +22,8 @@ services:
     restart: unless-stopped
     # image already has the code in app, no need to bind /workspace
     # image also has gunicorn command by default
-    expose:
-      - "8000"
+    ports:
+      - "192.168.25.203:8000:8000"
     depends_on:
       - db
       - redis
@@ -47,24 +47,6 @@ services:
     networks:
       - default
       - mediawiki_internal
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    environment:
-      SITE_DOMAIN: ${SITE_DOMAIN:-funding.wiki}
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - app
-    networks:
-      - default
-      - mediawiki_internal
   db:
     image: postgis/postgis:16-3.4
     restart: unless-stopped
@@ -84,8 +66,6 @@ services:
 volumes:
   postgres_data:
   media_data:
-  caddy_data:
-  caddy_config:
 
 networks:
   mediawiki_internal:
