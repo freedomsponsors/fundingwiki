@@ -57,6 +57,23 @@ class MediaWikiIdentityMiddlewareTests(TestCase):
             self.assertIsInstance(self.resolve(), AnonymousUser)
             get.assert_not_called()
 
+    def test_forwards_only_mediawiki_cookie_family(self):
+        request = self.factory.get(
+            "/",
+            HTTP_COOKIE=("testwiki_session=session-value; testwikiUserID=42; "
+                         "testwikiUserName=Ada; user_identify=unrelated; csrftoken=secret"),
+        )
+        middleware = MediaWikiIdentityMiddleware(lambda req: req.user.is_authenticated)
+        with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
+                {"id": 0, "anon": True})) as get:
+            self.assertFalse(middleware(request))
+        forwarded = get.call_args.kwargs["headers"]["Cookie"]
+        self.assertIn("testwiki_session=session-value", forwarded)
+        self.assertIn("testwikiUserID=42", forwarded)
+        self.assertIn("testwikiUserName=Ada", forwarded)
+        self.assertNotIn("user_identify", forwarded)
+        self.assertNotIn("csrftoken", forwarded)
+
     def test_registered_user_is_created_with_unusable_password_and_renamed(self):
         with patch("apps.mediawiki_auth.middleware._userinfo", return_value=
                    {"id": 42, "name": "Ada", "groups": ["user"]}):

@@ -18,8 +18,8 @@ def _cookie_name():
     return f"{settings.MEDIAWIKI_COOKIE_PREFIX}_session"
 
 
-def _userinfo(cookie):
-    key = "mw-userinfo:" + hashlib.sha256(cookie.encode("utf-8")).hexdigest()
+def _userinfo(cookie_header):
+    key = "mw-userinfo:" + hashlib.sha256(cookie_header.encode("utf-8")).hexdigest()
     cached = cache.get(key)
     if cached is not None:
         return cached
@@ -29,7 +29,7 @@ def _userinfo(cookie):
             params={"action": "query", "meta": "userinfo",
                     "uiprop": "groups|rights|blockinfo", "format": "json",
                     "formatversion": 2},
-            headers={"Cookie": f"{_cookie_name()}={cookie}",
+            headers={"Cookie": cookie_header,
                      "Host": settings.MEDIAWIKI_API_HOST},
             timeout=settings.MEDIAWIKI_API_TIMEOUT,
         )
@@ -60,10 +60,10 @@ def _is_valid_username(name):
     return bool(re.fullmatch(r"[\w.@+-]+", name, flags=re.UNICODE))
 
 
-def _resolve(cookie):
-    if not cookie:
+def _resolve(cookie_header):
+    if not cookie_header:
         return AnonymousUser()
-    info = _userinfo(cookie)
+    info = _userinfo(cookie_header)
     if not info:
         return AnonymousUser()
     mw_id = info.get("id")
@@ -141,8 +141,19 @@ class MediaWikiIdentityMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        cookie = request.COOKIES.get(_cookie_name())
-        request.user = SimpleLazyObject(lambda: _resolve(cookie))
+        # Forward MediaWiki's own cookie family (session, user ID/name, token)
+        # so MediaWiki can validate the browser session. Do not forward Django
+        # cookies or unrelated application cookies such as user_identify.
+        prefix = settings.MEDIAWIKI_COOKIE_PREFIX
+        if request.COOKIES.get(_cookie_name()):
+            cookie_header = "; ".join(
+                f"{name}={value}"
+                for name, value in request.COOKIES.items()
+                if name.startswith(prefix)
+            )
+        else:
+            cookie_header = None
+        request.user = SimpleLazyObject(lambda: _resolve(cookie_header))
         # Keep existing identity-aware views working; it resolves lazily too.
         request.mw_user = SimpleLazyObject(lambda: _profile_for_request(request))
         return self.get_response(request)

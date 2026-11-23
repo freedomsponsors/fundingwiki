@@ -21,7 +21,7 @@ Set matching values in `.env.production` for Django and in the MediaWiki Compose
 | `MEDIAWIKI_API_TIMEOUT` | `2` | API timeout, seconds |
 | `MEDIAWIKI_ADMIN_GROUP` | `sysop` | MediaWiki group mapped to Django admin flags |
 
-`MEDIAWIKI_COOKIE_DOMAIN` is intentionally left unset by default: a host-only cookie is shared by paths on this origin without being sent to unrelated subdomains. Set it only if the deployment uses a deliberate shared parent domain.
+`MEDIAWIKI_COOKIE_DOMAIN` is intentionally left unset by default: a host-only cookie is shared by paths on this origin without being sent to unrelated subdomains. Set it only if the deployment uses a deliberate shared parent domain. Django forwards only cookies whose names begin with `MEDIAWIKI_COOKIE_PREFIX` (including the session and MediaWiki identity cookies); it does not forward Django CSRF/session cookies or unrelated cookies such as `user_identify`.
 
 Compose first creates the shared Docker network from `espacio_de_trabajo/mediawiki`, then the Django Compose stack attaches the app to it. Nginx continues to terminate TLS and keeps its existing routing and access rules. The API lookup uses the Docker-only service name and does not pass through Nginx.
 
