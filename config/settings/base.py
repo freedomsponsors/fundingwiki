@@ -80,6 +80,8 @@ MEDIAWIKI_API_TIMEOUT = config('MEDIAWIKI_API_TIMEOUT', default=2, cast=float)
 MEDIAWIKI_ADMIN_GROUP = config('MEDIAWIKI_ADMIN_GROUP', default='sysop')
 MEDIAWIKI_SERVER_URL = config('MEDIAWIKI_SERVER_URL', default='https://funding.wiki')
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(
+    list(globals().get('CSRF_TRUSTED_ORIGINS', [])) + [MEDIAWIKI_SERVER_URL]))
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",

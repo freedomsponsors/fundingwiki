@@ -1,0 +1,14 @@
+# Derive from the deployed image so production-only settings and runtime setup
+# remain intact. Build locally after fundingwiki-app:latest is available.
+FROM fundingwiki-app:latest
+
+WORKDIR /app
+
+COPY apps/mediawiki_auth/ /app/apps/mediawiki_auth/
+COPY config/urls.py /app/config/urls.py
+COPY config/settings/base.py /app/config/settings/base.py
+COPY templates/issues/include/navbar_old.html /app/templates/issues/include/navbar_old.html
+COPY templates/issues/include/newnavbar.html /app/templates/issues/include/newnavbar.html
+COPY templates/registration/activate.html /app/templates/registration/activate.html
+COPY templates/registration/activation_complete.html /app/templates/registration/activation_complete.html
+COPY templates/registration/logout.html /app/templates/registration/logout.html

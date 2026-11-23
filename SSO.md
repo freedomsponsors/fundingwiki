@@ -25,6 +25,24 @@ Set matching values in `.env.production` for Django and in the MediaWiki Compose
 
 Compose first creates the shared Docker network from `espacio_de_trabajo/mediawiki`, then the Django Compose stack attaches the app to it. Nginx continues to terminate TLS and keeps its existing routing and access rules. The API lookup uses the Docker-only service name and does not pass through Nginx.
 
+## Build and roll back the Django SSO image
+
+The production Compose uses a prebuilt `fundingwiki-app:latest` image and has no production build recipe. `Dockerfile.sso` derives from that existing image and copies only the SSO code, retaining production-only files already present in the base image. Build and select it with:
+
+```bash
+docker build --pull=false -f Dockerfile.sso -t fundingwiki-app:sso .
+docker compose -f docker-compose.prod.yml -f docker-compose.sso.yml config --quiet
+docker compose -f docker-compose.prod.yml -f docker-compose.sso.yml up -d --no-deps --force-recreate app
+```
+
+The existing app image and database volumes remain untouched. To return the app service to its original image before migration, run:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --no-deps --force-recreate app
+```
+
+After confirming the SSO image is running, apply migrations using both Compose files so the command targets that same container.
+
 ## Identity behavior
 
 The middleware maps MediaWiki's numeric ID to an additive `MWIdentity` one-to-one profile for Django's existing auth `User`; it does not change `AUTH_USER_MODEL`. It updates Django usernames when MediaWiki renames an account, sets unusable passwords, and synchronizes `is_staff`/`is_superuser` from the configured group on each cache refresh. MediaWiki usernames that Django's built-in username validator cannot store (notably temporary names beginning with `~`) use `mw_<id>` locally.
