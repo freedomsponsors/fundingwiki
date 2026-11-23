@@ -25,7 +25,14 @@ class MediaWikiIdentityMiddlewareTests(TestCase):
         request = self.factory.get("/", **headers)
         if cookie:
             self.assertEqual(request.COOKIES.get(_cookie_name()), cookie)
-        middleware = MediaWikiIdentityMiddleware(lambda req: req.user)
+
+        def resolve_user(req):
+            user = req.user
+            # Resolve inside the mock context; the production middleware stays lazy.
+            user.is_authenticated
+            return user
+
+        middleware = MediaWikiIdentityMiddleware(resolve_user)
         return middleware(request)
 
     def test_cookie_name_uses_configured_prefix(self):
