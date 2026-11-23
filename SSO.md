@@ -1,6 +1,6 @@
 # SSO MediaWiki → Django
 
-MediaWiki is the sole login authority. The existing Nginx TLS proxy serves `https://funding.wiki`, sends `/doc`, `/w` and `/images` to MediaWiki, and sends other paths to Django. The location fragment is in `nginx-sso-locations.conf`; include it in the existing TLS `server` block on the public proxy. Adjust the backend IP there if the app server is reached at a different address. Django reads only the configured MediaWiki session cookie and calls the internal MediaWiki Action API over the Docker bridge network. It never accepts identity from a client supplied identity header and does not use Django's login session to authenticate requests. Django's CSRF middleware remains enabled.
+MediaWiki is the sole login authority. Keep the working Nginx configuration as it is: it already serves the shared `https://funding.wiki` origin, routes `/doc/` and `/w/` to MediaWiki, and sends other paths to Django. Its `/w/` proxy rule removes that prefix before forwarding to the MediaWiki container; Django therefore calls the container's internal `/api.php` path directly over the Docker bridge. Django reads only the configured MediaWiki session cookie. It never accepts identity from a client supplied identity header and does not use Django's login session to authenticate requests. Django's CSRF middleware remains enabled.
 
 ## Configuration
 
@@ -9,7 +9,7 @@ Set matching values in `.env.production` for Django and in the MediaWiki Compose
 | Variable | Default | Purpose |
 |---|---|---|
 | `MEDIAWIKI_SERVER_URL` | `https://funding.wiki` | Public origin and MediaWiki canonical server |
-| `MEDIAWIKI_INTERNAL_API_URL` | `http://mediawiki/w/api.php` | Django-only internal API endpoint |
+| `MEDIAWIKI_INTERNAL_API_URL` | `http://mediawiki/api.php` | Django-only internal API endpoint (direct container path) |
 | `MEDIAWIKI_INTERNAL_SERVER_URL` | `http://mediawiki` | MediaWiki internal server URL |
 | `MEDIAWIKI_API_HOST` | `funding.wiki` | Host header for API requests |
 | `MEDIAWIKI_COOKIE_PREFIX` | `mediawiki` | Cookie prefix; session cookie is `<prefix>_session` (matches this wiki's current DB name and legacy cookie) |
@@ -23,7 +23,7 @@ Set matching values in `.env.production` for Django and in the MediaWiki Compose
 
 `MEDIAWIKI_COOKIE_DOMAIN` is intentionally left unset by default: a host-only cookie is shared by paths on this origin without being sent to unrelated subdomains. Set it only if the deployment uses a deliberate shared parent domain.
 
-Compose first creates the shared Docker network from `espacio_de_trabajo/mediawiki`, then the Django Compose stack attaches the app to it. The existing Nginx continues to terminate TLS. Django and MediaWiki backends are published on the app server's current private address for Nginx; Django's API lookup itself uses the Docker-only service name. Keep the internal API URL on the Docker network.
+Compose first creates the shared Docker network from `espacio_de_trabajo/mediawiki`, then the Django Compose stack attaches the app to it. Nginx continues to terminate TLS and keeps its existing routing and access rules. The API lookup uses the Docker-only service name and does not pass through Nginx.
 
 ## Identity behavior
 
@@ -35,7 +35,7 @@ Temporary accounts do not exist as MediaWiki identities until MediaWiki creates 
 
 ## Try it
 
-1. Start MediaWiki Compose, then Django Compose, preserving the existing database volumes. Add `nginx-sso-locations.conf` to the active Nginx TLS server block and reload that proxy.
+1. Start MediaWiki Compose, then Django Compose, preserving the existing database volumes. Leave the working Nginx configuration unchanged.
 2. Browse to `https://funding.wiki/doc/Special:UserLogin`, sign in, and visit a Django page. The current user should be the matching Django user; a sysop should be able to use `/admin/`.
 3. Sign out through `https://funding.wiki/doc/Special:UserLogout`, then reload Django; the next identity lookup should be anonymous (up to the configured cache TTL).
 4. In a private browser session, edit a page anonymously to trigger MediaWiki temporary-account creation, then visit Django. It should identify the temporary profile. Before the edit, it should identify the visitor as anonymous.

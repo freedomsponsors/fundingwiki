@@ -10,7 +10,7 @@ from .models import MWIdentity
 
 
 @override_settings(MEDIAWIKI_COOKIE_PREFIX="testwiki", MEDIAWIKI_CACHE_TTL=20,
-                   MEDIAWIKI_INTERNAL_API_URL="http://mediawiki/w/api.php",
+                   MEDIAWIKI_INTERNAL_API_URL="http://mediawiki/api.php",
                    MEDIAWIKI_API_HOST="wiki.test", MEDIAWIKI_API_TIMEOUT=1,
                    MEDIAWIKI_ADMIN_GROUP="sysop")
 class MediaWikiIdentityMiddlewareTests(TestCase):

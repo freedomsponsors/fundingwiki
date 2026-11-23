@@ -72,7 +72,7 @@ MIDDLEWARE = [
 
 # MediaWiki session delegation (no Django login session is trusted).
 MEDIAWIKI_INTERNAL_API_URL = config(
-    'MEDIAWIKI_INTERNAL_API_URL', default='http://mediawiki/w/api.php')
+    'MEDIAWIKI_INTERNAL_API_URL', default='http://mediawiki/api.php')
 MEDIAWIKI_API_HOST = config('MEDIAWIKI_API_HOST', default='funding.wiki')
 MEDIAWIKI_COOKIE_PREFIX = config('MEDIAWIKI_COOKIE_PREFIX', default='mediawiki')
 MEDIAWIKI_CACHE_TTL = config('MEDIAWIKI_CACHE_TTL', default=20, cast=int)
