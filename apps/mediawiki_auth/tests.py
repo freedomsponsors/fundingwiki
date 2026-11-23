@@ -9,6 +9,7 @@ from django.test import RequestFactory, TestCase, override_settings
 from .middleware import MediaWikiIdentityMiddleware
 from .middleware import _cookie_name
 from .models import MWIdentity
+from .views import mediawiki_login
 
 
 @override_settings(MEDIAWIKI_COOKIE_PREFIX="testwiki", MEDIAWIKI_CACHE_TTL=20,
@@ -38,6 +39,11 @@ class MediaWikiIdentityMiddlewareTests(TestCase):
     def test_cookie_name_uses_configured_prefix(self):
         self.assertEqual(settings.MEDIAWIKI_COOKIE_PREFIX, "testwiki")
         self.assertEqual(_cookie_name(), "testwiki_session")
+
+    def test_admin_login_redirects_to_mediawiki_without_invalid_returnto_url(self):
+        request = self.factory.get("/admin/login/", {"next": "/admin/"})
+        response = mediawiki_login(request)
+        self.assertEqual(response["Location"], "https://funding.wiki/doc/Special:UserLogin")
 
     @staticmethod
     def api_response(info):
