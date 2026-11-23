@@ -45,61 +45,61 @@ class MediaWikiIdentityMiddlewareTests(TestCase):
             get.assert_not_called()
 
     def test_registered_user_is_created_with_unusable_password_and_renamed(self):
-        with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
-                {"id": 42, "name": "Ada", "groups": ["user"]})):
+        with patch("apps.mediawiki_auth.middleware._userinfo", return_value=
+                   {"id": 42, "name": "Ada", "groups": ["user"]}):
             user = self.resolve("registered")
         self.assertEqual(user.username, "Ada")
         self.assertFalse(user.has_usable_password())
         self.assertEqual(user.mw_identity.mw_id, 42)
         cache.clear()
-        with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
-                {"id": 42, "name": "AdaRenamed", "groups": ["user"]})):
+        with patch("apps.mediawiki_auth.middleware._userinfo", return_value=
+                   {"id": 42, "name": "AdaRenamed", "groups": ["user"]}):
             user = self.resolve("registered")
         self.assertEqual(user.username, "AdaRenamed")
 
     def test_temporary_user_is_mapped_and_marked(self):
-        with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
-                {"id": 77, "name": "~2026-77", "temp": True, "groups": ["user"]})):
+        with patch("apps.mediawiki_auth.middleware._userinfo", return_value=
+                   {"id": 77, "name": "~2026-77", "temp": True, "groups": ["user"]}):
             user = self.resolve("temporary")
         self.assertTrue(user.mw_identity.is_temp)
         self.assertFalse(user.has_usable_password())
 
     def test_existing_django_account_is_linked_without_losing_its_id(self):
         existing = User.objects.create_user(username="Legacy", password="old-password")
-        with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
-                {"id": 78, "name": "Legacy", "groups": ["user"]})):
+        with patch("apps.mediawiki_auth.middleware._userinfo", return_value=
+                   {"id": 78, "name": "Legacy", "groups": ["user"]}):
             user = self.resolve("legacy")
         self.assertEqual(user.pk, existing.pk)
         self.assertFalse(user.has_usable_password())
         self.assertEqual(user.mw_identity.mw_id, 78)
 
     def test_anonymous_flag_is_anonymous(self):
-        with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
-                {"id": 0, "anon": True})):
+        with patch("apps.mediawiki_auth.middleware._userinfo", return_value=
+                   {"id": 0, "anon": True}):
             self.assertIsInstance(self.resolve("anonymous-cookie"), AnonymousUser)
 
     def test_sysop_grants_and_losing_group_removes_admin_flags(self):
-        with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
-                {"id": 12, "name": "Admin", "groups": ["sysop"]})):
+        with patch("apps.mediawiki_auth.middleware._userinfo", return_value=
+                   {"id": 12, "name": "Admin", "groups": ["sysop"]}):
             user = self.resolve("admin")
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_superuser)
         cache.clear()
-        with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
-                {"id": 12, "name": "Admin", "groups": ["user"]})):
+        with patch("apps.mediawiki_auth.middleware._userinfo", return_value=
+                   {"id": 12, "name": "Admin", "groups": ["user"]}):
             user = self.resolve("admin")
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
 
     def test_block_then_unblock_controls_active_state(self):
-        with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
-                {"id": 13, "name": "Blocked", "groups": ["user"], "blockedby": "Sysop"})):
+        with patch("apps.mediawiki_auth.middleware._userinfo", return_value=
+                   {"id": 13, "name": "Blocked", "groups": ["user"], "blockedby": "Sysop"}):
             self.assertIsInstance(self.resolve("blocked"), AnonymousUser)
         user = User.objects.get(username="Blocked")
         self.assertFalse(user.is_active)
         cache.clear()
-        with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
-                {"id": 13, "name": "Blocked", "groups": ["user"]})):
+        with patch("apps.mediawiki_auth.middleware._userinfo", return_value=
+                   {"id": 13, "name": "Blocked", "groups": ["user"]}):
             user = self.resolve("blocked")
         self.assertTrue(user.is_active)
         self.assertFalse(user.mw_identity.is_blocked)
