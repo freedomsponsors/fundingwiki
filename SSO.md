@@ -4,7 +4,7 @@ MediaWiki is the sole login authority. The existing Nginx TLS proxy serves `http
 
 ## Configuration
 
-Set matching values in the MediaWiki and Django container environments:
+Set matching values in `.env.production` for Django and in the MediaWiki Compose environment (shell or its Compose `.env` file):
 
 | Variable | Default | Purpose |
 |---|---|---|

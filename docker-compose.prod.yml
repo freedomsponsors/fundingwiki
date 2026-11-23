@@ -33,13 +33,6 @@ services:
       DATABASE_USER: djangology
       DATABASE_PASS: djangology
       REDIS_HOST: redis
-      MEDIAWIKI_INTERNAL_API_URL: ${MEDIAWIKI_INTERNAL_API_URL:-http://mediawiki/w/api.php}
-      MEDIAWIKI_API_HOST: ${MEDIAWIKI_API_HOST:-funding.wiki}
-      MEDIAWIKI_COOKIE_PREFIX: ${MEDIAWIKI_COOKIE_PREFIX:-mediawiki}
-      MEDIAWIKI_CACHE_TTL: ${MEDIAWIKI_CACHE_TTL:-20}
-      MEDIAWIKI_API_TIMEOUT: ${MEDIAWIKI_API_TIMEOUT:-2}
-      MEDIAWIKI_ADMIN_GROUP: ${MEDIAWIKI_ADMIN_GROUP:-sysop}
-      MEDIAWIKI_SERVER_URL: ${MEDIAWIKI_SERVER_URL:-https://funding.wiki}
     env_file:
       - .env.production
     volumes:
