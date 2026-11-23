@@ -7,6 +7,8 @@ WORKDIR /app
 COPY apps/mediawiki_auth/ /app/apps/mediawiki_auth/
 COPY config/urls.py /app/config/urls.py
 COPY config/settings/base.py /app/config/settings/base.py
+COPY statfiles/static/vue/ /app/staticroot/vue/
+COPY templates/vue/index.html /app/templates/vue/index.html
 COPY templates/issues/include/navbar_old.html /app/templates/issues/include/navbar_old.html
 COPY templates/issues/include/newnavbar.html /app/templates/issues/include/newnavbar.html
 COPY templates/registration/activate.html /app/templates/registration/activate.html

@@ -12,4 +12,3 @@ __pycache__/
 media/
 staticroot/
 statfiles/dist/
-statfiles/static/vue/

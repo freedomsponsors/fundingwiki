@@ -27,13 +27,17 @@ Compose first creates the shared Docker network from `espacio_de_trabajo/mediawi
 
 ## Build and roll back the Django SSO image
 
-The production Compose uses a prebuilt `fundingwiki-app:latest` image and has no production build recipe. `Dockerfile.sso` derives from that existing image and copies only the SSO code, retaining production-only files already present in the base image. Build and select it with:
+The production Compose uses a prebuilt `fundingwiki-app:latest` image and has no production build recipe. `Dockerfile.sso` derives from that existing image, retains production-only files already present in the base image, and adds the SSO code and generated Vue frontend. Build and select it with:
 
 ```bash
+cd frontend && npm ci && npm run build && cd ..
+cp statfiles/static/vue/index.html templates/vue/index.html
 docker build --pull=false -f Dockerfile.sso -t fundingwiki-app:sso .
 docker compose -f docker-compose.prod.yml -f docker-compose.sso.yml config --quiet
 docker compose -f docker-compose.prod.yml -f docker-compose.sso.yml up -d --no-deps --force-recreate app
 ```
+
+The production Vite build uses `VITE_API_URL=/`, so Vue calls Django on the same origin and its requests include the MediaWiki session cookie. The SSO image copies the generated Vue shell and assets into Django's template and static-root directories.
 
 The existing app image and database volumes remain untouched. To return the app service to its original image before migration, run:
 
