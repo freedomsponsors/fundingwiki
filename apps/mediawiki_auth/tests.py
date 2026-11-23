@@ -21,8 +21,10 @@ class MediaWikiIdentityMiddlewareTests(TestCase):
         self.factory = RequestFactory()
 
     def resolve(self, cookie=None):
-        request = self.factory.get("/")
-        request.COOKIES = {_cookie_name(): cookie} if cookie else {}
+        headers = {"HTTP_COOKIE": f"{_cookie_name()}={cookie}"} if cookie else {}
+        request = self.factory.get("/", **headers)
+        if cookie:
+            self.assertEqual(request.COOKIES.get(_cookie_name()), cookie)
         middleware = MediaWikiIdentityMiddleware(lambda req: req.user)
         return middleware(request)
 
