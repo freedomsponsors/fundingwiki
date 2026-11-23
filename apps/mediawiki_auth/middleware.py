@@ -46,7 +46,7 @@ def _userinfo(cookie):
         return None
 
 
-def _username(name, mw_id, is_temp):
+def _username(name, mw_id):
     # Django's stock username validator does not allow MediaWiki's '~' temp prefix.
     candidate = name if re.fullmatch(r"[\w.@+-]+", name, flags=re.UNICODE) else f"mw_{mw_id}"
     if User.objects.filter(username=candidate).exclude(mw_identity__mw_id=mw_id).exists():
@@ -54,6 +54,10 @@ def _username(name, mw_id, is_temp):
     if User.objects.filter(username=candidate).exclude(mw_identity__mw_id=mw_id).exists():
         candidate = f"mw_{mw_id}_{hashlib.sha256(name.encode()).hexdigest()[:8]}"
     return candidate[:150]
+
+
+def _is_valid_username(name):
+    return bool(re.fullmatch(r"[\w.@+-]+", name, flags=re.UNICODE))
 
 
 def _resolve(cookie):
@@ -76,14 +80,20 @@ def _resolve(cookie):
 
     profile = MWIdentity.objects.filter(mw_id=mw_id).select_related("user").first()
     if profile is None:
-        username = _username(name, mw_id, is_temp)
-        user = User.objects.create_user(username=username)
+        # Preserve existing Django content when its username matches the
+        # authenticated MediaWiki name; the numeric MW ID becomes authoritative
+        # as soon as this one-time link is created.
+        user = None
+        if _is_valid_username(name):
+            user = User.objects.filter(username=name, mw_identity__isnull=True).first()
+        if user is None:
+            user = User.objects.create_user(username=_username(name, mw_id))
         user.set_unusable_password()
         user.save(update_fields=["password"])
         profile = MWIdentity.objects.create(user=user, mw_id=mw_id, is_temp=is_temp)
 
     user = profile.user
-    new_name = _username(name, mw_id, is_temp)
+    new_name = _username(name, mw_id)
     changed = []
     if user.username != new_name:
         user.username = new_name

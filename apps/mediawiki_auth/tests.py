@@ -56,6 +56,15 @@ class MediaWikiIdentityMiddlewareTests(TestCase):
         self.assertTrue(user.mw_identity.is_temp)
         self.assertFalse(user.has_usable_password())
 
+    def test_existing_django_account_is_linked_without_losing_its_id(self):
+        existing = User.objects.create_user(username="Legacy", password="old-password")
+        with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
+                {"id": 78, "name": "Legacy", "groups": ["user"]})):
+            user = self.resolve("legacy")
+        self.assertEqual(user.pk, existing.pk)
+        self.assertFalse(user.has_usable_password())
+        self.assertEqual(user.mw_identity.mw_id, 78)
+
     def test_anonymous_flag_is_anonymous(self):
         with patch("apps.mediawiki_auth.middleware.requests.get", return_value=self.api_response(
                 {"id": 0, "anon": True})):
