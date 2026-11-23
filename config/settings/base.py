@@ -129,6 +129,15 @@ DATABASES = {
     }
 }
 
+# Shared by production and local settings; template tags import Redis-backed
+# language services during Django's system checks.
+REDIS = {
+    'host': config('REDIS_HOST', 'localhost'),
+    'port': config('REDIS_PORT', '6379', cast=int),
+    'db': config('REDIS_DB', '0', cast=int),
+    'pass': config('REDIS_PASS', ''),
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
