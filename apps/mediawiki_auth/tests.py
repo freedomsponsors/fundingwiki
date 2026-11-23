@@ -1,11 +1,13 @@
 from unittest.mock import Mock, patch
 
 import requests
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.cache import cache
 from django.test import RequestFactory, TestCase, override_settings
 
 from .middleware import MediaWikiIdentityMiddleware
+from .middleware import _cookie_name
 from .models import MWIdentity
 
 
@@ -20,9 +22,13 @@ class MediaWikiIdentityMiddlewareTests(TestCase):
 
     def resolve(self, cookie=None):
         request = self.factory.get("/")
-        request.COOKIES = {"testwiki_session": cookie} if cookie else {}
+        request.COOKIES = {_cookie_name(): cookie} if cookie else {}
         middleware = MediaWikiIdentityMiddleware(lambda req: req.user)
         return middleware(request)
+
+    def test_cookie_name_uses_configured_prefix(self):
+        self.assertEqual(settings.MEDIAWIKI_COOKIE_PREFIX, "testwiki")
+        self.assertEqual(_cookie_name(), "testwiki_session")
 
     @staticmethod
     def api_response(info):
