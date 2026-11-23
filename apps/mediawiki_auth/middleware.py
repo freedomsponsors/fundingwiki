@@ -68,12 +68,8 @@ def _resolve(cookie):
         return AnonymousUser()
     mw_id = info.get("id")
     is_temp = bool(info.get("temp", False))
-    if info.get("anon") or (not mw_id and not is_temp):
+    if info.get("anon") or not mw_id:
         return AnonymousUser()
-    # API implementations may report zero for temp identities. They have no
-    # stable user table ID, so use a separate stable hash-derived local ID.
-    if not mw_id and is_temp:
-        mw_id = int(hashlib.sha256(info.get("name", "").encode()).hexdigest()[:14], 16)
     name = info.get("name")
     if not name or not mw_id:
         return AnonymousUser()
