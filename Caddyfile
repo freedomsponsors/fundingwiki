@@ -1,0 +1,9 @@
+{$SITE_DOMAIN} {
+	@mediawiki path /doc* /w* /images*
+	handle @mediawiki {
+		reverse_proxy mediawiki:80
+	}
+	handle {
+		reverse_proxy app:8000
+	}
+}

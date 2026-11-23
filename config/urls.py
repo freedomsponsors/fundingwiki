@@ -38,6 +38,7 @@ from apps.issues.views import user_views
 import registration.backends.default.urls
 import registration.backends.simple.urls
 from apps.issues.views import vue_views
+from apps.mediawiki_auth import views as mediawiki_auth_views
 
 from config import settings
 from django.conf.urls.static import static
@@ -45,6 +46,7 @@ from django.conf.urls.static import static
 # from registration.backends.default.views import RegistrationView
 
 urlpatterns = [
+    path('admin/login/', mediawiki_auth_views.mediawiki_login),
     path('admin/', admin.site.urls),
     path('issue_submit', issue_views.addIssueForm),
     path('core/', include(core_urls)),
@@ -68,13 +70,17 @@ urlpatterns = [
     path('donate/', include(core_urls.donate_urls)),
     # path('logout', django.contrib.auth.views.LogoutView.as_view(), {'next_page': '/'}),
     # path('', include(django.contrib.auth.urls)),
-    path('login/', main_views.login),
-    path('logout', main_views.logout),
+    path('login/', mediawiki_auth_views.mediawiki_login),
+    path('login/<path:unused>', mediawiki_auth_views.mediawiki_login),
+    path('logout', mediawiki_auth_views.mediawiki_logout),
+    path('logout/', mediawiki_auth_views.mediawiki_logout),
 
     # path('paypal/', include(paypal.standard.ipn.urls)),
     # path('paypal/test', paypal_sample.process_payment),
     # path('accounts/password/reset/', django.contrib.auth.views.password_reset, {'password_reset_form': FrespoPasswordResetForm}, name='password_reset'),
     # path('accounts/register/', RegistrationView.as_view(form_class=MyRegForm), name='registration_register'),
+    path('accounts/login/', mediawiki_auth_views.mediawiki_login),
+    path('accounts/register/', mediawiki_auth_views.mediawiki_login),
     path('accounts/', include(registration.backends.default.urls)),   #for email activation
     # path('accounts/', include(registration.backends.simple.urls)),    #without email activation
 

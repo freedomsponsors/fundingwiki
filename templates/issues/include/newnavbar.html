@@ -48,7 +48,7 @@
   {% if user and user.is_authenticated %}
     <div style="padding:10px 0;width:90%;display:flex; align-items:center;">
       Hello, <a href="/user/{{ user.username }}">{{ user.username }}</a>, <a href="/user/edit">edit</a>,
-      <a href="/logout">Sign Out</a>
+      <a href="/doc/Special:UserLogout">Sign Out</a>
 <!--      <form method="post" action="logout/">-->
 <!--          {% csrf_token %}-->
 <!--          <button type="submit">logout</button>-->
@@ -58,7 +58,7 @@
   {% else %}
     <div style="padding:10px 0;width:90%">Hello, visitor, you can make some interactions with your IP or </div>
     <div>
-      <a href="/accounts/register/">create account</a>. <a href="/login/">Log in</a>
+      <a href="/doc/Special:UserLogin">create account</a>. <a href="/doc/Special:UserLogin">Log in</a>
     </div>
   {% endif %}
 </div>

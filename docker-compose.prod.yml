@@ -22,8 +22,8 @@ services:
     restart: unless-stopped
     # image already has the code in app, no need to bind /workspace
     # image also has gunicorn command by default
-    ports:
-      - "192.168.25.203:8000:8000"
+    expose:
+      - "8000"
     depends_on:
       - db
       - redis
@@ -33,10 +33,38 @@ services:
       DATABASE_USER: djangology
       DATABASE_PASS: djangology
       REDIS_HOST: redis
+      MEDIAWIKI_INTERNAL_API_URL: ${MEDIAWIKI_INTERNAL_API_URL:-http://mediawiki/w/api.php}
+      MEDIAWIKI_API_HOST: ${MEDIAWIKI_API_HOST:-funding.wiki}
+      MEDIAWIKI_COOKIE_PREFIX: ${MEDIAWIKI_COOKIE_PREFIX:-mediawiki}
+      MEDIAWIKI_CACHE_TTL: ${MEDIAWIKI_CACHE_TTL:-20}
+      MEDIAWIKI_API_TIMEOUT: ${MEDIAWIKI_API_TIMEOUT:-2}
+      MEDIAWIKI_ADMIN_GROUP: ${MEDIAWIKI_ADMIN_GROUP:-sysop}
+      MEDIAWIKI_SERVER_URL: ${MEDIAWIKI_SERVER_URL:-https://funding.wiki}
     env_file:
       - .env.production
     volumes:
       - media_data:/app/media
+    networks:
+      - default
+      - mediawiki_internal
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:-funding.wiki}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    networks:
+      - default
+      - mediawiki_internal
   db:
     image: postgis/postgis:16-3.4
     restart: unless-stopped
@@ -56,3 +84,10 @@ services:
 volumes:
   postgres_data:
   media_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  mediawiki_internal:
+    external: true
+    name: fundingwiki_mediawiki_net
