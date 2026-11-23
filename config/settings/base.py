@@ -70,6 +70,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# MediaWiki session delegation (no Django login session is trusted).
+MEDIAWIKI_INTERNAL_API_URL = config(
+    'MEDIAWIKI_INTERNAL_API_URL', default='http://mediawiki/w/api.php')
+MEDIAWIKI_API_HOST = config('MEDIAWIKI_API_HOST', default='funding.wiki')
+MEDIAWIKI_COOKIE_PREFIX = config('MEDIAWIKI_COOKIE_PREFIX', default='mediawiki')
+MEDIAWIKI_CACHE_TTL = config('MEDIAWIKI_CACHE_TTL', default=20, cast=int)
+MEDIAWIKI_API_TIMEOUT = config('MEDIAWIKI_API_TIMEOUT', default=2, cast=float)
+MEDIAWIKI_ADMIN_GROUP = config('MEDIAWIKI_ADMIN_GROUP', default='sysop')
+MEDIAWIKI_SERVER_URL = config('MEDIAWIKI_SERVER_URL', default='https://funding.wiki')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]

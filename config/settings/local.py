@@ -28,6 +28,7 @@ REDIS = {
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:8000",
+    config('MEDIAWIKI_SERVER_URL', default='https://funding.wiki'),
 ]
 
 # MediaWiki settings
