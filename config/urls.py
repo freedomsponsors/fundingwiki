@@ -40,7 +40,7 @@ import registration.backends.simple.urls
 from apps.issues.views import vue_views
 from apps.mediawiki_auth import views as mediawiki_auth_views
 
-from config import settings
+from django.conf import settings
 from django.conf.urls.static import static
 
 # from registration.backends.default.views import RegistrationView
