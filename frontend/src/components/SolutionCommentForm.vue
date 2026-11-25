@@ -9,7 +9,7 @@
             <div style="">
                 <v-textarea
                     v-model="form_content"
-                    label="Add a comment"
+                    label="Comment on this solution"
                     rows="1"
                     auto-grow
                     :rules="content_not_empty"
@@ -26,7 +26,12 @@
                     :loading="loading"
                     @click="submitForm"
                     style="background-color: #E1ECF4;"
-                >Comment</v-btn>
+                >{{currentEditComment ? 'Edit' : ''}} Comment</v-btn>
+                <a 
+                    v-show="isFocus || form_content.trim() !== ''" 
+                    v-if="currentEditComment || form_content.trim() !== ''" 
+                    @click="form_content='';currentEditComment=null" style="margin-left: 10px;"
+                >Cancel</a>
             </div>
         </div>
     </v-form>
@@ -44,6 +49,10 @@ const props = defineProps({
     solution: {
         type: Object,
         required: true
+    },
+    editingComment: {
+        type: Object,
+        default: null
     }
 })
 console.log(props.solution.id)
@@ -61,8 +70,16 @@ const isValid = ref(false)
 const form = ref(null)
 const form_success = ref(false)
 const myIdeasKey = ref(0)
+const currentEditComment = ref(null)
 
 const emit = defineEmits(['submit-success'])
+
+watch(() => props.editingComment, (newVal) => {
+    if (newVal && typeof newVal.content === 'string') {
+        form_content.value = newVal.content
+        currentEditComment.value = newVal
+    }
+}, { immediate: true })
 
 const content_not_empty = [
     value => {
@@ -77,7 +94,8 @@ const submitForm = async () => {
     loading.value = true
     const { valid } = await form.value.validate()
     if (valid) {
-        let response = await saveSolutionComment(props.solution.id, form_content.value)
+        let editingCommentId = currentEditComment.value ? currentEditComment.value.id : null
+        let response = await saveSolutionComment(props.solution.id, form_content.value, editingCommentId)
         console.log(response.data)
         form_success.value = true
 
@@ -85,6 +103,7 @@ const submitForm = async () => {
 
         form_success.value = false
         form_content.value = ''
+        currentEditComment.value = null
 
         // Emit an event to notify the parent component to refresh the solution list
         emit('submit-success')

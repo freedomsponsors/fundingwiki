@@ -11,11 +11,19 @@
                         <a v-if="item.if_mine" @click="handleEdit(item)" style="margin-left:10px">edit</a>
                     </div>
                 </div>
-                <div>
-                    <SolutionCommentForm :solution="item" @submit-success="onSolutionCommentSubmitSuccess(item)"></SolutionCommentForm>
+                <div :ref="(el) => setCommentFormAnchor(el, item.id)">
+                    <SolutionCommentForm 
+                        :solution="item" 
+                        :editing-comment="item.editingComment"
+                        @submit-success="onSolutionCommentSubmitSuccess(item)"
+                    ></SolutionCommentForm>
                 </div>
-                <div style="">
-                    <SolutionCommentList :comment_list="item.techsolutioncomment_set" :refresh-flag="item.commentRefreshFlag"></SolutionCommentList>
+                <div style="margin-top: 10px;">
+                    <SolutionCommentList 
+                        :comment_list="item.techsolutioncomment_set" 
+                        :refresh-flag="item.commentRefreshFlag"
+                        @edit-comment="(comment) => editComment(item, comment)"
+                    ></SolutionCommentList>
                 </div>
             </div>
         </div>
@@ -23,13 +31,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import {getSolution} from '@/services/solution.js'
 import SolutionCommentForm from '@/components/SolutionCommentForm.vue'
 import SolutionCommentList from '@/components/SolutionCommentList.vue'
 
 const data_list = ref([])
 const emit = defineEmits(['edit-proposal'])
+const commentFormAnchors = ref<Record<string | number, Element | null>>({})
 
 const props = defineProps({
     issue: {
@@ -51,10 +60,35 @@ watch(() => props.issue.id, (newVal, oldVal) => {
     }
 }, { deep: true })
 
+const setCommentFormAnchor = (el: Element | null, solutionId: string | number | undefined) => {
+    if (!solutionId) return
+
+    if (el) {
+        commentFormAnchors.value[solutionId] = el
+    } else {
+        delete commentFormAnchors.value[solutionId]
+    }
+}
+
 let onSolutionCommentSubmitSuccess = async (targetItem)=>{
+    if (targetItem) {
+        targetItem.editingComment = null
+        targetItem.commentRefreshFlag = !targetItem.commentRefreshFlag
+    }
+
     getSolution(props.issue.id).then((response) => {
         data_list.value = response
     })
+}
+
+const editComment = async (solutionItem, comment) => {
+    if (solutionItem && comment) {
+        solutionItem.editingComment = comment
+        await nextTick()
+
+        const anchor = commentFormAnchors.value[solutionItem.id]
+        anchor?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
 }
 
 const handleEdit = (item) => {
