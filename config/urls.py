@@ -17,6 +17,7 @@ Including another URLconf
 import django.contrib.auth.views
 from django.contrib import admin
 from django.urls import path, re_path
+from django.views.generic import RedirectView
 from apps.issues.views import issue_views
 from django.urls import include
 from apps.issues import urls as core_urls
@@ -46,6 +47,9 @@ from django.conf.urls.static import static
 # from registration.backends.default.views import RegistrationView
 
 urlpatterns = [
+    # The final Vue catch-all also matches /admin, so APPEND_SLASH cannot
+    # redirect it automatically. Normalize the Django admin URL explicitly.
+    path('admin', RedirectView.as_view(url='/admin/', permanent=True)),
     path('admin/login/', mediawiki_auth_views.mediawiki_login),
     path('admin/', admin.site.urls),
     path('issue_submit', issue_views.addIssueForm),
